@@ -12,7 +12,7 @@ class SupplyHandler:
         result['sfulfilled'] = row[6]
         return result
 
-    def build_supply_attributes(self, supply_id, scategory, sname, sdescription, saddress, sprice):
+    def build_supply_attributes(self, supply_id, scategory, sname, sdescription, saddress, sprice, sfulfilled):
         result = {}
         result['supply_id'] = supply_id
         result['scategory'] = scategory
@@ -20,7 +20,7 @@ class SupplyHandler:
         result['sdescription'] = sdescription
         result['saddress'] = saddress
         result['sprice'] = sprice
-        result['sfulfilled'] = False
+        result['sfulfilled'] = sfulfilled
         return result
 
     def get_all_supplies(self):
@@ -51,7 +51,7 @@ class SupplyHandler:
         # if (len(args) == 2) and category and name:
         #     supply_list = dao.getSupplyByCategoryAndName(category, name)
         # elif (len(args) == 1) and category:
-        #     supply_list = dao.getSupplyBycategory(category)
+        #     supply_list = dao.getSupplyByCategory(category)
         # elif (len(args) == 1) and name:
         #     supply_list = dao.getSupplyByName(name)
         # else:
@@ -61,7 +61,27 @@ class SupplyHandler:
         # for row in supply_list:
         #     result = self.build_part_dict(row)
         #     result_list.append(result)
-        return jsonify(Parts=result_list)
+        return jsonify(Supplies=result_list)
+
+    def match_supplies_to_request(self, args):
+        category = args.get("category")
+        max_price = args.get("max_price")
+        name = args.get("name")
+        supply_list = []
+        # if (len(args) == 1) and name:
+        #     supply_list = dao.getSupplyBycategory(category)
+        # elif (len(args) == 2) and category and max_price:
+        #     supply_list = dao.getSupplyByCategoryAndMaxPrice(category, max_price)
+        # elif (len(args) == 3) and category and max_price and name:
+        #     supply_list = dao.getSupplyByCategoryNameAndMaxPrice(category, name, max_price)
+        # else:
+        #     return jsonify(Error = "Malformed querry string"), 400
+        result_list = []
+        result_list.append('Match supplies to request works!')
+        # for row in supply_list:
+        #     result = self.build_part_dict(row)
+        #     result_list.append(result)
+        return jsonify(Supplies=result_list)
 
     def insert_supply(self, form):
         if len(form) != 5:
@@ -72,10 +92,11 @@ class SupplyHandler:
             sdescription = form['sdescription']
             saddress = form['saddress']
             sprice = form['sprice']
-            if scategory and sname and sdescription and saddress and sprice:
+            sfulfilled = form['sfulfilled']
+            if scategory and sname and sdescription and saddress and sprice and sfulfilled:
                 # dao = SupplyDAO()
-                # pid = dao.insert(scategory, sname, sdescription, saddress, sprice)
-                # result = build_supply_attributes(self, supply_id, scategory, sname, sdescription, saddress, sprice)
+                # pid = dao.insert(scategory, sname, sdescription, saddress, sprice, sfulfilled)
+                # result = build_supply_attributes(self, supply_id, scategory, sname, sdescription, saddress, sprice, sfulfilled)
                 result = 'Insert works!'
                 return jsonify(Supply=result), 201
             else:
@@ -87,10 +108,11 @@ class SupplyHandler:
         sdescription = json['sdescription']
         saddress = json['saddress']
         sprice = json['sprice']
-        if scategory and sname and saddress and sdescription and sprice:
+        sfulfilled = json['sfulfilled']
+        if scategory and sname and saddress and sdescription and sprice and sfulfilled:
             # dao = PartsDAO()
-            # pid = dao.insert(pname, pcolor, pmaterial, pprice)
-            # result = self.build_part_attributes(pid, pname, pcolor, pmaterial, pprice)
+            # pid = dao.insert(pname, pcolor, pmaterial, pprice, sfulfilled)
+            # result = self.build_part_attributes(pid, pname, pcolor, pmaterial, pprice, sfulfilled)
             return jsonify(Part="Insert supply json works!"), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -116,9 +138,10 @@ class SupplyHandler:
         #         sdescription = form['sdescription']
         #         saddress = form['saddress']
         #         sprice = form['sprice']
+        #         sfulfilled = form['sfulfilled']
         #         if scategory and sname and saddress and sdescription and sprice:
-        #             dao.update(supply_id, scategory, sname, sdescription, saddress, sprice)
-        #             result = self.build_part_attributes(supply_id, scategory, sname, sdescription, saddress, sprice)
+        #             dao.update(supply_id, scategory, sname, sdescription, saddress, sprice, sfulfilled)
+        #             result = self.build_part_attributes(supply_id, scategory, sname, sdescription, saddress, sprice, sfulfilled)
         #             return jsonify(Part=result), 200
         #         else:
         #             return jsonify(Error="Unexpected attributes in update request"), 400

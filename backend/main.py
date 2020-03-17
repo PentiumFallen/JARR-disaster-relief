@@ -21,6 +21,11 @@ def getAllSupplies():
         else:
             return SupplyHandler().search_supply(request.args)
 
+@app.route('/JARR-disaster-relief/supplies/match')
+def matchSuppliesToRequest():
+    return SupplyHandler().match_supplies_to_request(request.args)
+
+
 @app.route('/JARR-disaster-relief/supplies/<int:supply_id>', methods=['GET', 'PUT', 'DELETE'])
 def getSupplyById(supply_id):
     if request.method == 'GET':
