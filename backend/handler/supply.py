@@ -2,25 +2,27 @@ from flask import jsonify
 
 class SupplyHandler:
     def build_supply_dict(self, row):
-        result = {}
-        result['supply_id'] = row[0]
-        result['scategory'] = row[1]
-        result['sname'] = row[2]
-        result['sdescription'] = row[3]
-        result['saddress'] = row[4]
-        result['sprice'] = row[5]
-        result['sfulfilled'] = row[6]
+        result = {
+            'supply_id': row[0],
+            'scategory': row[1],
+            'sname': row[2],
+            'sdescription': row[3],
+            'saddress': row[4],
+            'sprice': row[5],
+            'sfulfilled': row[6]
+        }
         return result
 
     def build_supply_attributes(self, supply_id, scategory, sname, sdescription, saddress, sprice, sfulfilled):
-        result = {}
-        result['supply_id'] = supply_id
-        result['scategory'] = scategory
-        result['sname'] = sname
-        result['sdescription'] = sdescription
-        result['saddress'] = saddress
-        result['sprice'] = sprice
-        result['sfulfilled'] = sfulfilled
+        result = {
+            'supply_id': supply_id,
+            'scategory': scategory,
+            'sname': sname,
+            'sdescription': sdescription,
+            'saddress': saddress,
+            'sprice': sprice,
+            'sfulfilled': sfulfilled
+        }
         return result
 
     def get_all_supplies(self):
