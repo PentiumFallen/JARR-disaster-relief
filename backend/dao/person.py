@@ -1,7 +1,7 @@
 from config.dbconfig import pg_config
 import psycopg2
 
-class PersonDao:
+class PersonDAO:
     def __init__(self):
 
         connection_url = "dbname=%s user=%s password=%s" % (pg_config['dbname'],
@@ -18,16 +18,31 @@ class PersonDao:
             result.append(row)
         return result
 
-    def getPersonById(self, pid):
+    def getPersonByPersonId(self, person_id):
         cursor = self.conn.cursor()
         query = "select first_name, last_name, address, senate_district, phone_number, current_location from person where person_id = %s;"
-        cursor.execute(query, (pid,))
+        cursor.execute(query, (person_id,))
+        result = cursor.fetchone()
+        return result
+
+    # TODO
+    def getPersonByRequestId(self, request_id):
+        cursor = self.conn.cursor()
+        query = "select first_name, last_name, address, senate_district, phone_number, current_location from person where person_id = %s;"
+        cursor.execute(query, (request_id,))
+        result = cursor.fetchone()
+        return result
+
+    # TODO
+    def getPersonBySupplyId(self, supply_id):
+        cursor = self.conn.cursor()
+        query = "select first_name, last_name, address, senate_district, phone_number, current_location from person where person_id = %s;"
+        cursor.execute(query, (supply_id,))
         result = cursor.fetchone()
         return result
 
     def insertPerson(self, first_name, last_name, address, senate_district, phone_number, current_location):
         cursor = self.conn.cursor()
-        "select first_name, last_name, address, senate_district, phone_number, current_location from person where person_id = %s;"
         query = "insert into person(first_name, last_name, address, senate_district, phone_number, current_location) values (%s, %s, %s, %s, %s, %s, %s) returning person_id;"
         cursor.execute(query, (first_name, last_name, address, senate_district, phone_number, current_location,))
         person_id = cursor.fetchone()[0]
@@ -51,7 +66,7 @@ class PersonDao:
     def updatePerson(self, first_name, last_name, address, senate_district, phone_number, current_location, person_id):
         cursor = self.conn.cursor()
         query = "update person set first_name = %s, last_name = %s, address = %s, senate_district = %s, phone_number = %s, current_location = %s, phone_number = %s where person_id = %s;"
-        cursor.execute(query, (first_name, last_name, municipality, zip_code, address, senate_district, phone_number, person_id,))
+        cursor.execute(query, (first_name, last_name, address, senate_district, phone_number, current_location, person_id,))
         self.conn.commit()
         return person_id
 
