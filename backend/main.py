@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from backend.handler.supply import SupplyHandler
+from backend.handler.person import PersonHandler
 from flask_cors import CORS
 
 # Activate
@@ -10,6 +11,37 @@ CORS(app)
 @app.route('/')
 def greeting():
     return 'Hello, this is the JARR DB App!'
+
+@app.route('/JARR-disaster-relief/person/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+def getPersonById(id):
+    if request.method == 'GET':
+        id_type = request.args.get('id_type', type=str)
+        if id_type == 'person':
+            return PersonHandler().get_person_by_id(id)
+        elif id_type == 'supply':
+            return PersonHandler().get_person_by_supply_id(id)
+        else:
+            return PersonHandler().get_person_by_request_id(id)
+    elif request.method == 'PUT':
+        return PersonHandler().update_person(person_id, request.form)
+    elif request.method == 'DELETE':
+        return PersonHandler().delete_person(person_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+@app.route('/JARR-disaster-relief/person/location/<int:person_id>', methods=['POST'])
+def updatePersonLocation(person_id):
+    if request.method == 'POST':
+        return PersonHandler().update_person_location(request.json['new_location'], person_id)
+
+@app.route('/JARR-disaster-relief/person', methods=['GET', 'POST'])
+def getAllPersons():
+    if request.method == 'POST':
+        return PersonHandler().insert_person_json(request.json)
+    else:
+        if not request.args:
+            return PersonHandler().get_all_persons()
+
 
 @app.route('/JARR-disaster-relief/supplies', methods=['GET', 'POST'])
 def getAllSupplies():
@@ -24,7 +56,6 @@ def getAllSupplies():
 @app.route('/JARR-disaster-relief/supplies/match')
 def matchSuppliesToRequest():
     return SupplyHandler().match_supplies_to_request(request.args)
-
 
 @app.route('/JARR-disaster-relief/supplies/<int:supply_id>', methods=['GET', 'PUT', 'DELETE'])
 def getSupplyById(supply_id):
