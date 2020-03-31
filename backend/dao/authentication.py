@@ -63,7 +63,7 @@ class AuthenticationDAO:
 
     def updateAccount(self, email, password, is_admin, account_id):
         cursor = self.conn.cursor()
-        query = "update person set first_name = %s, last_name = %s, address = %s, senate_district = %s, phone_number = %s, current_location = %s, phone_number = %s where person_id = %s;"
+        query = "update account set email = %s, password = %s, is_admin = %s;"
         cursor.execute(query, (email, password, is_admin, account_id,))
         self.conn.commit()
         return account_id
