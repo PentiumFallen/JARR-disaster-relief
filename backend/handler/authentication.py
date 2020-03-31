@@ -121,5 +121,3 @@ class AuthenticationHandler:
         #         else:
         #             return jsonify(Error="Unexpected attributes in update request"), 400
         return jsonify(Account='Update account (form)!')
-
-

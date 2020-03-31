@@ -67,3 +67,5 @@ class AuthenticationDAO:
         cursor.execute(query, (email, password, is_admin, account_id,))
         self.conn.commit()
         return account_id
+
+        
