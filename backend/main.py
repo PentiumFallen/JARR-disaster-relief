@@ -23,9 +23,9 @@ def getPersonById(id):
         else:
             return PersonHandler().get_person_by_request_id(id)
     elif request.method == 'PUT':
-        return PersonHandler().update_person(person_id, request.form)
+        return PersonHandler().update_person(id, request.form)
     elif request.method == 'DELETE':
-        return PersonHandler().delete_person(person_id)
+        return PersonHandler().delete_person(id)
     else:
         return jsonify(Error="Method not allowed."), 405
 
