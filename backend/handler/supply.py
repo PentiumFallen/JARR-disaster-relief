@@ -5,23 +5,19 @@ class SupplyHandler:
         result = {
             'supply_id': row[0],
             'scategory': row[1],
-            'sname': row[2],
-            'sdescription': row[3],
-            'saddress': row[4],
-            'sprice': row[5],
-            'sfulfilled': row[6]
+            'sdescription': row[2],
+            'saddress': row[3],
+            'sprice': row[4]
         }
         return result
 
-    def build_supply_attributes(self, supply_id, scategory, sname, sdescription, saddress, sprice, sfulfilled):
+    def build_supply_attributes(self, supply_id, scategory, sdescription, saddress, sprice):
         result = {
             'supply_id': supply_id,
             'scategory': scategory,
-            'sname': sname,
             'sdescription': sdescription,
             'saddress': saddress,
             'sprice': sprice,
-            'sfulfilled': sfulfilled
         }
         return result
 
@@ -44,9 +40,14 @@ class SupplyHandler:
         supply = 'Got supply ' + str(supply_id) + '!'
         return jsonify(Supply=supply)
 
+    def get_supplies_by_person_id(self, person_id):
+        supplies = 'Got supplies of person number ' + str(person_id)
+        return jsonify(Supplies=supplies)
+
     def search_supply(self, args):
         category = args.get("category")
         name = args.get("name")
+        #REMOVE NAME AND USE ADDRESS
         # Add more! #
         # dao = PartsDAO()
         supply_list = []
@@ -90,15 +91,13 @@ class SupplyHandler:
             return jsonify(Error="Malformed post request"), 400
         else:
             scategory = form['scategory']
-            sname = form['sname']
             sdescription = form['sdescription']
             saddress = form['saddress']
             sprice = form['sprice']
-            sfulfilled = form['sfulfilled']
-            if scategory and sname and sdescription and saddress and sprice and sfulfilled:
+            if scategory and sdescription and saddress and sprice:
                 # dao = SupplyDAO()
-                # pid = dao.insert(scategory, sname, sdescription, saddress, sprice, sfulfilled)
-                # result = build_supply_attributes(self, supply_id, scategory, sname, sdescription, saddress, sprice, sfulfilled)
+                # pid = dao.insert(scategory, sdescription, saddress, sprice)
+                # result = build_supply_attributes(self, supply_id, scategory, sdescription, saddress, sprice)
                 result = 'Insert works!'
                 return jsonify(Supply=result), 201
             else:
@@ -106,15 +105,13 @@ class SupplyHandler:
 
     def insert_supply_json(self, json):
         scategory = json['scategory']
-        sname = json['sname']
         sdescription = json['sdescription']
         saddress = json['saddress']
         sprice = json['sprice']
-        sfulfilled = json['sfulfilled']
-        if scategory and sname and saddress and sdescription and sprice and sfulfilled:
+        if scategory and saddress and sdescription and sprice:
             # dao = PartsDAO()
-            # pid = dao.insert(pname, pcolor, pmaterial, pprice, sfulfilled)
-            # result = self.build_part_attributes(pid, pname, pcolor, pmaterial, pprice, sfulfilled)
+            # pid = dao.insert(pcolor, pmaterial, pprice)
+            # result = self.build_part_attributes(pid, pcolor, pmaterial, pprice)
             return jsonify(Part="Insert supply json works!"), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -136,14 +133,12 @@ class SupplyHandler:
         #         return jsonify(Error="Malformed update request"), 400
         #     else:
         #         scategory = form['scategory']
-        #         sname = form['sname']
         #         sdescription = form['sdescription']
         #         saddress = form['saddress']
         #         sprice = form['sprice']
-        #         sfulfilled = form['sfulfilled']
-        #         if scategory and sname and saddress and sdescription and sprice:
-        #             dao.update(supply_id, scategory, sname, sdescription, saddress, sprice, sfulfilled)
-        #             result = self.build_part_attributes(supply_id, scategory, sname, sdescription, saddress, sprice, sfulfilled)
+        #         if scategory and saddress and sdescription and sprice:
+        #             dao.update(supply_id, scategory, sdescription, saddress, sprice)
+        #             result = self.build_part_attributes(supply_id, scategory, sdescription, saddress, sprice)
         #             return jsonify(Part=result), 200
         #         else:
         #             return jsonify(Error="Unexpected attributes in update request"), 400

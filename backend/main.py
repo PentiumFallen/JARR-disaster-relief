@@ -54,6 +54,10 @@ def getAllSupplies():
         else:
             return SupplyHandler().search_supply(request.args)
 
+@app.route('/JARR-disaster-relief/person/<int:person_id>/supplies')
+def getAllSuppliesOfPerson(person_id):
+    return SupplyHandler().get_supplies_by_person_id(person_id)
+
 @app.route('/JARR-disaster-relief/supplies/match')
 def matchSuppliesToRequest():
     return SupplyHandler().match_supplies_to_request(request.args)
