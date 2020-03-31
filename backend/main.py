@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from backend.handler.supply import SupplyHandler
 from backend.handler.person import PersonHandler
+from backend.handler.authentication import AuthenticationHandler
 from flask_cors import CORS
 
 # Activate
@@ -67,6 +68,20 @@ def getSupplyById(supply_id):
         return SupplyHandler().delete_supply(supply_id)
     else:
         return jsonify(Error="Method not allowed."), 405
+
+@app.route('/JARR-disaster-relief/authentication/login', methods=['GET'])
+def getAccountLogin():
+    if request.method == 'GET':
+        return AuthenticationHandler().accountLogin(request.args)
+    else:
+        return jsonify(Error = "Method not allowed"), 405
+
+@app.route('JARR-disaster-relief/authentication/password', methods=['GET'])
+def getChangeAccountPassword():
+    if request.method == 'GET':
+        return AuthenticationHandler().accountChangePassword(request.args)
+    else:
+        return jsonify(Error = "Method not allowed"), 405
 
 if __name__ == '__main__':
     app.run()
