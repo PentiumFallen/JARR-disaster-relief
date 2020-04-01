@@ -5,23 +5,19 @@ class RequestHandler:
         result = {
             'request_id': row[0],
             'rcategory': row[1],
-            'rname': row[2],
-            'rdescription': row[3],
-            'raddress': row[4],
-            'rmaxpr': row[5],
-            'rfulfilled': row[6]
+            'rdescription': row[2],
+            'raddress': row[3],
+            'rprice': row[4],
         }
         return result
 
-    def build_request_attributes(self, request_id, rcategory, rname, rdescription, raddress, rmaxprice, rfulfilled):
+    def build_request_attributes(self, request_id, rcategory, rdescription, raddress, rprice,):
         result = {
             'request_id': request_id,
             'rcategory': rcategory,
-            'rname': rname,
             'rdescription': rdescription,
             'raddress': raddress,
-            'rmaxprice': rmaxprice,
-            'rfulfilled': rfulfilled
+            'rprice': rprice
         }
         return result
 
@@ -46,16 +42,11 @@ class RequestHandler:
 
     def search_request(self, args):
         category = args.get("category")
-        name = args.get("name")
         # Add more! #
         # dao = RequestsDAO()
         request_list = []
-        # if (len(args) == 2) and category and name:
-        #     request_list = dao.getRequestByCategoryAndName(category, name)
-        # elif (len(args) == 1) and category:
+        # if (len(args) == 1) and category:
         #     request_list = dao.getRequestByCategory(category)
-        # elif (len(args) == 1) and name:
-        #     request_list = dao.getRequestByName(name)
         # else:
         #     return jsonify(Error = "Malformed query string"), 400
         result_list = []
@@ -65,17 +56,14 @@ class RequestHandler:
         #     result_list.append(result)
         return jsonify(Requests=result_list)
 
-    def match_requests_to_request(self, args):
+    def match_requests_to_supplies(self, args):
         category = args.get("category")
-        max_price = args.get("max_price")
-        name = args.get("name")
+        rprice = args.get("rprice")
         request_list = []
-        # if (len(args) == 1) and name:
+        # if (len(args) == 1) and category:
         #     request_list = dao.getRequestBycategory(category)
-        # elif (len(args) == 2) and category and max_price:
-        #     request_list = dao.getRequestByCategoryAndMaxPrice(category, max_price)
-        # elif (len(args) == 3) and category and max_price and name:
-        #     request_list = dao.getRequestByCategoryNameAndMaxPrice(category, name, max_price)
+        # elif (len(args) == 2) and category and rprice:
+        #     request_list = dao.getRequestByCategoryAndMaxPrice(category, rprice)
         # else:
         #     return jsonify(Error = "Malformed querry string"), 400
         result_list = []
@@ -90,15 +78,13 @@ class RequestHandler:
             return jsonify(Error="Malformed post request"), 400
         else:
             rcategory = form['rcategory']
-            rname = form['rname']
             rdescription = form['rdescription']
             raddress = form['raddress']
-            rmaxprice = form['rmaxprice']
-            rfulfilled = form['rfulfilled']
-            if rcategory and rname and rdescription and raddress and rmaxprice and rfulfilled:
+            rprice = form['rprice']
+            if rcategory and rdescription and raddress and rprice:
                 # dao = RequestDAO()
-                # pid = dao.insert(rcategory, rname, rdescription, raddress, rmaxprice, rfulfilled)
-                # result = build_request_attributes(self, request_id, rcategory, rname, rdescription, raddress, rmaxprice, rfulfilled)
+                # pid = dao.insert(rcategory, rdescription, raddress, rprice)
+                # result = build_request_attributes(self, request_id, rcategory, rdescription, raddress, rprice)
                 result = 'Insert works!'
                 return jsonify(Request=result), 201
             else:
@@ -106,15 +92,13 @@ class RequestHandler:
 
     def insert_request_json(self, json):
         rcategory = json['rcategory']
-        rname = json['rname']
         rdescription = json['rdescription']
         raddress = json['raddress']
-        rmaxprice = json['rmaxprice']
-        rfulfilled = json['rfulfilled']
-        if rcategory and rname and raddress and rdescription and rmaxprice and rfulfilled:
+        rprice = json['rprice']
+        if rcategory and raddress and rdescription and rprice:
             # dao = RequestsDAO()
-            # pid = dao.insert(pname, pcolor, pmaterial, pprice, rfulfilled)
-            # result = self.build_part_attributes(pid, pname, pcolor, pmaterial, pprice, rfulfilled)
+            # pid = dao.insert(rcategory, rdescription, raddress, rprice)
+            # result = build_request_attributes(self, request_id, rcategory, rdescription, raddress, rprice)
             return jsonify(Request="Insert request json works!"), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -136,14 +120,12 @@ class RequestHandler:
         #         return jsonify(Error="Malformed update request"), 400
         #     else:
         #         rcategory = form['rcategory']
-        #         rname = form['rname']
         #         rdescription = form['rdescription']
         #         raddress = form['raddress']
-        #         rmaxprice = form['rmaxprice']
-        #         rfulfilled = form['rfulfilled']
-        #         if rcategory and rname and raddress and rdescription and rmaxprice:
-        #             dao.update(request_id, rcategory, rname, rdescription, raddress, rmaxprice, rfulfilled)
-        #             result = self.build_part_attributes(request_id, rcategory, rname, rdescription, raddress, rmaxprice, rfulfilled)
+        #         rprice = form['rprice']
+        #         if rcategory and raddress and rdescription and rprice:
+        #             dao.update(request_id, rcategory, rdescription, raddress, rprice)
+        #             result = self.build_part_attributes(request_id, rcategory, rdescription, raddress, rprice)
         #             return jsonify(Request=result), 200
         #         else:
         #             return jsonify(Error="Unexpected attributes in update request"), 400
