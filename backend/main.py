@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from backend.handler.supply import SupplyHandler
 from backend.handler.person import PersonHandler
+from backend.handler.request import RequestHandler
 from backend.handler.authentication import AuthenticationHandler
 from flask_cors import CORS
 
@@ -86,6 +87,31 @@ def getChangeAccountPassword():
         return AuthenticationHandler().accountChangePassword(request.args)
     else:
         return jsonify(Error = "Method not allowed"), 405
+
+@app.route('/JARR-disaster-relief/requests', methods=['GET', 'POST'])
+def getAllSupplies():
+    if request.method == 'POST':
+        return RequestHandler().insert_request_json(request.json)
+    else:
+        if not request.args:
+            return RequestHandler.get_all_requests()
+        else:
+            return RequestHandler.search_request(request.args)
+
+@app.route('/JARR-disaster-relief/requests/match')
+def matchRequesttoSupplies():
+    return RequestHandler.match_requests_to_supplies(request.args)
+
+@app.route('/JARR-disaster-relief/requests/<int:supply_id>', methods=['GET', 'PUT', 'DELETE'])
+def getRrequestById(request_id):
+    if request.method == 'GET':
+        return RequestHandler().get_request_by_id(request_id)
+    elif request.method == 'PUT':
+        return RequestHandler.update_request(request_id, request.form)
+    elif request.method == 'DELETE':
+        return RequestHandler.delete_request(request_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 if __name__ == '__main__':
     app.run()
