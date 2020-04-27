@@ -1,5 +1,5 @@
 from flask import jsonify
-from backend.dao import PersonDAO
+from backend.dao.authentication import AuthenticationDAO
 
 class AuthenticationHandler:
     def build_account_dict(self, row):
