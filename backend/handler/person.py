@@ -1,5 +1,5 @@
 from flask import jsonify
-from backend.dao import PersonDAO
+from backend.dao.person import PersonDAO
 
 class PersonHandler:
     def build_person_dict(self, row):

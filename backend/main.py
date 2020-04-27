@@ -10,9 +10,11 @@ app = Flask(__name__)
 # Apply CORS to this app
 CORS(app)
 
+
 @app.route('/')
 def greeting():
     return 'Hello, this is the JARR DB App!'
+
 
 @app.route('/JARR-disaster-relief/person/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def getPersonById(id):
@@ -31,10 +33,12 @@ def getPersonById(id):
     else:
         return jsonify(Error="Method not allowed."), 405
 
+
 @app.route('/JARR-disaster-relief/person/location/<int:person_id>', methods=['POST'])
 def updatePersonLocation(person_id):
     if request.method == 'POST':
         return PersonHandler().update_person_location(request.json['new_location'], person_id)
+
 
 @app.route('/JARR-disaster-relief/person', methods=['GET', 'POST'])
 def getAllPersons():
@@ -55,13 +59,16 @@ def getAllSupplies():
         else:
             return SupplyHandler().search_supply(request.args)
 
+
 @app.route('/JARR-disaster-relief/person/<int:person_id>/supplies')
 def getAllSuppliesOfPerson(person_id):
     return SupplyHandler().get_supplies_by_person_id(person_id)
 
+
 @app.route('/JARR-disaster-relief/supplies/match')
 def matchSuppliesToRequest():
     return SupplyHandler().match_supplies_to_request(request.args)
+
 
 @app.route('/JARR-disaster-relief/supplies/<int:supply_id>', methods=['GET', 'PUT', 'DELETE'])
 def getSupplyById(supply_id):
@@ -74,22 +81,25 @@ def getSupplyById(supply_id):
     else:
         return jsonify(Error="Method not allowed."), 405
 
+
 @app.route('/JARR-disaster-relief/authentication/login', methods=['GET'])
 def getAccountLogin():
     if request.method == 'GET':
         return AuthenticationHandler().accountLogin(request.args)
     else:
-        return jsonify(Error = "Method not allowed"), 405
+        return jsonify(Error="Method not allowed"), 405
 
-@app.route('JARR-disaster-relief/authentication/password', methods=['GET'])
+
+@app.route('/JARR-disaster-relief/authentication/password', methods=['GET'])
 def getChangeAccountPassword():
     if request.method == 'GET':
         return AuthenticationHandler().accountChangePassword(request.args)
     else:
-        return jsonify(Error = "Method not allowed"), 405
+        return jsonify(Error="Method not allowed"), 405
+
 
 @app.route('/JARR-disaster-relief/requests', methods=['GET', 'POST'])
-def getAllSupplies():
+def getAllRequests():
     if request.method == 'POST':
         return RequestHandler().insert_request_json(request.json)
     else:
@@ -98,9 +108,11 @@ def getAllSupplies():
         else:
             return RequestHandler.search_request(request.args)
 
+
 @app.route('/JARR-disaster-relief/requests/match')
 def matchRequesttoSupplies():
     return RequestHandler.match_requests_to_supplies(request.args)
+
 
 @app.route('/JARR-disaster-relief/requests/<int:supply_id>', methods=['GET', 'PUT', 'DELETE'])
 def getRrequestById(request_id):
@@ -112,6 +124,7 @@ def getRrequestById(request_id):
         return RequestHandler.delete_request(request_id)
     else:
         return jsonify(Error="Method not allowed."), 405
+
 
 if __name__ == '__main__':
     app.run()
