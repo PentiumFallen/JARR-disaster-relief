@@ -9,152 +9,152 @@ class BatteryDAO:
                                                             pg_config['passwd'])
         self.conn = psycopg2._connect(connection_url)
 
-    def getAllBatteries(self):
+    def getAllBattery(self):
         cursor = self.conn.cursor()
-        query = "select * from Battery;"
+        query = "select * from Batteries;"
         cursor.execute(query)
         result = []
         for row in cursor:
             result.append(row)
         return result
 
-    def getAllBatteriesSupplies(self):
+    def getAllBatterySupplies(self):
         cursor = self.conn.cursor()
-        query = "select * from Battery where is_supply = TRUE;"
+        query = "select * from Batteries where is_supply = TRUE;"
         cursor.execute(query)
         result = []
         for row in cursor:
             result.append(row)
         return result
 
-    def getAllBatteriesRequests(self):
+    def getAllBatteryRequests(self):
         cursor = self.conn.cursor()
-        query = "select * from Battery where is_supply = FALSE;"
+        query = "select * from Batteries where is_supply = FALSE;"
         cursor.execute(query)
         result = []
         for row in cursor:
             result.append(row)
         return result
 
-    def getAllAvailableBatteriesSupplies(self):
+    def getAllAvailableBatterySupplies(self):
         cursor = self.conn.cursor()
-        query = "select * from Battery where is_supply = TRUE and curr_quantity > 0;"
+        query = "select * from Batteries where is_supply = TRUE and curr_quantity > 0;"
         cursor.execute(query)
         result = []
         for row in cursor:
             result.append(row)
         return result
 
-    def getAllUnfulfilledBatteriesRequests(self):
+    def getAllUnfulfilledBatteryRequests(self):
         cursor = self.conn.cursor()
-        query = "select * from Battery where is_supply = FALSE and curr_quantity > 0;"
+        query = "select * from Batteries where is_supply = FALSE and curr_quantity > 0;"
         cursor.execute(query)
         result = []
         for row in cursor:
             result.append(row)
         return result
 
-    def getBatteriesById(self, battery_id):
+    def getBatteryById(self, battery_id):
         cursor = self.conn.cursor()
-        query = "select * from Battery where battery_id = %s;"
+        query = "select * from Batteries where battery_id = %s;"
         cursor.execute(query, (battery_id,))
         result = cursor.fetchone()
         return result
 
-    def getBatteriesByPersonId(self, person_id):
+    def getBatteryByPersonId(self, person_id):
         cursor = self.conn.cursor()
-        query = "select * from Battery where person_id = %s;"
+        query = "select * from Batteries where person_id = %s;"
         cursor.execute(query, (person_id,))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesSuppliesByPersonId(self, person_id):
+    def getBatterySuppliesByPersonId(self, person_id):
         cursor = self.conn.cursor()
-        query = "select * from Battery where person_id = %s and is_supply = TRUE;"
+        query = "select * from Batteries where person_id = %s and is_supply = TRUE;"
         cursor.execute(query, (person_id,))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesRequestsByPersonId(self, person_id):
+    def getBatteryRequestsByPersonId(self, person_id):
         cursor = self.conn.cursor()
-        query = "select * from Battery where person_id = %s and is_supply = FALSE;"
+        query = "select * from Batteries where person_id = %s and is_supply = FALSE;"
         cursor.execute(query, (person_id,))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesByBrandAndType(self, brand, battery_type):
+    def getBatteryByBrandAndType(self, brand, battery_type):
         cursor = self.conn.cursor()
-        query = "select * from Battery where brand = %s and battery_type = %s;"
+        query = "select * from Batteries where brand = %s and battery_type = %s;"
         cursor.execute(query, (brand, battery_type))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesByBrand(self, brand):
+    def getBatteryByBrand(self, brand):
         cursor = self.conn.cursor()
-        query = "select * from Battery where brand = %s;"
+        query = "select * from Batteries where brand = %s;"
         cursor.execute(query, (brand,))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesByType(self, battery_type):
+    def getBatteryByType(self, battery_type):
         cursor = self.conn.cursor()
-        query = "select * from Battery where battery_type = %s;"
+        query = "select * from Batteries where battery_type = %s;"
         cursor.execute(query, (battery_type,))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesSuppliesByBrandAndTypeAndMaxPrice(self, brand, battery_type, max_price):
+    def getBatterySuppliesByBrandAndTypeAndMaxPrice(self, brand, battery_type, max_price):
         cursor = self.conn.cursor()
-        query = "select * from Battery where brand = %s and unit_price <= %s and is_supply = TRUE and battery_type = %s;"
+        query = "select * from Batteries where brand = %s and unit_price <= %s and is_supply = TRUE and battery_type = %s;"
         cursor.execute(query, (brand, max_price, battery_type))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesSuppliesByBrandAndType(self, brand, battery_type):
+    def getBatterySuppliesByBrandAndType(self, brand, battery_type):
         cursor = self.conn.cursor()
-        query = "select * from Battery where brand = %s and is_supply = TRUE and battery_type = %s;"
+        query = "select * from Batteries where brand = %s and is_supply = TRUE and battery_type = %s;"
         cursor.execute(query, (brand, battery_type))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesSuppliesByBrand(self, brand):
+    def getBatterySuppliesByBrand(self, brand):
         cursor = self.conn.cursor()
-        query = "select * from Battery where brand = %s and is_supply = TRUE;"
+        query = "select * from Batteries where brand = %s and is_supply = TRUE;"
         cursor.execute(query, (brand,))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesSuppliesByType(self, battery_type):
+    def getBatterySuppliesByType(self, battery_type):
         cursor = self.conn.cursor()
-        query = "select * from Battery where is_supply = TRUE and battery_type = %s;"
+        query = "select * from Batteries where is_supply = TRUE and battery_type = %s;"
         cursor.execute(query, (battery_type,))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesSuppliesByMaxPrice(self, max_price):
+    def getBatterySuppliesByMaxPrice(self, max_price):
         cursor = self.conn.cursor()
-        query = "select * from Battery where is_supply = TRUE and unit_price <= %s;"
+        query = "select * from Batteries where is_supply = TRUE and unit_price <= %s;"
         cursor.execute(query, (max_price,))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesRequestsByBrandAndType(self, brand, battery_type):
+    def getBatteryRequestsByBrandAndType(self, brand, battery_type):
         cursor = self.conn.cursor()
-        query = "select * from Battery where brand = %s and battery_type = %s and is_supply = FALSE;"
+        query = "select * from Batteries where brand = %s and battery_type = %s and is_supply = FALSE;"
         cursor.execute(query, (brand, battery_type))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesRequestsByBrand(self, brand):
+    def getBatteryRequestsByBrand(self, brand):
         cursor = self.conn.cursor()
-        query = "select * from Battery where brand = %s and is_supply = FALSE;"
+        query = "select * from Batteries where brand = %s and is_supply = FALSE;"
         cursor.execute(query, (brand,))
         result = cursor.fetchall()
         return result
 
-    def getBatteriesRequestsByType(self, battery_type):
+    def getBatteryRequestsByType(self, battery_type):
         cursor = self.conn.cursor()
-        query = "select * from Battery where battery_type = %s and is_supply = FALSE;"
+        query = "select * from Batteries where battery_type = %s and is_supply = FALSE;"
         cursor.execute(query, (battery_type,))
         result = cursor.fetchall()
         return result
@@ -162,7 +162,7 @@ class BatteryDAO:
     def insert(self, person_id, brand, battery_type, description, quantity, unit_price, date_posted, curr_quantity,
                is_supply, address_id):
         cursor = self.conn.cursor()
-        query = "insert into Battery(person_id, brand, battery_type, description, quantity, unit_price, date_posted, curr_quantity, " \
+        query = "insert into Batteries(person_id, brand, battery_type, description, quantity, unit_price, date_posted, curr_quantity, " \
                 "is_supply, address_id) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning supply_id;"
         cursor.execute(query, (person_id, brand, battery_type, description, quantity, unit_price, date_posted, curr_quantity,
                                is_supply, address_id))
@@ -172,14 +172,14 @@ class BatteryDAO:
 
     def delete(self, battery_id):
         cursor = self.conn.cursor()
-        query = "update Battery set curr_quantity = 0 where battery_id = %s;"
+        query = "update Batteries set curr_quantity = 0 where battery_id = %s;"
         cursor.execute(query, (battery_id,))
         self.conn.commit()
         return battery_id
 
     def update(self, battery_id, brand, battery_type, description, unit_price, curr_quantity, address_id):
         cursor = self.conn.cursor()
-        query = "update Battery set brand = %s, battery_type = %s, description = %s, unit_price = %s, curr_quantity = %s, " \
+        query = "update Batteries set brand = %s, battery_type = %s, description = %s, unit_price = %s, curr_quantity = %s, " \
                 "address_id = %s where battery_id = %s;"
         cursor.execute(query, (brand, battery_type, description, unit_price, curr_quantity, address_id, battery_id))
         self.conn.commit()

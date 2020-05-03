@@ -38,7 +38,7 @@ class BatteryHandler:
 
     def get_all_battery_posts(self):
         dao = BatteryDAO()
-        result_list = dao.getAllbattery()
+        result_list = dao.getAllBattery()
         for row in result_list:
             result = self.build_battery_dict(row)
             result_list.append(result)
@@ -46,7 +46,7 @@ class BatteryHandler:
 
     def get_all_battery_supplies(self):
         dao = BatteryDAO()
-        result_list = dao.getAllbatterySupplies()
+        result_list = dao.getAllBatterySupplies()
         for row in result_list:
             result = self.build_battery_dict(row)
             result_list.append(result)
@@ -54,7 +54,7 @@ class BatteryHandler:
 
     def get_all_battery_requests(self):
         dao = BatteryDAO()
-        result_list = dao.getAllbatteryRequests()
+        result_list = dao.getAllBatteryRequests()
         for row in result_list:
             result = self.build_battery_dict(row)
             result_list.append(result)
@@ -62,7 +62,7 @@ class BatteryHandler:
 
     def get_all_available_battery_supplies(self):
         dao = BatteryDAO()
-        result_list = dao.getAllAvailablebatterySupplies()
+        result_list = dao.getAllAvailableBatterySupplies()
         for row in result_list:
             result = self.build_battery_dict(row)
             result_list.append(result)
@@ -70,7 +70,7 @@ class BatteryHandler:
 
     def get_all_unfulfilled_battery_requests(self):
         dao = BatteryDAO()
-        result_list = dao.getAllUnfulfilledbatteryRequests()
+        result_list = dao.getAllUnfulfilledBatteryRequests()
         for row in result_list:
             result = self.build_battery_dict(row)
             result_list.append(result)
@@ -78,7 +78,7 @@ class BatteryHandler:
 
     def get_battery_post_by_id(self, battery_id):
         dao = BatteryDAO()
-        row = dao.getbatteryById(battery_id)
+        row = dao.getBatteryById(battery_id)
         if not row:
             return jsonify(Error="Post Not Found"), 404
         else:
@@ -87,7 +87,7 @@ class BatteryHandler:
 
     def get_battery_posts_by_person_id(self, person_id):
         dao = BatteryDAO()
-        result_list = dao.getbatteryByPersonId(person_id)
+        result_list = dao.getBatteryByPersonId(person_id)
         for row in result_list:
             result = self.build_battery_dict(row)
             result_list.append(result)
@@ -95,7 +95,7 @@ class BatteryHandler:
 
     def get_battery_supplies_by_person_id(self, person_id):
         dao = BatteryDAO()
-        result_list = dao.getbatterySuppliesByPersonId(person_id)
+        result_list = dao.getBatterySuppliesByPersonId(person_id)
         for row in result_list:
             result = self.build_battery_dict(row)
             result_list.append(result)
@@ -103,7 +103,7 @@ class BatteryHandler:
 
     def get_battery_requests_by_person_id(self, person_id):
         dao = BatteryDAO()
-        result_list = dao.getbatteryRequestsByPersonId(person_id)
+        result_list = dao.getBatteryRequestsByPersonId(person_id)
         for row in result_list:
             result = self.build_battery_dict(row)
             result_list.append(result)
@@ -115,11 +115,11 @@ class BatteryHandler:
         dao = BatteryDAO()
 
         if len(args) == 2 and brand and battery_type:
-            battery_list = dao.getbatteryByBrandAndType(brand, battery_type)
+            battery_list = dao.getBatteryByBrandAndType(brand, battery_type)
         elif len(args) == 1 and brand:
-            battery_list = dao.getbatteryByBrand(brand)
+            battery_list = dao.getBatteryByBrand(brand)
         elif len(args) == 1 and battery_type:
-            battery_list = dao.getbatteryByType(battery_type)
+            battery_list = dao.getBatteryByType(battery_type)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -135,15 +135,15 @@ class BatteryHandler:
         dao = BatteryDAO()
 
         if len(args) == 3 and brand and max_price and battery_type:
-            battery_list = dao.getbatterySuppliesByBrandAndTypeAndMaxPrice(brand, battery_type, max_price)
+            battery_list = dao.getBatterySuppliesByBrandAndTypeAndMaxPrice(brand, battery_type, max_price)
         elif len(args) == 2 and brand and battery_type:
-            battery_list = dao.getbatterySuppliesByBrandAndType(brand, battery_type)
+            battery_list = dao.getBatterySuppliesByBrandAndType(brand, battery_type)
         elif len(args) == 1 and brand:
-            battery_list = dao.getbatterySuppliesByBrand(brand)
+            battery_list = dao.getBatterySuppliesByBrand(brand)
         elif len(args) == 1 and max_price:
-            battery_list = dao.getbatterySuppliesByMaxPrice(max_price)
+            battery_list = dao.getBatterySuppliesByMaxPrice(max_price)
         elif len(args) == 1 and battery_type:
-            battery_list = dao.getbatterySuppliesByType(battery_type)
+            battery_list = dao.getBatterySuppliesByType(battery_type)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -158,11 +158,11 @@ class BatteryHandler:
         dao = BatteryDAO()
 
         if len(args) == 2 and brand and battery_type:
-            battery_list = dao.getbatteryRequestsByBrandAndType(brand, battery_type)
+            battery_list = dao.getBatteryRequestsByBrandAndType(brand, battery_type)
         elif len(args) == 1 and brand:
-            battery_list = dao.getbatteryRequestsByBrand(brand)
+            battery_list = dao.getBatteryRequestsByBrand(brand)
         elif len(args) == 1 and battery_type:
-            battery_list = dao.getbatteryRequestsByType(battery_type)
+            battery_list = dao.getBatteryRequestsByType(battery_type)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -271,7 +271,7 @@ class BatteryHandler:
 
     def delete_battery_post(self, battery_id):
         dao = BatteryDAO()
-        if not dao.getbatteryById(battery_id):
+        if not dao.getBatteryById(battery_id):
             return jsonify(Error="Post not found."), 404
         else:
             dao.delete(battery_id)
@@ -279,7 +279,7 @@ class BatteryHandler:
 
     def update_supply(self, battery_id, form):
         dao = BatteryDAO()
-        if not dao.getbatteryById(battery_id):
+        if not dao.getBatteryById(battery_id):
             return jsonify(Error="Post not found."), 404
         else:
             if len(form) != 9:

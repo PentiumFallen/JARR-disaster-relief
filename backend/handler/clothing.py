@@ -38,7 +38,7 @@ class ClothingHandler:
 
     def get_all_clothing_posts(self):
         dao = ClothingDAO()
-        result_list = dao.getAllclothing()
+        result_list = dao.getAllClothing()
         for row in result_list:
             result = self.build_clothing_dict(row)
             result_list.append(result)
@@ -46,7 +46,7 @@ class ClothingHandler:
 
     def get_all_clothing_supplies(self):
         dao = ClothingDAO()
-        result_list = dao.getAllclothingSupplies()
+        result_list = dao.getAllClothingSupplies()
         for row in result_list:
             result = self.build_clothing_dict(row)
             result_list.append(result)
@@ -54,7 +54,7 @@ class ClothingHandler:
 
     def get_all_clothing_requests(self):
         dao = ClothingDAO()
-        result_list = dao.getAllclothingRequests()
+        result_list = dao.getAllClothingRequests()
         for row in result_list:
             result = self.build_clothing_dict(row)
             result_list.append(result)
@@ -62,7 +62,7 @@ class ClothingHandler:
 
     def get_all_available_clothing_supplies(self):
         dao = ClothingDAO()
-        result_list = dao.getAllAvailableclothingSupplies()
+        result_list = dao.getAllAvailableClothingSupplies()
         for row in result_list:
             result = self.build_clothing_dict(row)
             result_list.append(result)
@@ -70,7 +70,7 @@ class ClothingHandler:
 
     def get_all_unfulfilled_clothing_requests(self):
         dao = ClothingDAO()
-        result_list = dao.getAllUnfulfilledclothingRequests()
+        result_list = dao.getAllUnfulfilledClothingRequests()
         for row in result_list:
             result = self.build_clothing_dict(row)
             result_list.append(result)
@@ -78,7 +78,7 @@ class ClothingHandler:
 
     def get_clothing_post_by_id(self, clothing_id):
         dao = ClothingDAO()
-        row = dao.getclothingById(clothing_id)
+        row = dao.getClothingById(clothing_id)
         if not row:
             return jsonify(Error="Post Not Found"), 404
         else:
@@ -87,7 +87,7 @@ class ClothingHandler:
 
     def get_clothing_posts_by_person_id(self, person_id):
         dao = ClothingDAO()
-        result_list = dao.getclothingByPersonId(person_id)
+        result_list = dao.getClothingByPersonId(person_id)
         for row in result_list:
             result = self.build_clothing_dict(row)
             result_list.append(result)
@@ -95,7 +95,7 @@ class ClothingHandler:
 
     def get_clothing_supplies_by_person_id(self, person_id):
         dao = ClothingDAO()
-        result_list = dao.getclothingSuppliesByPersonId(person_id)
+        result_list = dao.getClothingSuppliesByPersonId(person_id)
         for row in result_list:
             result = self.build_clothing_dict(row)
             result_list.append(result)
@@ -103,7 +103,7 @@ class ClothingHandler:
 
     def get_clothing_requests_by_person_id(self, person_id):
         dao = ClothingDAO()
-        result_list = dao.getclothingRequestsByPersonId(person_id)
+        result_list = dao.getClothingRequestsByPersonId(person_id)
         for row in result_list:
             result = self.build_clothing_dict(row)
             result_list.append(result)
@@ -115,11 +115,11 @@ class ClothingHandler:
         dao = ClothingDAO()
 
         if len(args) == 2 and brand and clothing_type:
-            clothing_list = dao.getclothingByBrandAndType(brand, clothing_type)
+            clothing_list = dao.getClothingByBrandAndType(brand, clothing_type)
         elif len(args) == 1 and brand:
-            clothing_list = dao.getclothingByBrand(brand)
+            clothing_list = dao.getClothingByBrand(brand)
         elif len(args) == 1 and clothing_type:
-            clothing_list = dao.getclothingByType(clothing_type)
+            clothing_list = dao.getClothingByType(clothing_type)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -135,15 +135,15 @@ class ClothingHandler:
         dao = ClothingDAO()
 
         if len(args) == 3 and brand and max_price and clothing_type:
-            clothing_list = dao.getclothingSuppliesByBrandAndTypeAndMaxPrice(brand, clothing_type, max_price)
+            clothing_list = dao.getClothingSuppliesByBrandAndTypeAndMaxPrice(brand, clothing_type, max_price)
         elif len(args) == 2 and brand and clothing_type:
-            clothing_list = dao.getclothingSuppliesByBrandAndType(brand, clothing_type)
+            clothing_list = dao.getClothingSuppliesByBrandAndType(brand, clothing_type)
         elif len(args) == 1 and brand:
-            clothing_list = dao.getclothingSuppliesByBrand(brand)
+            clothing_list = dao.getClothingSuppliesByBrand(brand)
         elif len(args) == 1 and max_price:
-            clothing_list = dao.getclothingSuppliesByMaxPrice(max_price)
+            clothing_list = dao.getClothingSuppliesByMaxPrice(max_price)
         elif len(args) == 1 and clothing_type:
-            clothing_list = dao.getclothingSuppliesByType(clothing_type)
+            clothing_list = dao.getClothingSuppliesByType(clothing_type)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -158,11 +158,11 @@ class ClothingHandler:
         dao = ClothingDAO()
 
         if len(args) == 2 and brand and clothing_type:
-            clothing_list = dao.getclothingRequestsByBrandAndType(brand, clothing_type)
+            clothing_list = dao.getClothingRequestsByBrandAndType(brand, clothing_type)
         elif len(args) == 1 and brand:
-            clothing_list = dao.getclothingRequestsByBrand(brand)
+            clothing_list = dao.getClothingRequestsByBrand(brand)
         elif len(args) == 1 and clothing_type:
-            clothing_list = dao.getclothingRequestsByType(clothing_type)
+            clothing_list = dao.getClothingRequestsByType(clothing_type)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -271,7 +271,7 @@ class ClothingHandler:
 
     def delete_clothing_post(self, clothing_id):
         dao = ClothingDAO()
-        if not dao.getclothingById(clothing_id):
+        if not dao.getClothingById(clothing_id):
             return jsonify(Error="Post not found."), 404
         else:
             dao.delete(clothing_id)
@@ -279,7 +279,7 @@ class ClothingHandler:
 
     def update_supply(self, clothing_id, form):
         dao = ClothingDAO()
-        if not dao.getclothingById(clothing_id):
+        if not dao.getClothingById(clothing_id):
             return jsonify(Error="Post not found."), 404
         else:
             if len(form) != 9:
@@ -296,7 +296,7 @@ class ClothingHandler:
                     return jsonify(Error="Cannot put negative value"), 400
                 if brand and clothing_type and description and unit_price and curr_quantity and address_id:
                     dao.update(clothing_id, brand, clothing_type, description, unit_price, curr_quantity, address_id)
-                    row = dao.getclothingById(clothing_id)
+                    row = dao.getClothingById(clothing_id)
                     result = self.build_clothing_dict(row)
                     return jsonify(Part=result), 200
                 else:

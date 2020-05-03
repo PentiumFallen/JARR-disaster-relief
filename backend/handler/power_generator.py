@@ -40,7 +40,7 @@ class PowerGeneratorHandler:
 
     def get_all_power_generator_posts(self):
         dao = PowerGeneratorDAO()
-        result_list = dao.getAllpower_generator()
+        result_list = dao.getAllPowerGenerator()
         for row in result_list:
             result = self.build_power_generator_dict(row)
             result_list.append(result)
@@ -48,7 +48,7 @@ class PowerGeneratorHandler:
 
     def get_all_power_generator_supplies(self):
         dao = PowerGeneratorDAO()
-        result_list = dao.getAllpower_generatorSupplies()
+        result_list = dao.getAllPowerGeneratorSupplies()
         for row in result_list:
             result = self.build_power_generator_dict(row)
             result_list.append(result)
@@ -56,7 +56,7 @@ class PowerGeneratorHandler:
 
     def get_all_power_generator_requests(self):
         dao = PowerGeneratorDAO()
-        result_list = dao.getAllpower_generatorRequests()
+        result_list = dao.getAllPowerGeneratorRequests()
         for row in result_list:
             result = self.build_power_generator_dict(row)
             result_list.append(result)
@@ -64,7 +64,7 @@ class PowerGeneratorHandler:
 
     def get_all_available_power_generator_supplies(self):
         dao = PowerGeneratorDAO()
-        result_list = dao.getAllAvailablepower_generatorSupplies()
+        result_list = dao.getAllAvailablePowerGeneratorSupplies()
         for row in result_list:
             result = self.build_power_generator_dict(row)
             result_list.append(result)
@@ -72,7 +72,7 @@ class PowerGeneratorHandler:
 
     def get_all_unfulfilled_power_generator_requests(self):
         dao = PowerGeneratorDAO()
-        result_list = dao.getAllUnfulfilledpower_generatorRequests()
+        result_list = dao.getAllUnfulfilledPowerGeneratorRequests()
         for row in result_list:
             result = self.build_power_generator_dict(row)
             result_list.append(result)
@@ -80,7 +80,7 @@ class PowerGeneratorHandler:
 
     def get_power_generator_post_by_id(self, generator_id):
         dao = PowerGeneratorDAO()
-        row = dao.getpower_generatorById(generator_id)
+        row = dao.getPowerGeneratorById(generator_id)
         if not row:
             return jsonify(Error="Post Not Found"), 404
         else:
@@ -89,7 +89,7 @@ class PowerGeneratorHandler:
 
     def get_power_generator_posts_by_person_id(self, person_id):
         dao = PowerGeneratorDAO()
-        result_list = dao.getpower_generatorByPersonId(person_id)
+        result_list = dao.getPowerGeneratorByPersonId(person_id)
         for row in result_list:
             result = self.build_power_generator_dict(row)
             result_list.append(result)
@@ -97,7 +97,7 @@ class PowerGeneratorHandler:
 
     def get_power_generator_supplies_by_person_id(self, person_id):
         dao = PowerGeneratorDAO()
-        result_list = dao.getpower_generatorSuppliesByPersonId(person_id)
+        result_list = dao.getPowerGeneratorSuppliesByPersonId(person_id)
         for row in result_list:
             result = self.build_power_generator_dict(row)
             result_list.append(result)
@@ -105,7 +105,7 @@ class PowerGeneratorHandler:
 
     def get_power_generator_requests_by_person_id(self, person_id):
         dao = PowerGeneratorDAO()
-        result_list = dao.getpower_generatorRequestsByPersonId(person_id)
+        result_list = dao.getPowerGeneratorRequestsByPersonId(person_id)
         for row in result_list:
             result = self.build_power_generator_dict(row)
             result_list.append(result)
@@ -117,11 +117,11 @@ class PowerGeneratorHandler:
         dao = PowerGeneratorDAO()
 
         if len(args) == 2 and brand and watts:
-            power_generator_list = dao.getpower_generatorByBrandAndType(brand, watts)
+            power_generator_list = dao.getPowerGeneratorByBrandAndWatts(brand, watts)
         elif len(args) == 1 and brand:
-            power_generator_list = dao.getpower_generatorByBrand(brand)
+            power_generator_list = dao.getPowerGeneratorByBrand(brand)
         elif len(args) == 1 and watts:
-            power_generator_list = dao.getpower_generatorByType(watts)
+            power_generator_list = dao.getPowerGeneratorByWatts(watts)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -137,15 +137,15 @@ class PowerGeneratorHandler:
         dao = PowerGeneratorDAO()
 
         if len(args) == 3 and brand and max_price and watts:
-            power_generator_list = dao.getpower_generatorSuppliesByBrandAndTypeAndMaxPrice(brand, watts, max_price)
+            power_generator_list = dao.getPowerGeneratorSuppliesByBrandAndWattsAndMaxPrice(brand, watts, max_price)
         elif len(args) == 2 and brand and watts:
-            power_generator_list = dao.getpower_generatorSuppliesByBrandAndType(brand, watts)
+            power_generator_list = dao.getPowerGeneratorSuppliesByBrandAndWatts(brand, watts)
         elif len(args) == 1 and brand:
-            power_generator_list = dao.getpower_generatorSuppliesByBrand(brand)
+            power_generator_list = dao.getPowerGeneratorSuppliesByBrand(brand)
         elif len(args) == 1 and max_price:
-            power_generator_list = dao.getpower_generatorSuppliesByMaxPrice(max_price)
+            power_generator_list = dao.getPowerGeneratorrSuppliesByMaxPrice(max_price)
         elif len(args) == 1 and watts:
-            power_generator_list = dao.getpower_generatorSuppliesByType(watts)
+            power_generator_list = dao.getPowerGeneratorSuppliesByWatts(watts)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -156,15 +156,15 @@ class PowerGeneratorHandler:
 
     def search_power_generator_requests(self, args):
         brand = args['brand']
-        fuel_used = args['fuel_used']
+        watts = args['watts']
         dao = PowerGeneratorDAO()
 
-        if len(args) == 2 and brand and fuel_used:
-            power_generator_list = dao.getpower_generatorRequestsByBrandAndType(brand, fuel_used)
+        if len(args) == 2 and brand and watts:
+            power_generator_list = dao.getPowerGeneratorRequestsByBrandAndWatts(brand, watts)
         elif len(args) == 1 and brand:
-            power_generator_list = dao.getpower_generatorRequestsByBrand(brand)
-        elif len(args) == 1 and fuel_used:
-            power_generator_list = dao.getpower_generatorRequestsByType(fuel_used)
+            power_generator_list = dao.getPowerGeneratorRequestsByBrand(brand)
+        elif len(args) == 1 and watts:
+            power_generator_list = dao.getPowerGeneratorRequestsByWatts(watts)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -187,7 +187,7 @@ class PowerGeneratorHandler:
             date_posted = form['date_posted']
             curr_quantity = quantity
             is_supply = True
-            fuel_used = True
+            fuel_used = False
             address_id = form['address_id']
 
             if person_id and brand and watts and description and unit_price and quantity and date_posted and \
@@ -211,7 +211,7 @@ class PowerGeneratorHandler:
         date_posted = json['date_posted']
         curr_quantity = quantity
         is_supply = True
-        fuel_used = True
+        fuel_used = False
         address_id = json['address_id']
 
         if person_id and brand and watts and description and unit_price and quantity and date_posted and \
@@ -237,8 +237,8 @@ class PowerGeneratorHandler:
             unit_price = form['unit_price']
             date_posted = form['date_posted']
             curr_quantity = quantity
-            is_supply = True
-            fuel_used = True
+            is_supply = False
+            fuel_used = False
             address_id = form['address_id']
 
             if person_id and brand and watts and description and unit_price and quantity and date_posted and \
@@ -261,8 +261,8 @@ class PowerGeneratorHandler:
         unit_price = json['unit_price']
         date_posted = json['date_posted']
         curr_quantity = quantity
-        is_supply = True
-        fuel_used = True
+        is_supply = False
+        fuel_used = False
         address_id = json['address_id']
 
         if person_id and brand and watts and description and unit_price and quantity and date_posted and \
@@ -277,7 +277,7 @@ class PowerGeneratorHandler:
 
     def delete_power_generator_post(self, generator_id):
         dao = PowerGeneratorDAO()
-        if not dao.getpower_generatorById(generator_id):
+        if not dao.getPowerGeneratorById(generator_id):
             return jsonify(Error="Post not found."), 404
         else:
             dao.delete(generator_id)
@@ -285,7 +285,7 @@ class PowerGeneratorHandler:
 
     def update_supply(self, generator_id, form):
         dao = PowerGeneratorDAO()
-        if not dao.getpower_generatorById(generator_id):
+        if not dao.getPowerGeneratorById(generator_id):
             return jsonify(Error="Post not found."), 404
         else:
             if len(form) != 9:

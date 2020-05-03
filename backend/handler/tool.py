@@ -38,7 +38,7 @@ class ToolHandler:
 
     def get_all_tool_posts(self):
         dao = ToolDao()
-        result_list = dao.getAlltool()
+        result_list = dao.getAllTool()
         for row in result_list:
             result = self.build_tool_dict(row)
             result_list.append(result)
@@ -46,7 +46,7 @@ class ToolHandler:
 
     def get_all_tool_supplies(self):
         dao = ToolDao()
-        result_list = dao.getAlltoolSupplies()
+        result_list = dao.getAllToolSupplies()
         for row in result_list:
             result = self.build_tool_dict(row)
             result_list.append(result)
@@ -54,7 +54,7 @@ class ToolHandler:
 
     def get_all_tool_requests(self):
         dao = ToolDao()
-        result_list = dao.getAlltoolRequests()
+        result_list = dao.getAllToolRequests()
         for row in result_list:
             result = self.build_tool_dict(row)
             result_list.append(result)
@@ -62,7 +62,7 @@ class ToolHandler:
 
     def get_all_available_tool_supplies(self):
         dao = ToolDao()
-        result_list = dao.getAllAvailabletoolSupplies()
+        result_list = dao.getAllAvailableToolSupplies()
         for row in result_list:
             result = self.build_tool_dict(row)
             result_list.append(result)
@@ -70,7 +70,7 @@ class ToolHandler:
 
     def get_all_unfulfilled_tool_requests(self):
         dao = ToolDao()
-        result_list = dao.getAllUnfulfilledtoolRequests()
+        result_list = dao.getAllUnfulfilledToolRequests()
         for row in result_list:
             result = self.build_tool_dict(row)
             result_list.append(result)
@@ -87,7 +87,7 @@ class ToolHandler:
 
     def get_tool_posts_by_person_id(self, person_id):
         dao = ToolDao()
-        result_list = dao.gettoolByPersonId(person_id)
+        result_list = dao.getToolByPersonId(person_id)
         for row in result_list:
             result = self.build_tool_dict(row)
             result_list.append(result)
@@ -95,7 +95,7 @@ class ToolHandler:
 
     def get_tool_supplies_by_person_id(self, person_id):
         dao = ToolDao()
-        result_list = dao.gettoolSuppliesByPersonId(person_id)
+        result_list = dao.getToolSuppliesByPersonId(person_id)
         for row in result_list:
             result = self.build_tool_dict(row)
             result_list.append(result)
@@ -103,7 +103,7 @@ class ToolHandler:
 
     def get_tool_requests_by_person_id(self, person_id):
         dao = ToolDao()
-        result_list = dao.gettoolRequestsByPersonId(person_id)
+        result_list = dao.getToolRequestsByPersonId(person_id)
         for row in result_list:
             result = self.build_tool_dict(row)
             result_list.append(result)
@@ -115,11 +115,11 @@ class ToolHandler:
         dao = ToolDao()
 
         if len(args) == 2 and brand and tool_name:
-            tool_list = dao.gettoolByBrandAndType(brand, tool_name)
+            tool_list = dao.getToolByBrandAndName(brand, tool_name)
         elif len(args) == 1 and brand:
-            tool_list = dao.gettoolByBrand(brand)
+            tool_list = dao.getToolByBrand(brand)
         elif len(args) == 1 and tool_name:
-            tool_list = dao.gettoolByType(tool_name)
+            tool_list = dao.getToolByName(tool_name)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -135,15 +135,15 @@ class ToolHandler:
         dao = ToolDao()
 
         if len(args) == 3 and brand and max_price and tool_name:
-            tool_list = dao.gettoolSuppliesByBrandAndTypeAndMaxPrice(brand, tool_name, max_price)
+            tool_list = dao.getToolSuppliesByBrandAndNameAndMaxPrice(brand, tool_name, max_price)
         elif len(args) == 2 and brand and tool_name:
-            tool_list = dao.gettoolSuppliesByBrandAndType(brand, tool_name)
+            tool_list = dao.getToolSuppliesByBrandAndName(brand, tool_name)
         elif len(args) == 1 and brand:
             tool_list = dao.gettoolSuppliesByBrand(brand)
         elif len(args) == 1 and max_price:
-            tool_list = dao.gettoolSuppliesByMaxPrice(max_price)
+            tool_list = dao.getToolSuppliesByMaxPrice(max_price)
         elif len(args) == 1 and tool_name:
-            tool_list = dao.gettoolSuppliesByType(tool_name)
+            tool_list = dao.getToolSuppliesByName(tool_name)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -158,11 +158,11 @@ class ToolHandler:
         dao = ToolDao()
 
         if len(args) == 2 and brand and tool_name:
-            tool_list = dao.gettoolRequestsByBrandAndType(brand, tool_name)
+            tool_list = dao.getToolRequestsByBrandAndName(brand, tool_name)
         elif len(args) == 1 and brand:
-            tool_list = dao.gettoolRequestsByBrand(brand)
+            tool_list = dao.getToolRequestsByBrand(brand)
         elif len(args) == 1 and tool_name:
-            tool_list = dao.gettoolRequestsByType(tool_name)
+            tool_list = dao.getr(tool_name)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -271,7 +271,7 @@ class ToolHandler:
 
     def delete_tool_post(self, tool_id):
         dao = ToolDao()
-        if not dao.gettoolById(tool_id):
+        if not dao.getToolById(tool_id):
             return jsonify(Error="Post not found."), 404
         else:
             dao.delete(tool_id)
@@ -279,7 +279,7 @@ class ToolHandler:
 
     def update_supply(self, tool_id, form):
         dao = ToolDao()
-        if not dao.gettoolById(tool_id):
+        if not dao.getToolById(tool_id):
             return jsonify(Error="Post not found."), 404
         else:
             if len(form) != 9:

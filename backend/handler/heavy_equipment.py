@@ -38,7 +38,7 @@ class HeavyEquipmentHandler:
 
     def get_all_heavy_equipment_posts(self):
         dao = HeavyEquipmentDAO()
-        result_list = dao.getAllheavy_equipment()
+        result_list = dao.getAllHeavyEquipment()
         for row in result_list:
             result = self.build_heavy_equipment_dict(row)
             result_list.append(result)
@@ -46,7 +46,7 @@ class HeavyEquipmentHandler:
 
     def get_all_heavy_equipment_supplies(self):
         dao = HeavyEquipmentDAO()
-        result_list = dao.getAllheavy_equipmentSupplies()
+        result_list = dao.getAllHeavyEquipmentSupplies()
         for row in result_list:
             result = self.build_heavy_equipment_dict(row)
             result_list.append(result)
@@ -54,7 +54,7 @@ class HeavyEquipmentHandler:
 
     def get_all_heavy_equipment_requests(self):
         dao = HeavyEquipmentDAO()
-        result_list = dao.getAllheavy_equipmentRequests()
+        result_list = dao.getAllHeavyEquipmentRequests()
         for row in result_list:
             result = self.build_heavy_equipment_dict(row)
             result_list.append(result)
@@ -62,7 +62,7 @@ class HeavyEquipmentHandler:
 
     def get_all_available_heavy_equipment_supplies(self):
         dao = HeavyEquipmentDAO()
-        result_list = dao.getAllAvailableheavy_equipmentSupplies()
+        result_list = dao.getAllAvailableHeavyEquipmentSupplies()
         for row in result_list:
             result = self.build_heavy_equipment_dict(row)
             result_list.append(result)
@@ -70,7 +70,7 @@ class HeavyEquipmentHandler:
 
     def get_all_unfulfilled_heavy_equipment_requests(self):
         dao = HeavyEquipmentDAO()
-        result_list = dao.getAllUnfulfilledheavy_equipmentRequests()
+        result_list = dao.getAllUnfulfilledHeavyEquipmentRequests()
         for row in result_list:
             result = self.build_heavy_equipment_dict(row)
             result_list.append(result)
@@ -78,7 +78,7 @@ class HeavyEquipmentHandler:
 
     def get_heavy_equipment_post_by_id(self, heavy_equipment_id):
         dao = HeavyEquipmentDAO()
-        row = dao.getheavy_equipmentById(heavy_equipment_id)
+        row = dao.getHeavyEquipmentById(heavy_equipment_id)
         if not row:
             return jsonify(Error="Post Not Found"), 404
         else:
@@ -87,7 +87,7 @@ class HeavyEquipmentHandler:
 
     def get_heavy_equipment_posts_by_person_id(self, person_id):
         dao = HeavyEquipmentDAO()
-        result_list = dao.getheavy_equipmentByPersonId(person_id)
+        result_list = dao.getHeavyEquipmentByPersonId(person_id)
         for row in result_list:
             result = self.build_heavy_equipment_dict(row)
             result_list.append(result)
@@ -95,7 +95,7 @@ class HeavyEquipmentHandler:
 
     def get_heavy_equipment_supplies_by_person_id(self, person_id):
         dao = HeavyEquipmentDAO()
-        result_list = dao.getheavy_equipmentSuppliesByPersonId(person_id)
+        result_list = dao.getHeavyEquipmentSuppliesByPersonId(person_id)
         for row in result_list:
             result = self.build_heavy_equipment_dict(row)
             result_list.append(result)
@@ -103,7 +103,7 @@ class HeavyEquipmentHandler:
 
     def get_heavy_equipment_requests_by_person_id(self, person_id):
         dao = HeavyEquipmentDAO()
-        result_list = dao.getheavy_equipmentRequestsByPersonId(person_id)
+        result_list = dao.getHeavyEquipmentRequestsByPersonId(person_id)
         for row in result_list:
             result = self.build_heavy_equipment_dict(row)
             result_list.append(result)
@@ -115,11 +115,11 @@ class HeavyEquipmentHandler:
         dao = HeavyEquipmentDAO()
 
         if len(args) == 2 and brand and equipment_name:
-            heavy_equipment_list = dao.getheavy_equipmentByBrandAndType(brand, equipment_name)
+            heavy_equipment_list = dao.getHeavyEquipmentByBrandAndName(brand, equipment_name)
         elif len(args) == 1 and brand:
-            heavy_equipment_list = dao.getheavy_equipmentByBrand(brand)
+            heavy_equipment_list = dao.getHeavyEquipmenttByBrand(brand)
         elif len(args) == 1 and equipment_name:
-            heavy_equipment_list = dao.getheavy_equipmentByType(equipment_name)
+            heavy_equipment_list = dao.getHeavyEquipmentByName(equipment_name)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -135,15 +135,15 @@ class HeavyEquipmentHandler:
         dao = HeavyEquipmentDAO()
 
         if len(args) == 3 and brand and max_price and equipment_name:
-            heavy_equipment_list = dao.getheavy_equipmentSuppliesByBrandAndTypeAndMaxPrice(brand, equipment_name, max_price)
+            heavy_equipment_list = dao.getHeavyEquipmentSuppliesByBrandAndNameAndMaxPrice(brand, equipment_name, max_price)
         elif len(args) == 2 and brand and equipment_name:
-            heavy_equipment_list = dao.getheavy_equipmentSuppliesByBrandAndType(brand, equipment_name)
+            heavy_equipment_list = dao.getHeavyEquipmentSuppliesByBrandAndName(brand, equipment_name)
         elif len(args) == 1 and brand:
-            heavy_equipment_list = dao.getheavy_equipmentSuppliesByBrand(brand)
+            heavy_equipment_list = dao.getHeavyEquipmentSuppliesByBrand(brand)
         elif len(args) == 1 and max_price:
-            heavy_equipment_list = dao.getheavy_equipmentSuppliesByMaxPrice(max_price)
+            heavy_equipment_list = dao.getHeavyEquipmentSuppliesByMaxPrice(max_price)
         elif len(args) == 1 and equipment_name:
-            heavy_equipment_list = dao.getheavy_equipmentSuppliesByType(equipment_name)
+            heavy_equipment_list = dao.getHeavyEquipmentSuppliesByName(equipment_name)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -158,11 +158,11 @@ class HeavyEquipmentHandler:
         dao = HeavyEquipmentDAO()
 
         if len(args) == 2 and brand and equipment_name:
-            heavy_equipment_list = dao.getheavy_equipmentRequestsByBrandAndType(brand, equipment_name)
+            heavy_equipment_list = dao.HeavyEquipmentRequestsByBrandAndName(brand, equipment_name)
         elif len(args) == 1 and brand:
-            heavy_equipment_list = dao.getheavy_equipmentRequestsByBrand(brand)
+            heavy_equipment_list = dao.HeavyEquipmentRequestsByBrand(brand)
         elif len(args) == 1 and equipment_name:
-            heavy_equipment_list = dao.getheavy_equipmentRequestsByType(equipment_name)
+            heavy_equipment_list = dao.HeavyEquipmentRequestsByName(equipment_name)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -271,7 +271,7 @@ class HeavyEquipmentHandler:
 
     def delete_heavy_equipment_post(self, heavy_equipment_id):
         dao = HeavyEquipmentDAO()
-        if not dao.getheavy_equipmentById(heavy_equipment_id):
+        if not dao.getHeavyEquipmentById(heavy_equipment_id):
             return jsonify(Error="Post not found."), 404
         else:
             dao.delete(heavy_equipment_id)
@@ -279,7 +279,7 @@ class HeavyEquipmentHandler:
 
     def update_supply(self, heavy_equipment_id, form):
         dao = HeavyEquipmentDAO()
-        if not dao.getheavy_equipmentById(heavy_equipment_id):
+        if not dao.getHeavyEquipmentById(heavy_equipment_id):
             return jsonify(Error="Post not found."), 404
         else:
             if len(form) != 9:
@@ -296,7 +296,7 @@ class HeavyEquipmentHandler:
                     return jsonify(Error="Cannot put negative value"), 400
                 if brand and equipment_name and description and unit_price and curr_quantity and address_id:
                     dao.update(heavy_equipment_id, brand, equipment_name, description, unit_price, curr_quantity, address_id)
-                    row = dao.getheavy_equipmentById(heavy_equipment_id)
+                    row = dao.getHeavyEquipmenttById(heavy_equipment_id)
                     result = self.build_heavy_equipment_dict(row)
                     return jsonify(Part=result), 200
                 else:
