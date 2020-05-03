@@ -146,12 +146,12 @@ class CannedFoodTransactionDAO:
             result.append(row)
         return result
 
-    def insert(self, cf_id, person_id, tquantity, tunit_price, trans_total, date_completed):
+    def insert(self, cf_id, person_id, tquantity, tunit_price, trans_total):
         cursor = self.conn.cursor()
-        query = "insert into cannedFoodTransactions(cf_id, person_id, tquantity, tunit_price, trans_total, date_completed) " \
+        query = "insert into cannedFoodTransactions(cf_id, person_id, tquantity, tunit_price, trans_total) " \
                 "values (%s, %s, %s, %s, %s, %s) " \
                 "returning cf_trans_id;"
-        cursor.execute(query, (cf_id, person_id, tquantity, tunit_price, trans_total, date_completed,))
+        cursor.execute(query, (cf_id, person_id, tquantity, tunit_price, trans_total,))
         tid = cursor.fetchone()[0]
         self.conn.commit()
         return tid

@@ -1,6 +1,6 @@
 from flask import jsonify
 from backend.dao.waterTransaction import WaterTransactionDAO
-import datetime, pytz
+
 
 
 class WaterTransactionHandler:
@@ -11,19 +11,17 @@ class WaterTransactionHandler:
             'person_id': row[2],
             'tquantity': row[3],
             'tunit_price': row[4],
-            'trans_total': row[5],
-            'date_completed': row[6]}
+            'trans_total': row[5]}
         return result
 
-    def build_water_trans_attributes(self, water_trans_id, water_id, person_id, tquantity, tunit_price, trans_total, date_completed):
+    def build_water_trans_attributes(self, water_trans_id, water_id, person_id, tquantity, tunit_price, trans_total):
         result = {
             'water_trans_id': water_trans_id,
             'water_id': water_id,
             'person_id': person_id,
             'tquantity': tquantity,
             'tunit_price': tunit_price,
-            'trans_total': trans_total,
-            'date_completed': date_completed}
+            'trans_total': trans_total}
         return result
 
     def getAllWaterTransaction(self):
@@ -54,11 +52,10 @@ class WaterTransactionHandler:
             tquantity = form['tquantity']
             tunit_price = form['tunit_price']
             trans_total = tquantity * tunit_price
-            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp()
             if water_id and person_id and tquantity and tunit_price:
                 dao = WaterTransactionDAO()
-                water_trans_id = dao.insert(water_id,person_id,tquantity,tunit_price,trans_total,date_completed)
-                result = self.build_water_trans_attributes(water_trans_id, water_id, person_id, tquantity, tunit_price, trans_total, date_completed)
+                water_trans_id = dao.insert(water_id,person_id,tquantity,tunit_price,trans_total)
+                result = self.build_water_trans_attributes(water_trans_id, water_id, person_id, tquantity, tunit_price, trans_total)
                 return jsonify(WaterTransaction=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
@@ -69,12 +66,10 @@ class WaterTransactionHandler:
         tquantity = json['tquantity']
         tunit_price = json['tunit_price']
         trans_total = tquantity * tunit_price
-        date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp()
         if water_id and person_id and tquantity and tunit_price:
             dao = WaterTransactionDAO()
-            water_trans_id = dao.insert(water_id, person_id, tquantity, tunit_price, trans_total, date_completed)
-            result = self.build_water_trans_attributes(water_trans_id, water_id, person_id, tquantity, tunit_price,
-                                                       trans_total, date_completed)
+            water_trans_id = dao.insert(water_id, person_id, tquantity, tunit_price, trans_total)
+            result = self.build_water_trans_attributes(water_trans_id, water_id, person_id, tquantity, tunit_price, trans_total)
             return jsonify(WaterTransaction=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -88,7 +83,7 @@ class WaterTransactionHandler:
             dao.delete(tid)
             return jsonify(DeleteStatus = "OK"), 200
 
-    def updatePart(self, tid, form):
+    def updateTransaction(self, tid, form):
         dao = WaterTransactionDAO()
         if not dao.getTransactionById(tid):
             return jsonify(Error = "Transaction not found."), 404
@@ -103,7 +98,7 @@ class WaterTransactionHandler:
                 trans_total = tquantity * tunit_price
                 if water_id and person_id and tquantity and tunit_price:
                     dao.update(tid, water_id,person_id,tquantity,tunit_price,trans_total)
-                    result = self.build_water_trans_attributes(tid, water_id,person_id,tquantity,tunit_price,trans_total,' ')
+                    result = self.build_water_trans_attributes(tid, water_id,person_id,tquantity,tunit_price,trans_total)
                     return jsonify(WaterTransaction=result), 200
                 else:
                     return jsonify(Error="Unexpected attributes in update request"), 400

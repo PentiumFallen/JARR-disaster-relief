@@ -146,12 +146,12 @@ class DryFoodTransactionDAO:
             result.append(row)
         return result
 
-    def insert(self, df_id, person_id, tquantity, tunit_price, trans_total, date_completed):
+    def insert(self, df_id, person_id, tquantity, tunit_price, trans_total):
         cursor = self.conn.cursor()
-        query = "insert into dryFoodTransactions(df_id, person_id, tquantity, tunit_price, trans_total, date_completed) " \
+        query = "insert into dryFoodTransactions(df_id, person_id, tquantity, tunit_price, trans_total) " \
                 "values (%s, %s, %s, %s, %s, %s) " \
                 "returning df_trans_id;"
-        cursor.execute(query, (df_id, person_id, tquantity, tunit_price, trans_total, date_completed,))
+        cursor.execute(query, (df_id, person_id, tquantity, tunit_price, trans_total,))
         tid = cursor.fetchone()[0]
         self.conn.commit()
         return tid

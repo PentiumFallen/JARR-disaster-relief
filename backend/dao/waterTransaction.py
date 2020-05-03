@@ -146,12 +146,12 @@ class WaterTransactionDAO:
             result.append(row)
         return result
 
-    def insert(self, water_id, person_id, tquantity, tunit_price, trans_total, date_completed):
+    def insert(self, water_id, person_id, tquantity, tunit_price, trans_total):
         cursor = self.conn.cursor()
-        query = "insert into waterTransactions(water_id, person_id, tquantity, tunit_price, trans_total, date_completed) " \
+        query = "insert into waterTransactions(water_id, person_id, tquantity, tunit_price, trans_total) " \
                 "values (%s, %s, %s, %s, %s, %s) " \
                 "returning water_trans_id;"
-        cursor.execute(query, (water_id, person_id, tquantity, tunit_price, trans_total, date_completed,))
+        cursor.execute(query, (water_id, person_id, tquantity, tunit_price, trans_total,))
         tid = cursor.fetchone()[0]
         self.conn.commit()
         return tid

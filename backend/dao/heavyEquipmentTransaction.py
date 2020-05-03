@@ -96,12 +96,12 @@ class HeavyEquipmentTransactionDAO:
             result.append(row)
         return result
 
-    def insert(self, heavy_equip_id, person_id, tquantity, tunit_price, trans_total, date_completed):
+    def insert(self, heavy_equip_id, person_id, tquantity, tunit_price, trans_total):
         cursor = self.conn.cursor()
-        query = "insert into heavyequipmenttransaction(heavy_equip_id, person_id, tquantity, tunit_price, trans_total, date_completed) " \
+        query = "insert into heavyequipmenttransaction(heavy_equip_id, person_id, tquantity, tunit_price, trans_total) " \
                 "values (%s, %s, %s, %s, %s, %s) " \
                 "returning heavy_equip_trans_id;"
-        cursor.execute(query, (heavy_equip_id, person_id, tquantity, tunit_price, trans_total, date_completed,))
+        cursor.execute(query, (heavy_equip_id, person_id, tquantity, tunit_price, trans_total,))
         tid = cursor.fetchone()[0]
         self.conn.commit()
         return tid

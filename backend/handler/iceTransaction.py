@@ -1,6 +1,6 @@
 from flask import jsonify
 from backend.dao.iceTransaction import IceTransactionDAO
-import datetime, pytz
+
 
 
 class IceTransactionHandler:
@@ -11,19 +11,19 @@ class IceTransactionHandler:
             'person_id': row[2],
             'tquantity': row[3],
             'tunit_price': row[4],
-            'trans_total': row[5],
-            'date_completed': row[6]}
+            'trans_total': row[5]}
         return result
 
-    def build_ice_trans_attributes(self, ice_trans_id, ice_id, person_id, tquantity, tunit_price, trans_total, date_completed):
+
+
+    def build_ice_trans_attributes(self, ice_trans_id, ice_id, person_id, tquantity, tunit_price, trans_total):
         result = {
             'ice_trans_id': ice_trans_id,
             'ice_id': ice_id,
             'person_id': person_id,
             'tquantity': tquantity,
             'tunit_price': tunit_price,
-            'trans_total': trans_total,
-            'date_completed': date_completed}
+            'trans_total': trans_total}
         return result
 
     def getAllIceTransaction(self):
@@ -54,11 +54,10 @@ class IceTransactionHandler:
             tquantity = form['tquantity']
             tunit_price = form['tunit_price']
             trans_total = tquantity * tunit_price
-            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp()
             if ice_id and person_id and tquantity and tunit_price:
                 dao = IceTransactionDAO()
-                ice_trans_id = dao.insert(ice_id,person_id,tquantity,tunit_price,trans_total,date_completed)
-                result = self.build_ice_trans_attributes(ice_trans_id, ice_id, person_id, tquantity, tunit_price, trans_total, date_completed)
+                ice_trans_id = dao.insert(ice_id,person_id,tquantity,tunit_price,trans_total)
+                result = self.build_ice_trans_attributes(ice_trans_id, ice_id, person_id, tquantity, tunit_price, trans_total)
                 return jsonify(IceTransaction=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
@@ -69,12 +68,11 @@ class IceTransactionHandler:
         tquantity = json['tquantity']
         tunit_price = json['tunit_price']
         trans_total = tquantity * tunit_price
-        date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp()
         if ice_id and person_id and tquantity and tunit_price:
             dao = IceTransactionDAO()
-            ice_trans_id = dao.insert(ice_id, person_id, tquantity, tunit_price, trans_total, date_completed)
+            ice_trans_id = dao.insert(ice_id, person_id, tquantity, tunit_price, trans_total)
             result = self.build_ice_trans_attributes(ice_trans_id, ice_id, person_id, tquantity, tunit_price,
-                                                       trans_total, date_completed)
+                                                       trans_total)
             return jsonify(IceTransaction=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -88,7 +86,7 @@ class IceTransactionHandler:
             dao.delete(tid)
             return jsonify(DeleteStatus = "OK"), 200
 
-    def updatePart(self, tid, form):
+    def updateTransaction(self, tid, form):
         dao = IceTransactionDAO()
         if not dao.getTransactionById(tid):
             return jsonify(Error = "Transaction not found."), 404
@@ -103,7 +101,7 @@ class IceTransactionHandler:
                 trans_total = tquantity * tunit_price
                 if ice_id and person_id and tquantity and tunit_price:
                     dao.update(tid, ice_id,person_id,tquantity,tunit_price,trans_total)
-                    result = self.build_ice_trans_attributes(tid, ice_id,person_id,tquantity,tunit_price,trans_total,' ')
+                    result = self.build_ice_trans_attributes(tid, ice_id,person_id,tquantity,tunit_price,trans_total)
                     return jsonify(IceTransaction=result), 200
                 else:
                     return jsonify(Error="Unexpected attributes in update request"), 400
