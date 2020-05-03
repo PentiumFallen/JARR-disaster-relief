@@ -1,6 +1,7 @@
 from flask import jsonify
 from backend.dao.medicalDeviceTransaction import MedicalDeviceTransactionDAO
-import datetime, pytz
+import datetime
+import pytz
 
 
 class MedicalDeviceTransactionHandler:

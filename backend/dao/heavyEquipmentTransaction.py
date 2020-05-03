@@ -11,7 +11,7 @@ class HeavyEquipmentTransactionDAO:
 
     def getAllHeavyEquipmentTransactions(self):
         cursor = self.conn.cursor()
-        query = "select * from heavyequipmenttransaction"
+        query = "select * from heavyequipmenttransactions"
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -20,14 +20,14 @@ class HeavyEquipmentTransactionDAO:
 
     def getTransactionById(self, tid):
         cursor = self.conn.cursor()
-        query = "select * from heavyequipmenttransaction where heavy_equip_trans_id = %s;"
+        query = "select * from heavyequipmenttransactions where heavy_equip_trans_id = %s;"
         cursor.execute(query, tid)
         result = cursor.fetchone()
         return result
 
     def getTransactionByFulfillerID(self, pid):
         cursor = self.conn.cursor()
-        query = "select * from heavyequipmenttransaction where person_id = %s"
+        query = "select * from heavyequipmenttransactions where person_id = %s"
         cursor.execute(query, pid)
         result = []
         for row in cursor:
@@ -36,7 +36,7 @@ class HeavyEquipmentTransactionDAO:
 
     def getTransactionByFulfillerEmail(self, email):
         cursor = self.conn.cursor()
-        query = "select * from heavyequipmenttransaction inner join persons inner join account " \
+        query = "select * from heavyequipmenttransactions inner join persons inner join account " \
                 "where email = %s;"
         cursor.execute(query, email)
         result = []
@@ -47,7 +47,7 @@ class HeavyEquipmentTransactionDAO:
     def getTransactionByFulfillerName(self, first, last):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from heavyequipmenttransaction inner join persons " \
+                "from heavyequipmenttransactions inner join persons " \
                 "where first_name = %s" \
                 "and last_name = %s;"
         cursor.execute(query, first, last)
@@ -59,7 +59,7 @@ class HeavyEquipmentTransactionDAO:
     def getTransactionByInitialPost(self, heavy_equip_id):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from heavyequipmenttransaction " \
+                "from heavyequipmenttransactions " \
                 "where heavy_equip_id = %s;"
         cursor.execute(query, heavy_equip_id)
         result = []
@@ -70,7 +70,7 @@ class HeavyEquipmentTransactionDAO:
     def getTransactionByInitialPosterEmail(self, email):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from heavyequipmenttransaction as t inner join heavyequipment as r " \
+                "from heavyequipmenttransactions as t inner join heavyequipment as r " \
                 "where r.person_id = (" \
                 "select person_id " \
                 "from account inner join persons inner join heavyequipment " \
@@ -84,7 +84,7 @@ class HeavyEquipmentTransactionDAO:
     def getTransactionByInitialPosterName(self, first, last):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from heavyequipmenttransaction as t inner join heavyequipment as r " \
+                "from heavyequipmenttransactions as t inner join heavyequipment as r " \
                 "where r.person_id = (" \
                 "select person_id " \
                 "from account inner join persons inner join heavyequipment " \
@@ -98,7 +98,7 @@ class HeavyEquipmentTransactionDAO:
 
     def insert(self, heavy_equip_id, person_id, tquantity, tunit_price, trans_total, date_completed):
         cursor = self.conn.cursor()
-        query = "insert into heavyequipmenttransaction(heavy_equip_id, person_id, tquantity, tunit_price, trans_total, date_completed) " \
+        query = "insert into heavyequipmenttransactions(heavy_equip_id, person_id, tquantity, tunit_price, trans_total, date_completed) " \
                 "values (%s, %s, %s, %s, %s, %s) " \
                 "returning heavy_equip_trans_id;"
         cursor.execute(query, (heavy_equip_id, person_id, tquantity, tunit_price, trans_total, date_completed,))
@@ -108,7 +108,7 @@ class HeavyEquipmentTransactionDAO:
 
     def delete(self, tid):
         cursor = self.conn.cursor()
-        query = "delete from heavyequipmenttransaction " \
+        query = "delete from heavyequipmenttransactions " \
                 "where heavy_equip_trans_id = %s;"
         cursor.execute(query, (tid,))
         self.conn.commit()
