@@ -54,7 +54,7 @@ class WaterTransactionHandler:
             tquantity = form['tquantity']
             tunit_price = form['tunit_price']
             trans_total = tquantity * tunit_price
-            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp().timestamp()
+            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp()
             if water_id and person_id and tquantity and tunit_price:
                 dao = WaterTransactionDAO()
                 water_trans_id = dao.insert(water_id,person_id,tquantity,tunit_price,trans_total,date_completed)
