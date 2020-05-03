@@ -277,7 +277,7 @@ class WaterHandler:
             dao.delete(water_id)
         return jsonify(DeleteStatus="OK"), 200
 
-    def update_supply(self, water_id, form):
+    def update_water_post(self, water_id, form):
         dao = WaterDAO()
         if not dao.getWaterById(water_id):
             return jsonify(Error="Post not found."), 404

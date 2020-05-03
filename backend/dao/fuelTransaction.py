@@ -108,7 +108,9 @@ class FuelTransactionDAO:
                 "from fuelTransactions " \
                 "where trans_total <= %s;"
         cursor.execute(query, cost)
-        result = cursor.fetchone()
+        result = []
+        for row in cursor:
+            result.append(row)
         return result
 
     def getTransactionByMinCost(self, cost):
@@ -117,7 +119,9 @@ class FuelTransactionDAO:
                 "from fuelTransactions " \
                 "where trans_total >= %s;"
         cursor.execute(query, cost)
-        result = cursor.fetchone()
+        result = []
+        for row in cursor:
+            result.append(row)
         return result
 
     def getTransactionByMaxQuantity(self, quantity):
@@ -126,7 +130,9 @@ class FuelTransactionDAO:
                 "from fuelTransactions " \
                 "where tquantity <= %s;"
         cursor.execute(query, quantity)
-        result = cursor.fetchone()
+        result = []
+        for row in cursor:
+            result.append(row)
         return result
 
     def getTransactionByMinQuantity(self, quantity):
@@ -135,7 +141,9 @@ class FuelTransactionDAO:
                 "from fuelTransactions " \
                 "where tquantity >= %s;"
         cursor.execute(query, quantity)
-        result = cursor.fetchone()
+        result = []
+        for row in cursor:
+            result.append(row)
         return result
 
     def insert(self, fuel_id, person_id, tquantity, tunit_price, trans_total, date_completed):
