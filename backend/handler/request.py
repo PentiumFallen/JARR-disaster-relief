@@ -40,6 +40,10 @@ class RequestHandler:
         request = 'Got request ' + str(request_id) + '!'
         return jsonify(Request=request)
 
+    def get_requests_by_person_id(self, person_id):
+        requests = 'Got requests of person number ' + str(person_id)
+        return jsonify(Requests=requests)
+
     def search_request(self, args):
         category = args.get("category")
         # Add more! #
