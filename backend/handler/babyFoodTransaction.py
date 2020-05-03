@@ -54,7 +54,7 @@ class BabyFoodTransactionHandler:
             tquantity = form['tquantity']
             tunit_price = form['tunit_price']
             trans_total = tquantity * tunit_price
-            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
+            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp()
             if bf_id and person_id and tquantity and tunit_price:
                 dao = BabyFoodTransactionDAO()
                 bf_trans_id = dao.insert(bf_id,person_id,tquantity,tunit_price,trans_total,date_completed)
@@ -69,7 +69,7 @@ class BabyFoodTransactionHandler:
         tquantity = json['tquantity']
         tunit_price = json['tunit_price']
         trans_total = tquantity * tunit_price
-        date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
+        date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp()
         if bf_id and person_id and tquantity and tunit_price:
             dao = BabyFoodTransactionDAO()
             bf_trans_id = dao.insert(bf_id, person_id, tquantity, tunit_price, trans_total, date_completed)

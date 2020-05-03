@@ -54,7 +54,7 @@ class MedicationTransactionHandler:
             tquantity = form['tquantity']
             tunit_price = form['tunit_price']
             trans_total = tquantity * tunit_price
-            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
+            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp()
             if med_id and person_id and tquantity and tunit_price:
                 dao = MedicationTransactionDAO()
                 med_trans_id = dao.insert(med_id,person_id,tquantity,tunit_price,trans_total,date_completed)
@@ -69,7 +69,7 @@ class MedicationTransactionHandler:
         tquantity = json['tquantity']
         tunit_price = json['tunit_price']
         trans_total = tquantity * tunit_price
-        date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
+        date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp()
         if med_id and person_id and tquantity and tunit_price:
             dao = MedicationTransactionDAO()
             med_trans_id = dao.insert(med_id, person_id, tquantity, tunit_price, trans_total, date_completed)

@@ -54,7 +54,7 @@ class CannedFoodTransactionHandler:
             tquantity = form['tquantity']
             tunit_price = form['tunit_price']
             trans_total = tquantity * tunit_price
-            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
+            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp()
             if cf_id and person_id and tquantity and tunit_price:
                 dao = CannedFoodTransactionDAO()
                 cf_trans_id = dao.insert(cf_id,person_id,tquantity,tunit_price,trans_total,date_completed)
@@ -69,7 +69,7 @@ class CannedFoodTransactionHandler:
         tquantity = json['tquantity']
         tunit_price = json['tunit_price']
         trans_total = tquantity * tunit_price
-        date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
+        date_completed = datetime.datetime.now(pytz.timezone('US/Eastern')).timestamp()
         if cf_id and person_id and tquantity and tunit_price:
             dao = CannedFoodTransactionDAO()
             cf_trans_id = dao.insert(cf_id, person_id, tquantity, tunit_price, trans_total, date_completed)
