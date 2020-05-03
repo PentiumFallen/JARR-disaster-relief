@@ -84,7 +84,7 @@ class WaterDAO:
 
     def getWaterByBrandAndType(self, brand, water_type):
         cursor = self.conn.cursor()
-        query = "select * from Water where brand = %s and water_id = (select water_id from Water_Type where water_type = %s);"
+        query = "select * from Water where brand = %s and water_id = (select water_id from WaterTypes where water_type = %s);"
         cursor.execute(query, (brand, water_type))
         result = cursor.fetchall()
         return result
@@ -98,7 +98,7 @@ class WaterDAO:
 
     def getWaterByType(self, water_type):
         cursor = self.conn.cursor()
-        query = "select * from Water where water_id = (select water_id from Water_Type where water_type = %s);"
+        query = "select * from Water where water_id = (select water_id from WaterTypes where water_type = %s);"
         cursor.execute(query, (water_type,))
         result = cursor.fetchall()
         return result
@@ -106,7 +106,7 @@ class WaterDAO:
     def getWaterSuppliesByBrandAndTypeAndMaxPrice(self, brand, water_type, max_price):
         cursor = self.conn.cursor()
         query = "select * from Water where brand = %s and unit_price <= %s and is_supply = TRUE and water_id = " \
-                "(select water_id from Water_Type where water_type = %s);"
+                "(select water_id from WaterTypes where water_type = %s);"
         cursor.execute(query, (brand, max_price, water_type))
         result = cursor.fetchall()
         return result
@@ -114,7 +114,7 @@ class WaterDAO:
     def getWaterSuppliesByBrandAndType(self, brand, water_type):
         cursor = self.conn.cursor()
         query = "select * from Water where brand = %s and is_supply = TRUE and water_id = " \
-                "(select water_id from Water_Type where water_type = %s);"
+                "(select water_id from WaterTypes where water_type = %s);"
         cursor.execute(query, (brand, water_type))
         result = cursor.fetchall()
         return result
@@ -129,7 +129,7 @@ class WaterDAO:
     def getWaterSuppliesByType(self, water_type):
         cursor = self.conn.cursor()
         query = "select * from Water where is_supply = TRUE and water_id = " \
-                "(select water_id from Water_Type where water_type = %s);"
+                "(select water_id from WaterTypes where water_type = %s);"
         cursor.execute(query, (water_type,))
         result = cursor.fetchall()
         return result
@@ -144,7 +144,7 @@ class WaterDAO:
     def getWaterRequestsByBrandAndType(self, brand, water_type):
         cursor = self.conn.cursor()
         query = "select * from Water where brand = %s and is_supply = FALSE and water_id = " \
-                "(select water_id from Water_Type where water_type = %s);"
+                "(select water_id from WaterTypes where water_type = %s);"
         cursor.execute(query, (brand, water_type))
         result = cursor.fetchall()
         return result
@@ -159,14 +159,14 @@ class WaterDAO:
     def getWaterRequestsByType(self, water_type):
         cursor = self.conn.cursor()
         query = "select * from Water where is_supply = FALSE and water_id = " \
-                "(select water_id from Water_Type where water_type = %s);"
+                "(select water_id from WaterTypes where water_type = %s);"
         cursor.execute(query, (water_type,))
         result = cursor.fetchall()
         return result
 
     def getWaterTypeId(self, water_type):
         cursor = self.conn.cursor()
-        query = "select water_id from Water_Type natural where water_type = %s;"
+        query = "select water_id from WaterTypes natural where water_type = %s;"
         cursor.execute(query, (water_type,))
         result = cursor.fetchall()
         return result
