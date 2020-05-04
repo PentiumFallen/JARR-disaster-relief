@@ -78,7 +78,7 @@ class AuthenticationHandler:
         password = form.get('password')        
         if password and email and (len(form)==2):
             dao = AuthenticationDAO()
-            password = self.hash_password(password)
+            password = self.accountChangePassword(password)
             res = dao.accountChangePassword(email,password) 
             return jsonify(Account = res)        
         else:
@@ -90,25 +90,36 @@ class AuthenticationHandler:
         else:
             email = form['email']
             password = form['password']
+            registered_date = form['registered_id']
             is_admin = form['is_admin']
-            if email and password and is_admin:
-                # dao = AuthenticationDAO()
-                # pid = dao.insertAccount(email, password, is_admin)
-                # result = build_account_attributes(pid, email, password, is_admin)
-                result = 'Insert works!'
-                return jsonify(Request=result), 201
+            person_id = form['person_id']
+            balance = form['balance']
+            bank_account = form['bank_account']
+            routing_number = form['routing_number']
+
+            if email and password and registered_date and is_admin and person_id and balance and bank_account and routing_number:
+                dao = AuthenticationDAO()
+                pid = dao.insertAccount(email, password, registered_date, is_admin, person_id, balance, bank_account, routing_number)
+                result = build_account_attributes(pid, email, password, registered_date, is_admin, person_id, balance, bank_account, routing_number)
+                result = 'Account created!'
+                return jsonify(Account=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post account"), 400
 
     def insertAccount_json(self, json):
         email = json['email']
         password = json['password']
-        is_admin = json['is_admin']
-        if email and password and is_admin:
-            # dao = AuthenticationDAO()
-            # pid = dao.insertAccount(email, password, is_admin)
-            # result = self.build_account_attributes(pid, email, password, is_admin)
-            return jsonify(Request="Insert account json works!"), 201
+        registered_date = json['registered_date']
+        is_admin = json['is_admin'] 
+        person_id = json['person_id']
+        balance = json['balance']
+        bank_account = json['bank_account']
+        routing_number = json['routing_number']
+
+        if email and password and registered_date and is_admin and person_id and balance and bank_account and routing_number:
+            dao = AuthenticationDAO()
+            pid = dao.insertAccount(email, password, registered_date, is_admin, person_id, balance, bank_account, routing_number)
+            result = self.build_account_attributes(pid, email, password, registered_date, is_admin, person_id, balance, bank_account, routing_number)
+            return jsonify(Account=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post account"), 400
-        

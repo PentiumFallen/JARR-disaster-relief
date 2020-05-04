@@ -11,6 +11,7 @@ from backend.handler.ice import IceHandler
 from backend.handler.person import PersonHandler
 from backend.handler.request import RequestHandler
 from backend.handler.authentication import AuthenticationHandler
+from backend.handler.resource import ResourceHandler
 from flask_cors import CORS
 
 # Activate
@@ -551,7 +552,7 @@ def getAllFuelRequests():
 def getFuelRequestsByPersonId(person_id):
     return FuelHandler().get_fuel_supplies_by_person_id(person_id)
 
-
+#Authentication
 @app.route('/JARR-disaster-relief/authentication/login', methods=['GET'])
 def getAccountLogin():
     if request.method == 'GET':
@@ -595,6 +596,17 @@ def getRequestById(request_id):
     else:
         return jsonify(Error="Method not allowed."), 405
 
+#Resources
+@app.route('/JARR-disaster-relief/resources/<int:resource_id>')
+def getAllResources():
+    "Get the Resources in a given category subcategory"    
+    handler = ResourceHandler()
+    return handler.get_all_resources()
+
+@app.route('/JARR-disaster-relief/resources/')
+def getNeededResource():
+    "Get Resource without quantity"
+    return ResourceHandler().get_all_needed_resources()
 
 if __name__ == '__main__':
     app.run()
