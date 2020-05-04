@@ -20,31 +20,23 @@ class PersonDAO:
 
     def getPersonByPersonId(self, person_id):
         cursor = self.conn.cursor()
-        query = "select first_name, last_name, address, senate_district, phone_number, current_location from person where person_id = %s;"
+        query = "select * from person where person_id = %s;"
         cursor.execute(query, (person_id,))
-        result = cursor.fetchone()
-        return result
-
-    # TODO
-    def getPersonByRequestId(self, request_id):
-        cursor = self.conn.cursor()
-        query = "select first_name, last_name, address, senate_district, phone_number, current_location from person where person_id = %s;"
-        cursor.execute(query, (request_id,))
         result = cursor.fetchone()
         return result
 
     # TODO
     def getPersonBySupplyId(self, supply_id):
         cursor = self.conn.cursor()
-        query = "select first_name, last_name, address, senate_district, phone_number, current_location from person where person_id = %s;"
+        query = "select * from person natural inner join supplies where supply_id = %s;"
         cursor.execute(query, (supply_id,))
         result = cursor.fetchone()
         return result
 
-    def insertPerson(self, first_name, last_name, address, senate_district, phone_number, current_location):
+    def insertPerson(self, first_name, last_name, phone_number, address_id):
         cursor = self.conn.cursor()
-        query = "insert into person(first_name, last_name, address, senate_district, phone_number, current_location) values (%s, %s, %s, %s, %s, %s, %s) returning person_id;"
-        cursor.execute(query, (first_name, last_name, address, senate_district, phone_number, current_location,))
+        query = "insert into person(first_name, last_name, phone_number, address_id) values (%s, %s, %s, %s) returning person_id;"
+        cursor.execute(query, (first_name, last_name, phone_number, address_id,))
         person_id = cursor.fetchone()[0]
         self.conn.commit()
         return person_id
@@ -56,17 +48,10 @@ class PersonDAO:
         self.conn.commit()
         return person_id
 
-    def updatePersonLocation(self, new_location, person_id):
+    def updatePerson(self, first_name, last_name, phone_number, person_id):
         cursor = self.conn.cursor()
-        query = "update person set current_location = %s where person_id = %s;"
-        cursor.execute(query, (new_location, person_id))
-        self.conn.commit()
-        return person_id
-
-    def updatePerson(self, first_name, last_name, address, senate_district, phone_number, current_location, person_id):
-        cursor = self.conn.cursor()
-        query = "update person set first_name = %s, last_name = %s, address = %s, senate_district = %s, phone_number = %s, current_location = %s, phone_number = %s where person_id = %s;"
-        cursor.execute(query, (first_name, last_name, address, senate_district, phone_number, current_location, person_id,))
+        query = "update person set first_name = %s, last_name = %s, phone_number = %s where person_id = %s;"
+        cursor.execute(query, (first_name, last_name, phone_number, person_id,))
         self.conn.commit()
         return person_id
 

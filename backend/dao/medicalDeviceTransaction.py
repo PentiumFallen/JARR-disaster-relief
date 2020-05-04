@@ -11,7 +11,7 @@ class MedicalDeviceTransactionDAO:
 
     def getAllMedicalDeviceTransactions(self):
         cursor = self.conn.cursor()
-        query = "select * from medicaldevicetransaction"
+        query = "select * from medicaldevicetransactions"
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -20,14 +20,14 @@ class MedicalDeviceTransactionDAO:
 
     def getTransactionById(self, tid):
         cursor = self.conn.cursor()
-        query = "select * from medicaldevicetransaction where med_dev_trans_id = %s;"
+        query = "select * from medicaldevicetransactions where med_dev_trans_id = %s;"
         cursor.execute(query, tid)
         result = cursor.fetchone()
         return result
 
     def getTransactionByFulfillerID(self, pid):
         cursor = self.conn.cursor()
-        query = "select * from medicaldevicetransaction where person_id = %s"
+        query = "select * from medicaldevicetransactions where person_id = %s"
         cursor.execute(query, pid)
         result = []
         for row in cursor:
@@ -36,7 +36,7 @@ class MedicalDeviceTransactionDAO:
 
     def getTransactionByFulfillerEmail(self, email):
         cursor = self.conn.cursor()
-        query = "select * from medicaldevicetransaction inner join persons inner join account " \
+        query = "select * from medicaldevicetransactions inner join persons inner join account " \
                 "where email = %s;"
         cursor.execute(query, email)
         result = []
@@ -47,7 +47,7 @@ class MedicalDeviceTransactionDAO:
     def getTransactionByFulfillerName(self, first, last):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from medicaldevicetransaction inner join persons " \
+                "from medicaldevicetransactions inner join persons " \
                 "where first_name = %s" \
                 "and last_name = %s;"
         cursor.execute(query, first, last)
@@ -59,7 +59,7 @@ class MedicalDeviceTransactionDAO:
     def getTransactionByInitialPost(self, wid):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from medicaldevicetransaction " \
+                "from medicaldevicetransactions " \
                 "where cf_id = %s;"
         cursor.execute(query, wid)
         result = []
@@ -70,7 +70,7 @@ class MedicalDeviceTransactionDAO:
     def getTransactionByInitialPosterEmail(self, email):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from medicaldevicetransaction as t inner join medicaldevice as w " \
+                "from medicaldevicetransactions as t inner join medicaldevice as w " \
                 "where w.person_id = (" \
                 "select person_id " \
                 "from account inner join persons inner join medicaldevice " \
@@ -84,7 +84,7 @@ class MedicalDeviceTransactionDAO:
     def getTransactionByInitialPosterName(self, first, last):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from medicaldevicetransaction as t inner join medicaldevice as w " \
+                "from medicaldevicetransactions as t inner join medicaldevice as w " \
                 "where w.person_id = (" \
                 "select person_id " \
                 "from account inner join persons inner join medicaldevice " \
@@ -108,11 +108,12 @@ class MedicalDeviceTransactionDAO:
 
     def delete(self, tid):
         cursor = self.conn.cursor()
-        query = "delete from medicaldevicetransaction " \
+        query = "delete from medicaldevicetransactions " \
                 "where med_dev_trans_id = %s;"
         cursor.execute(query, (tid,))
         self.conn.commit()
         return tid
+
 
     def update(self, medical_dev_id, person_id, tquantity, tunit_price, trans_total, tid):
         cursor = self.conn.cursor()

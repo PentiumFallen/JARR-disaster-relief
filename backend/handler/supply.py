@@ -205,7 +205,8 @@ class SupplyHandler:
             if person_id and category_id and name and brand and description and unit_price and quantity \
                     and address_id:
                 available = quantity
-                resource_id = ResourceDAO().insert(category_id, person_id, name, quantity, brand)
+                #resource_id = ResourceDAO().insert(category_id, person_id, name, quantity, brand)
+                resource_id = 0
                 supply_id = dao.insert(resource_id, person_id, description, available, unit_price,
                                        address_id)
                 result = self.build_supply_attributes(supply_id, resource_id, category_id, person_id, name, quantity,
