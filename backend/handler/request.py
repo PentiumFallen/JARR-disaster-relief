@@ -7,37 +7,20 @@ class RequestHandler:
 
     # Joined to resource
     def build_request_dict(self, row):
-        #ToDo: Check what Python does with null values in columns!
-        if not row[3]:
-            result = {
-                'request_id': row[0],
-                'resource_id': row[1],
-                'category': row[2],
-                'person_id': row[4],
-                'name': row[5],
-                'quantity': row[6],
-                'rdescription': row[7],
-                'needed': row[8],
-                'max_unit_price': row[9],
-                'date_offered': row[10],
-                'address_id': row[11]
-            }
-        else:
-            result = {
-                'request_id': row[0],
-                'resource_id': row[1],
-                'category': row[2],
-                'subcategory': row[3],
-                'person_id': row[4],
-                'name': row[5],
-                'quantity': row[6],
-                'rdescription': row[7],
-                'needed': row[8],
-                'max_unit_price': row[9],
-                'date_offered': row[10],
-                'address_id': row[11]
-            }
-            return result
+        result = {
+            'request_id': row[0],
+            'category': row[1],
+            'subcategory': row[2],
+            'person_id': row[3],
+            'name': row[4],
+            'quantity': row[5],
+            'rdescription': row[6],
+            'needed': row[7],
+            'max_unit_price': row[8],
+            'date_offered': row[9],
+            'address_id': row[10]
+        }
+        return result
 
     def build_request_attributes(self, request_id, resource_id, category_id, person_id, name, quantity, description,
                                  needed, max_unit_price, address_id):
