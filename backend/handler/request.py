@@ -109,6 +109,15 @@ class RequestHandler:
             result_list.append(result)
         return jsonify(Request_Posts=result_list)
 
+    def get_needed_requests_by_person_id(self, person_id):
+        dao = RequestDAO()
+        request_list = dao.getNeededRequestsByPersonId(person_id)
+        result_list = []
+        for row in request_list:
+            result = self.build_request_dict(row)
+            result_list.append(result)
+        return jsonify(Request_Posts=result_list)
+
     def search_requests(self, args):
         max_price = args['max_unit_price']
         category = args['category']
@@ -163,7 +172,8 @@ class RequestHandler:
             if person_id and category_id and name and description and unit_price and quantity \
                     and address_id:
                 needed = quantity
-                resource_id = ResourceDAO().insert(category_id, person_id, name, quantity)
+                #resource_id = ResourceDAO().insert(category_id, person_id, name, quantity)
+                resource_id = 0
                 request_id = dao.insert(resource_id, person_id, description, needed, unit_price,
                                         address_id)
                 result = self.build_request_attributes(request_id, resource_id, category_id, person_id, name, quantity,

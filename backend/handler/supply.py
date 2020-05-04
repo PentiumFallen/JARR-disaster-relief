@@ -111,6 +111,15 @@ class SupplyHandler:
             result_list.append(result)
         return jsonify(Supply_Posts=result_list)
 
+    def get_available_supplies_by_person_id(self, person_id):
+        dao = SupplyDAO()
+        supply_list = dao.getAvailableSuppliesByPersonId(person_id)
+        result_list = []
+        for row in supply_list:
+            result = self.build_supply_dict(row)
+            result_list.append(result)
+        return jsonify(Supply_Posts=result_list)
+
     def search_supplies(self, args):
         brand = args['brand']
         max_price = args['max_price']
