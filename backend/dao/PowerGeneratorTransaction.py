@@ -1,7 +1,8 @@
 from backend.config.dbconfig import pg_config
 import psycopg2
 
-class HeavyEquipmentTransactionDAO:
+
+class PowerGeneratorTransactionDAO:
     def __init__(self):
 
         connection_url = "dbname=%s user=%s password=%s" % (pg_config['dbname'],
@@ -9,9 +10,9 @@ class HeavyEquipmentTransactionDAO:
                                                             pg_config['passwd'])
         self.conn = psycopg2._connect(connection_url)
 
-    def getAllHeavyEquipmentTransactions(self):
+    def getAllPowerGeneratorTransactions(self):
         cursor = self.conn.cursor()
-        query = "select * from heavyequipmenttransactions"
+        query = "select * from powergeneratortransactions"
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -20,14 +21,14 @@ class HeavyEquipmentTransactionDAO:
 
     def getTransactionById(self, tid):
         cursor = self.conn.cursor()
-        query = "select * from heavyequipmenttransactions where heavy_equip_trans_id = %s;"
+        query = "select * from powergeneratortransactions where generator_trans_id = %s;"
         cursor.execute(query, tid)
         result = cursor.fetchone()
         return result
 
     def getTransactionByFulfillerID(self, pid):
         cursor = self.conn.cursor()
-        query = "select * from heavyequipmenttransactions where person_id = %s"
+        query = "select * from powergeneratortransactions where person_id = %s"
         cursor.execute(query, pid)
         result = []
         for row in cursor:
@@ -36,7 +37,7 @@ class HeavyEquipmentTransactionDAO:
 
     def getTransactionByFulfillerEmail(self, email):
         cursor = self.conn.cursor()
-        query = "select * from heavyequipmenttransactions inner join persons inner join account " \
+        query = "select * from powergeneratortransactions inner join persons inner join account " \
                 "where email = %s;"
         cursor.execute(query, email)
         result = []
@@ -47,7 +48,7 @@ class HeavyEquipmentTransactionDAO:
     def getTransactionByFulfillerName(self, first, last):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from heavyequipmenttransactions inner join persons " \
+                "from powergeneratortransactions inner join persons " \
                 "where first_name = %s" \
                 "and last_name = %s;"
         cursor.execute(query, first, last)
@@ -56,12 +57,12 @@ class HeavyEquipmentTransactionDAO:
             result.append(row)
         return result
 
-    def getTransactionByInitialPost(self, heavy_equip_id):
+    def getTransactionByInitialPost(self, generator_id):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from heavyequipmenttransactions " \
-                "where heavy_equip_id = %s;"
-        cursor.execute(query, heavy_equip_id)
+                "from powergeneratortransactions " \
+                "where generator_id = %s;"
+        cursor.execute(query, generator_id)
         result = []
         for row in cursor:
             result.append(row)
@@ -70,10 +71,10 @@ class HeavyEquipmentTransactionDAO:
     def getTransactionByInitialPosterEmail(self, email):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from heavyequipmenttransactions as t inner join heavyequipment as r " \
+                "from powergeneratortransactions as t inner join powergenerator as r " \
                 "where r.person_id = (" \
                 "select person_id " \
-                "from account inner join persons inner join heavyequipment " \
+                "from account inner join persons inner join powergenerator " \
                 "where email = %s);"
         cursor.execute(query, email)
         result = []
@@ -84,10 +85,10 @@ class HeavyEquipmentTransactionDAO:
     def getTransactionByInitialPosterName(self, first, last):
         cursor = self.conn.cursor()
         query = "select * " \
-                "from heavyequipmenttransactions as t inner join heavyequipment as r " \
+                "from powergeneratortransactions as t inner join powergenerator as r " \
                 "where r.person_id = (" \
                 "select person_id " \
-                "from account inner join persons inner join heavyequipment " \
+                "from account inner join persons inner join powergenerator " \
                 "where first_name = %s " \
                 "and last_name = %s);"
         cursor.execute(query, first, last)
@@ -96,20 +97,20 @@ class HeavyEquipmentTransactionDAO:
             result.append(row)
         return result
 
-    def insert(self, heavy_equip_id, person_id, tquantity, tunit_price, trans_total):
+    def insert(self, generator_id, person_id, tquantity, tunit_price, trans_total, date_completed):
         cursor = self.conn.cursor()
-        query = "insert into heavyequipmenttransaction(heavy_equip_id, person_id, tquantity, tunit_price, trans_total) " \
+        query = "insert into powergeneratortransactions(generator_id, person_id, tquantity, tunit_price, trans_total, date_completed) " \
                 "values (%s, %s, %s, %s, %s, %s) " \
-                "returning heavy_equip_trans_id;"
-        cursor.execute(query, (heavy_equip_id, person_id, tquantity, tunit_price, trans_total,))
+                "returning generator_trans_id;"
+        cursor.execute(query, (generator_id, person_id, tquantity, tunit_price, trans_total, date_completed,))
         tid = cursor.fetchone()[0]
         self.conn.commit()
         return tid
 
     def delete(self, tid):
         cursor = self.conn.cursor()
-        query = "delete from heavyequipmenttransactions " \
-                "where heavy_equip_trans_id = %s;"
+        query = "delete from powergeneratortransactions " \
+                "where generator_trans_id = %s;"
         cursor.execute(query, (tid,))
         self.conn.commit()
         return tid

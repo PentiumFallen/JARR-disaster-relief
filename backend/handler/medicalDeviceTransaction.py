@@ -2,7 +2,6 @@ from flask import jsonify
 from backend.dao.medicalDeviceTransaction import MedicalDeviceTransactionDAO
 
 
-
 class MedicalDeviceTransactionHandler:
     def build_md_trans_dict(self, row):
         result = {
