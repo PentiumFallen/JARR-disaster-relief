@@ -42,6 +42,15 @@ class WaterTransactionHandler:
             waterTransaction = self.build_water_trans_dict(row)
             return jsonify(WaterTransaction = waterTransaction)
 
+    def getWaterTransactionByPersonId(self, pid):
+        dao = WaterTransactionDAO()
+        row = dao.getTransactionByFulfillerID(pid)
+        if not row:
+            return jsonify(Error = "Transaction Not Found"), 404
+        else:
+            waterTransaction = self.build_water_trans_dict(row)
+            return jsonify(WaterTransaction = waterTransaction)
+
     def insertWaterTransaction(self, form):
         print("form: ", form)
         if len(form) != 4:

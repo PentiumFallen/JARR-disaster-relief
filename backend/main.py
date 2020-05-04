@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from backend.handler.supply import SupplyHandler
 from backend.handler.water import WaterHandler
+from backend.handler.waterTransaction import WaterTransactionHandler
 from backend.handler.medication import MedicationHandler
 from backend.handler.fuel import FuelHandler
 from backend.handler.baby_food import BabyFoodHandler
@@ -16,7 +17,6 @@ from flask_cors import CORS
 app = Flask(__name__)
 # Apply CORS to this app
 CORS(app)
-
 
 @app.route('/')
 def greeting():
@@ -112,6 +112,30 @@ def getAllWaterRequests():
 @app.route('/JARR-disaster-relief/person/<int:person_id>/water/requests')
 def getWaterRequestsByPersonId(person_id):
     return WaterHandler().get_water_supplies_by_person_id(person_id)
+
+# __WaterTransactions__
+
+@app.route('/JARR-disaster-relief/water-transaction')
+def getAllWaterTransactions():
+    return WaterTransactionHandler().getAllWaterTransaction()
+
+
+@app.route('/JARR-disaster-relief/water-transaction/<int:water_id>', methods=['GET', 'PUT', 'DELETE'])
+def getWaterTransactionById(water_id):
+    if request.method == 'GET':
+        return WaterTransactionHandler().getWaterTransactionById(water_id)
+    elif request.method == 'PUT':
+        return WaterTransactionHandler().updateTransaction(water_id, request.form)
+    elif request.method == 'DELETE':
+        return WaterTransactionHandler().deleteWaterTransaction(water_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/JARR-disaster-relief/person/<int:person_id>/water-transaction')
+def getWaterPostsByPersonId(person_id):
+    return WaterTransactionHandler().getWaterTransactionByPersonId(person_id)
+
 
 # __Medication__
 
