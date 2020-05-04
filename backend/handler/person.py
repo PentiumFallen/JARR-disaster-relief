@@ -1,6 +1,7 @@
 from flask import jsonify
 from backend.dao.person import PersonDAO
 
+
 class PersonHandler:
     def build_person_dict(self, row):
         result = {
@@ -34,7 +35,7 @@ class PersonHandler:
         dao = PersonDAO()
         row = dao.getPersonById()
         if not row:
-            return jsonify(Error = "Person Not Found"), 404
+            return jsonify(Error="Person Not Found"), 404
         else:
             person = self.build_person_dict(row)
         return jsonify(Person=person)
@@ -43,7 +44,7 @@ class PersonHandler:
         dao = PersonDAO()
         row = dao.getPersonByRequestId(request_id)
         if not row:
-            return jsonify(Error = "Person Not Found"), 404
+            return jsonify(Error="Person Not Found"), 404
         else:
             person = self.build_person_dict(row)
         return jsonify(Person=person)
@@ -52,7 +53,7 @@ class PersonHandler:
         dao = PersonDAO()
         row = dao.getPersonBySupplyId(supply_id)
         if not row:
-            return jsonify(Error = "Person Not Found"), 404
+            return jsonify(Error="Person Not Found"), 404
         else:
             person = self.build_person_dict(row)
         return jsonify(Person=person)
@@ -67,7 +68,7 @@ class PersonHandler:
             address_id = form['address_id']
             if first_name and last_name and address_id and phone_number:
                 dao = PersonDAO()
-                pid = dao.insertPerson(first_name, last_name, phone_number, address_id,)
+                pid = dao.insertPerson(first_name, last_name, phone_number, address_id, )
                 result = self.build_person_attributes(self, first_name, last_name, phone_number, address_id)
                 return jsonify(Person=result)
             else:
@@ -89,7 +90,7 @@ class PersonHandler:
     def delete_person(self, person_id):
         dao = PersonDAO()
         if not dao.getPersonById(person_id):
-            return jsonify(Error = "Person not found."), 404
+            return jsonify(Error="Person not found."), 404
         else:
             dao.delete(person_id)
         return jsonify(DeleteStatus="OK"), 200
@@ -112,4 +113,3 @@ class PersonHandler:
                     return jsonify(Person=result)
                 else:
                     return jsonify(Error="Unexpected attributes in update request"), 400
-
