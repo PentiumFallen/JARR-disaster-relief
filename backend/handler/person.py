@@ -75,7 +75,7 @@ class PersonHandler:
                 return jsonify(Error="Unexpected attributes in post request"), 400
 
     def insert_person_json(self, json):
-        first_name = json['rcategory']
+        first_name = json['first_name']
         last_name = json['last_name']
         phone_number = json['phone_number']
         address_id = json['address_id']
