@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from backend.handler.supply import SupplyHandler
 from backend.handler.water import WaterHandler
 from backend.handler.waterTransaction import WaterTransactionHandler
 from backend.handler.medication import MedicationHandler
@@ -54,6 +55,73 @@ def getAllPersons():
         if not request.args:
             return PersonHandler().get_all_persons()
 
+# __Supply__
+
+@app.route('/JARR-disaster-relief/supplies', methods=['GET', 'POST'])
+def getAllSupplies():
+    if request.method == 'POST':
+        return SupplyHandler().insert_supply_json(request.json)
+    elif request.method == 'GET':
+        if not request.args:
+            return SupplyHandler().get_all_supplies()
+        else:
+            return SupplyHandler().search_supplies(request.args)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+@app.route('/JARR-disaster-relief/supplies/count')
+def getTotalSupplyCount():
+    return SupplyHandler().get_total_supplies()
+
+@app.route('/JARR-disaster-relief/supplies/available/count')
+def getTotalAvailableSupplyCount():
+    return SupplyHandler().get_total_available_supplies()
+
+@app.route('/JARR-disaster-relief/supplies/available')
+def getAllAvailableSupplies():
+    if not request.args:
+        return SupplyHandler().get_all_available_supplies()
+    else:
+        return SupplyHandler().search_available_supplies(request.args)
+
+
+@app.route('/JARR-disaster-relief/person/<int:person_id>/supplies')
+def getSuppliesByPersonId(person_id):
+    return SupplyHandler().get_supplies_by_person_id(person_id)
+
+# __Request__
+
+@app.route('/JARR-disaster-relief/requests', methods=['GET', 'POST'])
+def getAllRequests():
+    if request.method == 'POST':
+        return RequestHandler().insert_request_json(request.json)
+    elif request.method == 'GET':
+        if not request.args:
+            return RequestHandler().get_all_requests()
+        else:
+            return RequestHandler().search_requests(request.args)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+@app.route('/JARR-disaster-relief/requests/count')
+def getTotalRequestCount():
+    return RequestHandler().get_total_requests()
+
+@app.route('/JARR-disaster-relief/requests/needed/count')
+def getTotalNeededRequestCount():
+    return RequestHandler().get_total_needed_requests()
+
+@app.route('/JARR-disaster-relief/requests/needed')
+def getAllNeededRequests():
+    if not request.args:
+        return RequestHandler().get_all_needed_requests()
+    else:
+        return RequestHandler().search_needed_requests(request.args)
+
+
+@app.route('/JARR-disaster-relief/person/<int:person_id>/requests')
+def getRequestsByPersonId(person_id):
+    return RequestHandler().get_requests_by_person_id(person_id)
 
 # __Water__
 

@@ -1,7 +1,8 @@
 from backend.config.dbconfig import pg_config
 import psycopg2
 
-class RequestsDAO:
+
+class RequestDAO:
     def __init__(self):
 
         connection_url = "dbname=%s user=%s password=%s" % (pg_config['dbname'],
@@ -11,83 +12,165 @@ class RequestsDAO:
 
     def getAllRequests(self):
         cursor = self.conn.cursor()
-        query = "select request_id, scategory, sname, sdescription, saddress, sprice, sfulfilled from requests;"
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
+                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join " \
+                "(select category_id,category, subcategory from Categories as C left join Subcategories as S on " \
+                "C.subcategory_id = S.subcategory_id);"
         cursor.execute(query)
         result = []
         for row in cursor:
             result.append(row)
         return result
 
-    def getRequestById(self, sid):
+    def getTotalRequests(self):
         cursor = self.conn.cursor()
-        query = "select request_id, scategory, sname, sdescription, saddress, sprice, sfulfilled from requests where request_id = %s;"
-        cursor.execute(query, (sid,))
+        query = "select count(*) from Requests;"
+        cursor.execute(query)
+        result = int(cursor.fetchone())
+        return result
+
+    def getTotalRequestsPerCategory(self):
+        cursor = self.conn.cursor()
+        query = "select category, count(*) from Requests natural inner join Resources natural inner join Categories " \
+                "group by category order by category;"
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def getTotalNeededRequests(self):
+        cursor = self.conn.cursor()
+        query = "select count(*) from Requests where needed > 0;"
+        cursor.execute(query)
+        result = int(cursor.fetchone())
+        return result
+
+    def getTotalNeededRequestsPerCategory(self):
+        cursor = self.conn.cursor()
+        query = "select category, count(*) from Requests natural inner join Resources natural inner join Categories " \
+                " where needed > 0 group by category order by category;"
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def getAllNeededRequests(self):
+        cursor = self.conn.cursor()
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
+                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) where needed > 0;"
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def getRequestById(self, request_id):
+        cursor = self.conn.cursor()
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
+                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) where request_id = %s;"
+        cursor.execute(query, (request_id,))
         result = cursor.fetchone()
         return result
 
-    def getPartsByColor(self, color):
+    def getRequestsByPersonId(self, person_id):
         cursor = self.conn.cursor()
-        query = "select * from parts where pcolor = %s;"
-        cursor.execute(query, (color,))
-        result = []
-        for row in cursor:
-            result.append(row)
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
+                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) where person_id = %s;"
+        cursor.execute(query, (person_id,))
+        result = cursor.fetchall()
         return result
 
-    def getPartsByMaterial(self, material):
+    def getRequestsByMaxPriceAndCategory(self, max_price, category):
         cursor = self.conn.cursor()
-        query = "select * from parts where pmaterial = %s;"
-        cursor.execute(query, (material,))
-        result = []
-        for row in cursor:
-            result.append(row)
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
+                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) where max_unit_price = %s and category = %s;"
+        cursor.execute(query, (max_price, category))
+        result = cursor.fetchall()
         return result
 
-    def getPartsByColorAndMaterial(self, color, material):
+    def getRequestsByMaxPrice(self, brand):
         cursor = self.conn.cursor()
-        query = "select * from parts where pmaterial = %s and pcolor = %s;"
-        cursor.execute(query, (material,color))
-        result = []
-        for row in cursor:
-            result.append(row)
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
+                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) where max_unit_price = %s;"
+        cursor.execute(query, (brand,))
+        result = cursor.fetchall()
         return result
 
-    def getSuppliersByPartId(self, pid):
+    def getRequestsByCategory(self, category):
         cursor = self.conn.cursor()
-        query = "select sid, sname, scity, sphone from parts natural inner join supplier natural inner join requests where pid = %s;"
-        cursor.execute(query, (pid,))
-        result = []
-        for row in cursor:
-            result.append(row)
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
+                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) where category = %s;"
+        cursor.execute(query, (category,))
+        result = cursor.fetchall()
         return result
 
-    def insert(self, pname, pcolor, pmaterial, pprice):
+    def getNeededRequestsByMaxPriceAndCategory(self, max_price, category):
         cursor = self.conn.cursor()
-        query = "insert into parts(pname, pcolor, pmaterial, pprice) values (%s, %s, %s, %s) returning pid;"
-        cursor.execute(query, (pname, pcolor, pmaterial, pprice,))
-        pid = cursor.fetchone()[0]
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, " \
+                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) where max_unit_price = %s and category = %s and needed > 0;"
+        cursor.execute(query, (max_price, category))
+        result = cursor.fetchall()
+        return result
+
+    def getNeededRequestsByMaxPrice(self, brand):
+        cursor = self.conn.cursor()
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, " \
+                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) where max_unit_price = %s and needed > 0;"
+        cursor.execute(query, (brand,))
+        result = cursor.fetchall()
+        return result
+
+    def getNeededRequestsByCategory(self, category):
+        cursor = self.conn.cursor()
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, " \
+                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) where category = %s and needed > 0;"
+        cursor.execute(query, (category,))
+        result = cursor.fetchall()
+        return result
+
+    def insert(self, resource_id, person_id, description, needed, unit_price, address_id):
+        cursor = self.conn.cursor()
+
+        query = "insert into Requests(resource_id, person_id, description, needed, max_unit_price, " \
+                "address_id) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning request_id;"
+        cursor.execute(query, (resource_id, person_id, description, needed, unit_price, address_id))
+
+        request_id = cursor.fetchone()[0]
+
         self.conn.commit()
-        return pid
+        return request_id
 
-    def delete(self, pid):
+    def delete(self, request_id):
         cursor = self.conn.cursor()
-        query = "delete from parts where pid = %s;"
-        cursor.execute(query, (pid,))
+        query = "update Requests set needed = 0 where request_id = %s;"
+        cursor.execute(query, (request_id,))
         self.conn.commit()
-        return pid
+        return request_id
 
-    def update(self, pid, pname, pcolor, pmaterial, pprice):
+    def update(self, request_id, description, needed, unit_price, address_id):
         cursor = self.conn.cursor()
-        query = "update parts set pname = %s, pcolor = %s, pmaterial = %s, pprice = %s where pid = %s;"
-        cursor.execute(query, (pname, pcolor, pmaterial, pprice, pid,))
+        query = "update Requests set description = %s, needed = %s, unit_price = %s, address_id = %s where " \
+                "request_id = %s;"
+        cursor.execute(query, (request_id, description, needed, unit_price, address_id))
         self.conn.commit()
-        return pid
-
-    def getCountByPartId(self):
-        cursor = self.conn.cursor()
-        query = "select pid, pname, sum(stock) from parts natural inner join requests group by pid, pname order by pname;"
-        cursor.execute(query)
-        result = []
-        for row in cursor:
-            result.append(row)
-        return result
+        return request_id
