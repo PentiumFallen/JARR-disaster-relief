@@ -1,137 +1,243 @@
 from flask import jsonify
+from backend.dao.request import RequestDAO
+#from backend.dao.resource import ResourceDAO
+
 
 class RequestHandler:
+
+    # Joined to resource
     def build_request_dict(self, row):
+        #ToDo: Check what Python does with null values in columns!
+        if not row[3]:
+            result = {
+                'request_id': row[0],
+                'resource_id': row[1],
+                'category': row[2],
+                'person_id': row[4],
+                'name': row[5],
+                'quantity': row[6],
+                'rdescription': row[7],
+                'needed': row[8],
+                'max_unit_price': row[9],
+                'date_offered': row[10],
+                'address_id': row[11]
+            }
+        else:
+            result = {
+                'request_id': row[0],
+                'resource_id': row[1],
+                'category': row[2],
+                'subcategory': row[3],
+                'person_id': row[4],
+                'name': row[5],
+                'quantity': row[6],
+                'rdescription': row[7],
+                'needed': row[8],
+                'max_unit_price': row[9],
+                'date_offered': row[10],
+                'address_id': row[11]
+            }
+            return result
+
+    def build_request_attributes(self, request_id, resource_id, category_id, person_id, name, quantity, description,
+                                 needed, max_unit_price, address_id):
         result = {
-            'request_id': row[0],
-            'rcategory': row[1],
-            'rdescription': row[2],
-            'raddress': row[3],
-            'rprice': row[4],
+            'request_id': request_id,
+            'resource_id': resource_id,
+            'category_id': category_id,
+            'person_id': person_id,
+            'name': name,
+            'quantity': quantity,
+            'rdescription': description,
+            'needed': needed,
+            'max_unit_price': max_unit_price,
+            'address_id': address_id
         }
         return result
 
-    def build_request_attributes(self, request_id, rcategory, rdescription, raddress, rprice,):
+    def build_request_count(self, row):
         result = {
-            'request_id': request_id,
-            'rcategory': rcategory,
-            'rdescription': rdescription,
-            'raddress': raddress,
-            'rprice': rprice
+            'category': row[0],
+            'amount': row[1]
         }
         return result
 
     def get_all_requests(self):
-        # dao = RequestDAO()
-        # request_list = dao.get_all_requests()
-        result_list = ['Get all requests works!']
-        # for row in request_list:
-        #     result = self.build_request_dict(row)
-        #     result_list.append(result)
+        dao = RequestDAO()
+        request_list = dao.getAllRequests()
+        result_list = []
+        for row in request_list:
+            result = self.build_request_dict(row)
+            result_list.append(result)
         return jsonify(Requests=result_list)
+
+    def get_all_needed_requests(self):
+        dao = RequestDAO()
+        request_list = dao.getAllNeededRequests()
+        result_list = []
+        for row in request_list:
+            result = self.build_request_dict(row)
+            result_list.append(result)
+        return jsonify(Needed_Requests=result_list)
+
+    def get_total_requests(self):
+        dao = RequestDAO()
+        amount = dao.getTotalRequests()
+        return jsonify(Total_Requests=amount)
+
+    def get_total_needed_requests(self):
+        dao = RequestDAO()
+        amount = dao.getTotalNeededRequests()
+        return jsonify(Total_Needed_Requests=amount)
+
+    def get_total_requests_per_category(self):
+        dao = RequestDAO()
+        count_list = dao.getTotalRequestsPerCategory()
+        result_list = []
+        for row in count_list:
+            result = self.build_request_count(row)
+            result_list.append(result)
+        return jsonify(Request_Count=result_list)
+
+    def get_total_needed_requests_per_category(self):
+        dao = RequestDAO()
+        count_list = dao.getTotalNeededRequestsPerCategory()
+        result_list = []
+        for row in count_list:
+            result = self.build_request_count(row)
+            result_list.append(result)
+        return jsonify(Needed_Request_Count=result_list)
 
     def get_request_by_id(self, request_id):
-        # dao = RequestsDAO()
-        # row = dao.getRequestById(pid)
-        # if not row:
-        #     return jsonify(Error = "Request Not Found"), 404
-        # else:
-        #     request = self.build_request_dict(row)
-        request = 'Got request ' + str(request_id) + '!'
-        return jsonify(Request=request)
+        dao = RequestDAO()
+        row = dao.getRequestById(request_id)
+        if not row:
+            return jsonify(Error="Post Not Found"), 404
+        else:
+            result = self.build_request_dict(row)
+        return jsonify(Request_Post=result)
 
     def get_requests_by_person_id(self, person_id):
-        requests = 'Got requests of person number ' + str(person_id)
-        return jsonify(Requests=requests)
-
-    def search_request(self, args):
-        category = args.get("category")
-        # Add more! #
-        # dao = RequestsDAO()
-        request_list = []
-        # if (len(args) == 1) and category:
-        #     request_list = dao.getRequestByCategory(category)
-        # else:
-        #     return jsonify(Error = "Malformed query string"), 400
+        dao = RequestDAO()
+        request_list = dao.getRequestsByPersonId(person_id)
         result_list = []
-        result_list.append('Search request works!')
-        # for row in request_list:
-        #     result = self.build_part_dict(row)
-        #     result_list.append(result)
-        return jsonify(Requests=result_list)
+        for row in request_list:
+            result = self.build_request_dict(row)
+            result_list.append(result)
+        return jsonify(Request_Posts=result_list)
 
-    def match_requests_to_supplies(self, args):
-        category = args.get("category")
-        rprice = args.get("rprice")
-        request_list = []
-        # if (len(args) == 1) and category:
-        #     request_list = dao.getRequestBycategory(category)
-        # elif (len(args) == 2) and category and rprice:
-        #     request_list = dao.getRequestByCategoryAndMaxPrice(category, rprice)
-        # else:
-        #     return jsonify(Error = "Malformed querry string"), 400
+    def search_requests(self, args):
+        max_price = args['max_unit_price']
+        category = args['category']
+        dao = RequestDAO()
+
+        if len(args) == 2 and max_price and category:
+            request_list = dao.getRequestsByMaxPriceAndCategory(max_price, category)
+        elif len(args) == 1 and max_price:
+            request_list = dao.getRequestsByMaxPrice(max_price)
+        elif len(args) == 1 and category:
+            request_list = dao.getRequestsByCategory(category)
+        else:
+            return jsonify(Error="Malformed query string"), 400
         result_list = []
-        result_list.append('Match requests to request works!')
-        # for row in request_list:
-        #     result = self.build_part_dict(row)
-        #     result_list.append(result)
-        return jsonify(Requests=result_list)
+        for row in request_list:
+            result = self.build_request_dict(row)
+            result_list.append(result)
+        return jsonify(Request_Posts=result_list)
+
+    def search_needed_requests(self, args):
+        max_price = args['max_unit_price']
+        category = args['category']
+        dao = RequestDAO()
+
+        if len(args) == 2 and max_price and category:
+            request_list = dao.getNeededRequestsByMaxPriceAndCategory(max_price, category)
+        elif len(args) == 1 and max_price:
+            request_list = dao.getNeededRequestsByMaxPrice(max_price)
+        elif len(args) == 1 and category:
+            request_list = dao.getNeededRequestsByCategory(category)
+        else:
+            return jsonify(Error="Malformed query string"), 400
+        result_list = []
+        for row in request_list:
+            result = self.build_request_dict(row)
+            result_list.append(result)
+        return jsonify(Request_Posts=result_list)
 
     def insert_request(self, form):
-        if len(form) != 5:
+        if len(form) != 7:
             return jsonify(Error="Malformed post request"), 400
         else:
-            rcategory = form['rcategory']
-            rdescription = form['rdescription']
-            raddress = form['raddress']
-            rprice = form['rprice']
-            if rcategory and rdescription and raddress and rprice:
-                # dao = RequestDAO()
-                # pid = dao.insert(rcategory, rdescription, raddress, rprice)
-                # result = build_request_attributes(self, request_id, rcategory, rdescription, raddress, rprice)
-                result = 'Insert works!'
+            dao = RequestDAO()
+            category_id = form['category_id']
+            person_id = form['person_id']
+            name = form['name']
+            quantity = form['quantity']
+            description = form['description']
+            unit_price = form['max_unit_price']
+            address_id = form['address_id']
+
+            if person_id and category_id and name and description and unit_price and quantity \
+                    and address_id:
+                needed = quantity
+                resource_id = ResourceDAO().insert(category_id, person_id, name, quantity)
+                request_id = dao.insert(resource_id, person_id, description, needed, unit_price,
+                                        address_id)
+                result = self.build_request_attributes(request_id, resource_id, category_id, person_id, name, quantity,
+                                                       description, needed, unit_price, address_id)
                 return jsonify(Request=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
 
     def insert_request_json(self, json):
-        rcategory = json['rcategory']
-        rdescription = json['rdescription']
-        raddress = json['raddress']
-        rprice = json['rprice']
-        if rcategory and raddress and rdescription and rprice:
-            # dao = RequestsDAO()
-            # pid = dao.insert(rcategory, rdescription, raddress, rprice)
-            # result = build_request_attributes(self, request_id, rcategory, rdescription, raddress, rprice)
-            return jsonify(Request="Insert request json works!"), 201
+        dao = RequestDAO()
+        category_id = json['category_id']
+        person_id = json['person_id']
+        name = json['name']
+        quantity = json['quantity']
+        description = json['description']
+        needed = quantity
+        unit_price = json['max_unit_price']
+        address_id = json['address_id']
+
+        if person_id and category_id and name and needed and description and unit_price and quantity \
+                and address_id:
+            # resource_id = ResourceDAO().insert(category_id=category_id, person_id=person_id, name=name, quantity=quantity)
+            resource_id = 0
+            request_id = dao.insert(resource_id, person_id, description, needed, unit_price, address_id)
+            result = self.build_request_attributes(request_id, resource_id, category_id, person_id, name, quantity,
+                                                   description, needed, unit_price, address_id)
+            return jsonify(Request=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
     def delete_request(self, request_id):
-        # dao = RequestDAO()
-        # if not dao.getRequestById(request_id):
-        #     return jsonify(Error = "Request not found."), 404
-        # else:
-        #     dao.delete(request_id)
+        dao = RequestDAO()
+        if not dao.getRequestById(request_id):
+            return jsonify(Error="Post not found."), 404
+        else:
+            dao.delete(request_id)
         return jsonify(DeleteStatus="OK"), 200
 
     def update_request(self, request_id, form):
-        # dao = RequestDAO()
-        # if not dao.getRequestById(request_id):
-        #     return jsonify(Error="Request not found."), 404
-        # else:
-        #     if len(form) != 4:
-        #         return jsonify(Error="Malformed update request"), 400
-        #     else:
-        #         rcategory = form['rcategory']
-        #         rdescription = form['rdescription']
-        #         raddress = form['raddress']
-        #         rprice = form['rprice']
-        #         if rcategory and raddress and rdescription and rprice:
-        #             dao.update(request_id, rcategory, rdescription, raddress, rprice)
-        #             result = self.build_part_attributes(request_id, rcategory, rdescription, raddress, rprice)
-        #             return jsonify(Request=result), 200
-        #         else:
-        #             return jsonify(Error="Unexpected attributes in update request"), 400
-        return jsonify(Request="Update works!")
+        dao = RequestDAO()
+        if not dao.getRequestById(request_id):
+            return jsonify(Error="Post not found."), 404
+        else:
+            if len(form) != 4:
+                return jsonify(Error="Malformed update request"), 400
+            else:
+                description = form['description']
+                unit_price = form['max_unit_price']
+                needed = form['needed']
+                address_id = form['address_id']
 
+                if int(needed) < 0:
+                    return jsonify(Error="Cannot put negative value in needed"), 400
+                if description and unit_price and needed and address_id:
+                    dao.update(request_id, description, needed, unit_price, address_id)
+                    row = dao.getRequestById(request_id)
+                    result = self.build_request_dict(row)
+                    return jsonify(Part=result), 200
+                else:
+                    return jsonify(Error="Unexpected attributes in update request"), 400
