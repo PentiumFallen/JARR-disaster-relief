@@ -88,6 +88,16 @@ class SupplyDAO:
         result = cursor.fetchall()
         return result
 
+    def getAvailableSuppliesByPersonId(self, person_id):
+        cursor = self.conn.cursor()
+        query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
+                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) as Cat where person_id = %s and available > 0;"
+        cursor.execute(query, (person_id,))
+        result = cursor.fetchall()
+        return result
+
     def getSuppliesByBrandAndCategoryAndSubcategoryAndMaxPrice(self, brand, category, subcategory, max_price):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, " \

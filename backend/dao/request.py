@@ -88,6 +88,16 @@ class RequestDAO:
         result = cursor.fetchall()
         return result
 
+    def getNeededRequestsByPersonId(self, person_id):
+        cursor = self.conn.cursor()
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
+                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) as Cat where person_id = %s and needed > 0;"
+        cursor.execute(query, (person_id,))
+        result = cursor.fetchall()
+        return result
+
     def getRequestsByMaxPriceAndCategory(self, max_price, category):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
