@@ -7,40 +7,21 @@ class SupplyHandler:
 
     # Joined to resource
     def build_supply_dict(self, row):
-        #ToDo: Check what Python does with null values in columns!
-        print(row)
-        if not row[3]:
-            result = {
-                'supply_id': row[0],
-                'resource_id': row[1],
-                'category': row[2],
-                'person_id': row[4],
-                'name': row[5],
-                'quantity': row[6],
-                'brand': row[7],
-                'sdescription': row[8],
-                'available': row[9],
-                'sunit_price': row[10],
-                'date_offered': row[11],
-                'address_id': row[12]
-            }
-        else:
-            result = {
-                'supply_id': row[0],
-                'resource_id': row[1],
-                'category': row[2],
-                'subcategory': row[3],
-                'person_id': row[4],
-                'name': row[5],
-                'quantity': row[6],
-                'brand': row[7],
-                'sdescription': row[8],
-                'available': row[9],
-                'sunit_price': row[10],
-                'date_offered': row[11],
-                'address_id': row[12]
-            }
-            return result
+        result = {
+            'supply_id': row[0],
+            'category': row[1],
+            'subcategory': row[2],
+            'person_id': row[3],
+            'name': row[4],
+            'quantity': row[5],
+            'brand': row[6],
+            'sdescription': row[7],
+            'available': row[8],
+            'sunit_price': row[9],
+            'date_offered': row[10],
+            'address_id': row[11]
+        }
+        return result
 
     def build_supply_attributes(self, supply_id, resource_id, category_id, person_id, name, quantity, brand,
                                 description, available, sunit_price, address_id):
