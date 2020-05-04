@@ -1,7 +1,5 @@
 from flask import jsonify
 from backend.dao.medicalDeviceTransaction import MedicalDeviceTransactionDAO
-import datetime
-import pytz
 
 
 class MedicalDeviceTransactionHandler:
@@ -12,19 +10,18 @@ class MedicalDeviceTransactionHandler:
             'person_id': row[2],
             'tquantity': row[3],
             'tunit_price': row[4],
-            'trans_total': row[5],
-            'date_completed': row[6]}
+            'trans_total': row[5]}
         return result
 
-    def build_md_trans_attributes(self, med_dev_trans_id, medical_dev_id, person_id, tquantity, tunit_price, trans_total, date_completed):
+
+    def build_md_trans_attributes(self, med_dev_trans_id, medical_dev_id, person_id, tquantity, tunit_price, trans_total):
         result = {
             'med_dev_trans_id': med_dev_trans_id,
             'medical_dev_id': medical_dev_id,
             'person_id': person_id,
             'tquantity': tquantity,
             'tunit_price': tunit_price,
-            'trans_total': trans_total,
-            'date_completed': date_completed}
+            'trans_total': trans_total}
         return result
 
     def getAllMedicalDeviceTransactions(self):
@@ -55,11 +52,10 @@ class MedicalDeviceTransactionHandler:
             tquantity = form['tquantity']
             tunit_price = form['tunit_price']
             trans_total = tquantity * tunit_price
-            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
             if medical_dev_id and person_id and tquantity and tunit_price:
                 dao = MedicalDeviceTransactionDAO()
-                med_dev_trans_id = dao.insert(medical_dev_id, person_id, tquantity, tunit_price, trans_total, date_completed)
-                result = self.build_md_trans_attributes(med_dev_trans_id, medical_dev_id, person_id, tquantity, tunit_price, trans_total, date_completed)
+                med_dev_trans_id = dao.insert(medical_dev_id, person_id, tquantity, tunit_price, trans_total)
+                result = self.build_md_trans_attributes(med_dev_trans_id, medical_dev_id, person_id, tquantity, tunit_price, trans_total)
                 return jsonify(MedicalDeviceTransaction=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
@@ -70,12 +66,10 @@ class MedicalDeviceTransactionHandler:
         tquantity = json['tquantity']
         tunit_price = json['tunit_price']
         trans_total = tquantity * tunit_price
-        date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
         if medical_dev_id and person_id and tquantity and tunit_price:
             dao = MedicalDeviceTransactionDAO()
-            med_dev_trans_id = dao.insert(medical_dev_id, person_id, tquantity, tunit_price, trans_total, date_completed)
-            result = self.build_md_trans_attributes(med_dev_trans_id, medical_dev_id, person_id, tquantity, tunit_price,
-                                                       trans_total, date_completed)
+            med_dev_trans_id = dao.insert(medical_dev_id, person_id, tquantity, tunit_price, trans_total)
+            result = self.build_md_trans_attributes(med_dev_trans_id, medical_dev_id, person_id, tquantity, tunit_price, trans_total)
             return jsonify(MedicalDeviceTransaction=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -104,7 +98,7 @@ class MedicalDeviceTransactionHandler:
     #             trans_total = tquantity * tunit_price
     #             if medical_dev_id and person_id and tquantity and tunit_price:
     #                 dao.update(tid, medical_dev_id, person_id, tquantity, tunit_price, trans_total)
-    #                 result = self.build_md_trans_attributes(tid, medical_dev_id, person_id, tquantity,tunit_price,trans_total,' ')
+    #                 result = self.build_md_trans_attributes(tid, medical_dev_id, person_id, tquantity,tunit_price,trans_total)
     #                 return jsonify(MedicalDeviceTransaction=result), 200
     #             else:
     #                 return jsonify(Error="Unexpected attributes in update request"), 400

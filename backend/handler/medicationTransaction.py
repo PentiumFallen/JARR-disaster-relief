@@ -1,6 +1,6 @@
 from flask import jsonify
 from backend.dao.medicationTransaction import MedicationTransactionDAO
-import datetime, pytz
+
 
 
 class MedicationTransactionHandler:
@@ -11,19 +11,19 @@ class MedicationTransactionHandler:
             'person_id': row[2],
             'tquantity': row[3],
             'tunit_price': row[4],
-            'trans_total': row[5],
-            'date_completed': row[6]}
+            'trans_total': row[5]}
         return result
 
-    def build_med_trans_attributes(self, med_trans_id, med_id, person_id, tquantity, tunit_price, trans_total, date_completed):
+
+
+    def build_med_trans_attributes(self, med_trans_id, med_id, person_id, tquantity, tunit_price, trans_total):
         result = {
             'med_trans_id': med_trans_id,
             'med_id': med_id,
             'person_id': person_id,
             'tquantity': tquantity,
             'tunit_price': tunit_price,
-            'trans_total': trans_total,
-            'date_completed': date_completed}
+            'trans_total': trans_total}
         return result
 
     def getAllMedicationTransaction(self):
@@ -54,11 +54,10 @@ class MedicationTransactionHandler:
             tquantity = form['tquantity']
             tunit_price = form['tunit_price']
             trans_total = tquantity * tunit_price
-            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
             if med_id and person_id and tquantity and tunit_price:
                 dao = MedicationTransactionDAO()
-                med_trans_id = dao.insert(med_id,person_id,tquantity,tunit_price,trans_total,date_completed)
-                result = self.build_med_trans_attributes(med_trans_id, med_id, person_id, tquantity, tunit_price, trans_total, date_completed)
+                med_trans_id = dao.insert(med_id,person_id,tquantity,tunit_price,trans_total)
+                result = self.build_med_trans_attributes(med_trans_id, med_id, person_id, tquantity, tunit_price, trans_total)
                 return jsonify(MedicationTransaction=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
@@ -69,12 +68,11 @@ class MedicationTransactionHandler:
         tquantity = json['tquantity']
         tunit_price = json['tunit_price']
         trans_total = tquantity * tunit_price
-        date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
         if med_id and person_id and tquantity and tunit_price:
             dao = MedicationTransactionDAO()
-            med_trans_id = dao.insert(med_id, person_id, tquantity, tunit_price, trans_total, date_completed)
+            med_trans_id = dao.insert(med_id, person_id, tquantity, tunit_price, trans_total)
             result = self.build_med_trans_attributes(med_trans_id, med_id, person_id, tquantity, tunit_price,
-                                                       trans_total, date_completed)
+                                                       trans_total)
             return jsonify(MedicationTransaction=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -88,7 +86,7 @@ class MedicationTransactionHandler:
             dao.delete(tid)
             return jsonify(DeleteStatus = "OK"), 200
 
-    def updatePart(self, tid, form):
+    def updateTransaction(self, tid, form):
         dao = MedicationTransactionDAO()
         if not dao.getTransactionById(tid):
             return jsonify(Error = "Transaction not found."), 404
@@ -103,7 +101,7 @@ class MedicationTransactionHandler:
                 trans_total = tquantity * tunit_price
                 if med_id and person_id and tquantity and tunit_price:
                     dao.update(tid, med_id,person_id,tquantity,tunit_price,trans_total)
-                    result = self.build_med_trans_attributes(tid, med_id,person_id,tquantity,tunit_price,trans_total,' ')
+                    result = self.build_med_trans_attributes(tid, med_id,person_id,tquantity,tunit_price,trans_total)
                     return jsonify(MedicationTransaction=result), 200
                 else:
                     return jsonify(Error="Unexpected attributes in update request"), 400

@@ -16,6 +16,7 @@ class WaterDAO:
         result = []
         for row in cursor:
             result.append(row)
+        cursor.close()
         return result
 
     def getAllWaterSupplies(self):

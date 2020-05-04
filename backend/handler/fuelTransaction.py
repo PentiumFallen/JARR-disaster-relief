@@ -1,6 +1,6 @@
 from flask import jsonify
 from backend.dao.fuelTransaction import FuelTransactionDAO
-import datetime, pytz
+
 
 
 class FuelTransactionHandler:
@@ -11,19 +11,19 @@ class FuelTransactionHandler:
             'person_id': row[2],
             'tquantity': row[3],
             'tunit_price': row[4],
-            'trans_total': row[5],
-            'date_completed': row[6]}
+            'trans_total': row[5]}
         return result
 
-    def build_fuel_trans_attributes(self, fuel_trans_id, fuel_id, person_id, tquantity, tunit_price, trans_total, date_completed):
+
+
+    def build_fuel_trans_attributes(self, fuel_trans_id, fuel_id, person_id, tquantity, tunit_price, trans_total):
         result = {
             'fuel_trans_id': fuel_trans_id,
             'fuel_id': fuel_id,
             'person_id': person_id,
             'tquantity': tquantity,
             'tunit_price': tunit_price,
-            'trans_total': trans_total,
-            'date_completed': date_completed}
+            'trans_total': trans_total}
         return result
 
     def getAllFuelTransaction(self):
@@ -54,11 +54,10 @@ class FuelTransactionHandler:
             tquantity = form['tquantity']
             tunit_price = form['tunit_price']
             trans_total = tquantity * tunit_price
-            date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
             if fuel_id and person_id and tquantity and tunit_price:
                 dao = FuelTransactionDAO()
-                fuel_trans_id = dao.insert(fuel_id,person_id,tquantity,tunit_price,trans_total,date_completed)
-                result = self.build_fuel_trans_attributes(fuel_trans_id, fuel_id, person_id, tquantity, tunit_price, trans_total, date_completed)
+                fuel_trans_id = dao.insert(fuel_id,person_id,tquantity,tunit_price,trans_total)
+                result = self.build_fuel_trans_attributes(fuel_trans_id, fuel_id, person_id, tquantity, tunit_price, trans_total)
                 return jsonify(FuelTransaction=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
@@ -69,12 +68,11 @@ class FuelTransactionHandler:
         tquantity = json['tquantity']
         tunit_price = json['tunit_price']
         trans_total = tquantity * tunit_price
-        date_completed = datetime.datetime.now(pytz.timezone('US/Eastern'))
         if fuel_id and person_id and tquantity and tunit_price:
             dao = FuelTransactionDAO()
-            fuel_trans_id = dao.insert(fuel_id, person_id, tquantity, tunit_price, trans_total, date_completed)
+            fuel_trans_id = dao.insert(fuel_id, person_id, tquantity, tunit_price, trans_total)
             result = self.build_fuel_trans_attributes(fuel_trans_id, fuel_id, person_id, tquantity, tunit_price,
-                                                       trans_total, date_completed)
+                                                       trans_total)
             return jsonify(FuelTransaction=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -88,7 +86,7 @@ class FuelTransactionHandler:
             dao.delete(tid)
             return jsonify(DeleteStatus = "OK"), 200
 
-    def updatePart(self, tid, form):
+    def updateTransaction(self, tid, form):
         dao = FuelTransactionDAO()
         if not dao.getTransactionById(tid):
             return jsonify(Error = "Transaction not found."), 404
@@ -103,7 +101,7 @@ class FuelTransactionHandler:
                 trans_total = tquantity * tunit_price
                 if fuel_id and person_id and tquantity and tunit_price:
                     dao.update(tid, fuel_id,person_id,tquantity,tunit_price,trans_total)
-                    result = self.build_fuel_trans_attributes(tid, fuel_id,person_id,tquantity,tunit_price,trans_total,' ')
+                    result = self.build_fuel_trans_attributes(tid, fuel_id,person_id,tquantity,tunit_price,trans_total)
                     return jsonify(FuelTransaction=result), 200
                 else:
                     return jsonify(Error="Unexpected attributes in update request"), 400
