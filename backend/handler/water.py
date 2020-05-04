@@ -5,18 +5,9 @@ from backend.dao.water import WaterDAO
 class WaterHandler:
 
     def build_water_dict(self, row):
-        result = {}
-        result['water_id'] = row[0]
-        result['person_id'] = row[1]
-        result['brand'] = row[2]
-        result['description'] = row[3]
-        result['quantity'] = row[4]
-        result['unit_price'] = row[5]
-        result['date_posted'] = row[6]
-        result['curr_quantity'] = row[7]
-        result['is_supply'] = row[8]
-        result['type_id'] = row[9]
-        result['address_id'] = row[10]
+        result = {'water_id': row[0], 'person_id': row[1], 'brand': row[2], 'description': row[3], 'quantity': row[4],
+                  'unit_price': row[5], 'date_posted': row[6], 'curr_quantity': row[7], 'is_supply': row[8],
+                  'type_id': row[9], 'address_id': row[10]}
         return result
 
     def build_water_attributes(self, water_id, person_id, brand, description, quantity, unit_price, date_posted,
@@ -38,40 +29,45 @@ class WaterHandler:
 
     def get_all_water_posts(self):
         dao = WaterDAO()
-        result_list = dao.getAllWater()
-        for row in result_list:
+        water_list = dao.getAllWater()
+        result_list = []
+        for row in water_list:
             result = self.build_water_dict(row)
             result_list.append(result)
         return jsonify(Water_Posts=result_list)
 
     def get_all_water_supplies(self):
         dao = WaterDAO()
-        result_list = dao.getAllWaterSupplies()
-        for row in result_list:
+        water_list = dao.getAllWaterSupplies()
+        result_list = []
+        for row in water_list:
             result = self.build_water_dict(row)
             result_list.append(result)
         return jsonify(Water_Supplies=result_list)
 
     def get_all_water_requests(self):
         dao = WaterDAO()
-        result_list = dao.getAllWaterRequests()
-        for row in result_list:
+        water_list = dao.getAllWaterRequests()
+        result_list = []
+        for row in water_list:
             result = self.build_water_dict(row)
             result_list.append(result)
         return jsonify(Water_Requests=result_list)
 
     def get_all_available_water_supplies(self):
         dao = WaterDAO()
-        result_list = dao.getAllAvailableWaterSupplies()
-        for row in result_list:
+        water_list = dao.getAllAvailableWaterSupplies()
+        result_list = []
+        for row in water_list:
             result = self.build_water_dict(row)
             result_list.append(result)
         return jsonify(Water_Supplies=result_list)
 
     def get_all_unfulfilled_water_requests(self):
         dao = WaterDAO()
-        result_list = dao.getAllUnfulfilledWaterRequests()
-        for row in result_list:
+        water_list = dao.getAllUnfulfilledWaterRequests()
+        result_list = []
+        for row in water_list:
             result = self.build_water_dict(row)
             result_list.append(result)
         return jsonify(Water_Requests=result_list)
@@ -87,24 +83,27 @@ class WaterHandler:
 
     def get_water_posts_by_person_id(self, person_id):
         dao = WaterDAO()
-        result_list = dao.getWaterByPersonId(person_id)
-        for row in result_list:
+        water_list = dao.getWaterByPersonId(person_id)
+        result_list = []
+        for row in water_list:
             result = self.build_water_dict(row)
             result_list.append(result)
         return jsonify(Water_Posts=result_list)
 
     def get_water_supplies_by_person_id(self, person_id):
         dao = WaterDAO()
-        result_list = dao.getWaterSuppliesByPersonId(person_id)
-        for row in result_list:
+        water_list = dao.getWaterSuppliesByPersonId(person_id)
+        result_list = []
+        for row in water_list:
             result = self.build_water_dict(row)
             result_list.append(result)
         return jsonify(Water_Posts=result_list)
 
     def get_water_requests_by_person_id(self, person_id):
         dao = WaterDAO()
-        result_list = dao.getWaterRequestsByPersonId(person_id)
-        for row in result_list:
+        water_list = dao.getWaterRequestsByPersonId(person_id)
+        result_list = []
+        for row in water_list:
             result = self.build_water_dict(row)
             result_list.append(result)
         return jsonify(Water_Posts=result_list)
