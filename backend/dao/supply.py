@@ -13,9 +13,9 @@ class SupplyDAO:
     def getAllSupplies(self):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join " \
                 "(select category_id,category, subcategory from Categories as C left join Subcategories as S on " \
-                "C.subcategory_id = S.subcategory_id);"
+                "C.subcategory_id = S.subcategory_id) as Cat natural inner join Addresses;"
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -59,9 +59,9 @@ class SupplyDAO:
     def getAllAvailableSupplies(self):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where available > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where available > 0;"
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -71,9 +71,9 @@ class SupplyDAO:
     def getSupplyById(self, supply_id):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where supply_id = %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where supply_id = %s;"
         cursor.execute(query, (supply_id,))
         result = cursor.fetchone()
         return result
@@ -81,9 +81,9 @@ class SupplyDAO:
     def getSuppliesByPersonId(self, person_id):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where person_id = %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where person_id = %s order by name;"
         cursor.execute(query, (person_id,))
         result = cursor.fetchall()
         return result
@@ -91,9 +91,9 @@ class SupplyDAO:
     def getAvailableSuppliesByPersonId(self, person_id):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where person_id = %s and available > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where person_id = %s and available > 0 order by name;"
         cursor.execute(query, (person_id,))
         result = cursor.fetchall()
         return result
@@ -101,9 +101,9 @@ class SupplyDAO:
     def getSuppliesByBrandAndCategoryAndSubcategoryAndMaxPrice(self, brand, category, subcategory, max_price):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, " \
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where brand = %s and category = %s and subcategory = %s sunit_price < %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where brand = %s and category = %s and subcategory = %s sunit_price < %s order by name;"
         cursor.execute(query, (brand, category, subcategory, max_price))
         result = cursor.fetchall()
         return result
@@ -111,9 +111,9 @@ class SupplyDAO:
     def getSuppliesByBrandAndCategoryAndSubcategory(self, brand, category, subcategory):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, " \
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where brand = %s and category = %s and subcategory = %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where brand = %s and category = %s and subcategory = %s order by name;"
         cursor.execute(query, (brand, category, subcategory))
         result = cursor.fetchall()
         return result
@@ -121,9 +121,9 @@ class SupplyDAO:
     def getSuppliesByBrandAndCategoryAndMaxPrice(self, brand, category, max_price):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where brand = %s and category = %s and sunit_price < %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where brand = %s and category = %s and sunit_price < %s order by name;"
         cursor.execute(query, (brand, category, max_price))
         result = cursor.fetchall()
         return result
@@ -131,9 +131,9 @@ class SupplyDAO:
     def getSuppliesByBrandAndCategory(self, brand, category):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where brand = %s and category = %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where brand = %s and category = %s;"
         cursor.execute(query, (brand, category))
         result = cursor.fetchall()
         return result
@@ -141,19 +141,29 @@ class SupplyDAO:
     def getSuppliesByBrand(self, brand):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where brand = %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where brand = %s order by name;"
         cursor.execute(query, (brand,))
+        result = cursor.fetchall()
+        return result
+
+    def getSuppliesByName(self, name):
+        cursor = self.conn.cursor()
+        query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) as Cat natural inner join Addresses where name = %s;"
+        cursor.execute(query, (name,))
         result = cursor.fetchall()
         return result
 
     def getSuppliesByCategory(self, category):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where category = %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where category = %s order by name;"
         cursor.execute(query, (category,))
         result = cursor.fetchall()
         return result
@@ -161,9 +171,9 @@ class SupplyDAO:
     def getSuppliesByMaxPrice(self, max_price):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where sunit_price < %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where sunit_price < %s order by name;"
         cursor.execute(query, (max_price,))
         result = cursor.fetchall()
         return result
@@ -171,9 +181,10 @@ class SupplyDAO:
     def getAvailableSuppliesByBrandAndCategoryAndSubcategoryAndMaxPrice(self, brand, category, subcategory, max_price):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, " \
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where brand = %s and category = %s and subcategory = %s sunit_price < %s and available > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where brand = %s and category = %s and " \
+                "subcategory = %s sunit_price < %s and available > 0 order by name;"
         cursor.execute(query, (brand, category, subcategory, max_price))
         result = cursor.fetchall()
         return result
@@ -181,9 +192,9 @@ class SupplyDAO:
     def getAvailableSuppliesByBrandAndCategoryAndSubcategory(self, brand, category, subcategory):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, " \
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where brand = %s and category = %s and subcategory = %s and available > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where brand = %s and category = %s and subcategory = %s and available > 0 order by name;"
         cursor.execute(query, (brand, category, subcategory))
         result = cursor.fetchall()
         return result
@@ -191,9 +202,9 @@ class SupplyDAO:
     def getAvailableSuppliesByBrandAndCategoryAndMaxPrice(self, brand, category, max_price):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, " \
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where brand = %s and category = %s and sunit_price < %s and available > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where brand = %s and category = %s and sunit_price < %s and available > 0 order by name;"
         cursor.execute(query, (brand, category, max_price))
         result = cursor.fetchall()
         return result
@@ -201,9 +212,9 @@ class SupplyDAO:
     def getAvailableSuppliesByBrandAndCategory(self, brand, category):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, " \
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where brand = %s and category = %s and available > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where brand = %s and category = %s and available > 0 order by name;"
         cursor.execute(query, (brand, category))
         result = cursor.fetchall()
         return result
@@ -211,19 +222,29 @@ class SupplyDAO:
     def getAvailableSuppliesByBrand(self, brand):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, " \
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where brand = %s and available > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where brand = %s and available > 0 order by name;"
         cursor.execute(query, (brand,))
+        result = cursor.fetchall()
+        return result
+
+    def getAvailableSuppliesByName(self, name):
+        cursor = self.conn.cursor()
+        query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) as Cat natural inner join Addresses where name = %s and available > 0;"
+        cursor.execute(query, (name,))
         result = cursor.fetchall()
         return result
 
     def getAvailableSuppliesByCategory(self, category):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, " \
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where category = %s and available > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where category = %s and available > 0 order by name;"
         cursor.execute(query, (category,))
         result = cursor.fetchall()
         return result
@@ -231,19 +252,19 @@ class SupplyDAO:
     def getAvailableSuppliesByMaxPrice(self, max_price):
         cursor = self.conn.cursor()
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, " \
-                "sunit_price, date_offered, address_id from Supplies natural inner join Resources natural inner join (select category_id, " \
+                "sunit_price, date_offered, address, city, district, zip_code from Supplies natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where sunit_price < %s and available > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where sunit_price < %s and available > 0 order by name;"
         cursor.execute(query, (max_price,))
         result = cursor.fetchall()
         return result
 
-    def insert(self, resource_id, person_id, description, available, unit_price, address_id):
+    def insert(self, resource_id, person_id, description, available, unit_price, address, city, district, zip_code):
         cursor = self.conn.cursor()
 
         query = "insert into Supplies(resource_id, person_id, description, available, sunit_price, " \
-                "address_id) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning supply_id;"
-        cursor.execute(query, (resource_id, person_id, description, available, unit_price, address_id))
+                "address, city, district, zip_code) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning supply_id;"
+        cursor.execute(query, (resource_id, person_id, description, available, unit_price, address, city, district, zip_code))
 
         supply_id = cursor.fetchone()[0]
 
@@ -257,10 +278,10 @@ class SupplyDAO:
         self.conn.commit()
         return supply_id
 
-    def update(self, supply_id, description, available, unit_price, address_id):
+    def update(self, supply_id, description, available, unit_price, address, city, district, zip_code):
         cursor = self.conn.cursor()
-        query = "update Supplies set description = %s, available = %s, sunit_price = %s, address_id = %s where " \
+        query = "update Supplies set description = %s, available = %s, sunit_price = %s, address, city, district, zip_code = %s where " \
                 "supply_id = %s;"
-        cursor.execute(query, (supply_id, description, available, unit_price, address_id))
+        cursor.execute(query, (supply_id, description, available, unit_price, address, city, district, zip_code))
         self.conn.commit()
         return supply_id

@@ -13,9 +13,9 @@ class RequestDAO:
     def getAllRequests(self):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
-                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join " \
                 "(select category_id,category, subcategory from Categories as C left join Subcategories as S on " \
-                "C.subcategory_id = S.subcategory_id) as Cat;"
+                "C.subcategory_id = S.subcategory_id) as Cat natural inner join Addresses;"
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -59,9 +59,9 @@ class RequestDAO:
     def getAllNeededRequests(self):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
-                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where needed > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where needed > 0;"
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -71,9 +71,9 @@ class RequestDAO:
     def getRequestById(self, request_id):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
-                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where request_id = %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where request_id = %s;"
         cursor.execute(query, (request_id,))
         result = cursor.fetchone()
         return result
@@ -81,9 +81,9 @@ class RequestDAO:
     def getRequestsByPersonId(self, person_id):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
-                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where person_id = %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where person_id = %s order by name;"
         cursor.execute(query, (person_id,))
         result = cursor.fetchall()
         return result
@@ -91,9 +91,9 @@ class RequestDAO:
     def getNeededRequestsByPersonId(self, person_id):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
-                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where person_id = %s and needed > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where person_id = %s and needed > 0 order by name;"
         cursor.execute(query, (person_id,))
         result = cursor.fetchall()
         return result
@@ -101,9 +101,9 @@ class RequestDAO:
     def getRequestsByMaxPriceAndCategory(self, max_price, category):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
-                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where max_unit_price = %s and category = %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where max_unit_price = %s and category = %s order by name;"
         cursor.execute(query, (max_price, category))
         result = cursor.fetchall()
         return result
@@ -111,9 +111,9 @@ class RequestDAO:
     def getRequestsByMaxPrice(self, brand):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
-                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where max_unit_price = %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where max_unit_price = %s order by name;"
         cursor.execute(query, (brand,))
         result = cursor.fetchall()
         return result
@@ -121,19 +121,29 @@ class RequestDAO:
     def getRequestsByCategory(self, category):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
-                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where category = %s;"
+                "S.subcategory_id) as Cat natural inner join Addresses where category = %s order by name;"
         cursor.execute(query, (category,))
+        result = cursor.fetchall()
+        return result
+
+    def getRequestsByName(self, name):
+        cursor = self.conn.cursor()
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) as Cat natural inner join Addresses where name = %s;"
+        cursor.execute(query, (name,))
         result = cursor.fetchall()
         return result
 
     def getNeededRequestsByMaxPriceAndCategory(self, max_price, category):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, " \
-                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where max_unit_price = %s and category = %s and needed > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where max_unit_price = %s and category = %s and needed > 0 order by name;"
         cursor.execute(query, (max_price, category))
         result = cursor.fetchall()
         return result
@@ -141,9 +151,9 @@ class RequestDAO:
     def getNeededRequestsByMaxPrice(self, brand):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, " \
-                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where max_unit_price = %s and needed > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where max_unit_price = %s and needed > 0 order by name;"
         cursor.execute(query, (brand,))
         result = cursor.fetchall()
         return result
@@ -151,19 +161,29 @@ class RequestDAO:
     def getNeededRequestsByCategory(self, category):
         cursor = self.conn.cursor()
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, " \
-                "max_unit_price, date_requested, address_id from Requests natural inner join Resources natural inner join (select category_id, " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
                 "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat where category = %s and needed > 0;"
+                "S.subcategory_id) as Cat natural inner join Addresses where category = %s and needed > 0 order by name;"
         cursor.execute(query, (category,))
         result = cursor.fetchall()
         return result
 
-    def insert(self, resource_id, person_id, description, needed, unit_price, address_id):
+    def getNeededRequestsByName(self, name):
+        cursor = self.conn.cursor()
+        query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, " \
+                "max_unit_price, date_requested, address, city, district, zip_code from Requests natural inner join Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) as Cat natural inner join Addresses where name = %s and needed > 0;"
+        cursor.execute(query, (name,))
+        result = cursor.fetchall()
+        return result
+
+    def insert(self, resource_id, person_id, description, needed, unit_price, address, city, district, zip_code):
         cursor = self.conn.cursor()
 
         query = "insert into Requests(resource_id, person_id, description, needed, max_unit_price, " \
-                "address_id) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning request_id;"
-        cursor.execute(query, (resource_id, person_id, description, needed, unit_price, address_id))
+                "address, city, district, zip_code) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning request_id;"
+        cursor.execute(query, (resource_id, person_id, description, needed, unit_price, address, city, district, zip_code))
 
         request_id = cursor.fetchone()[0]
 
@@ -177,10 +197,10 @@ class RequestDAO:
         self.conn.commit()
         return request_id
 
-    def update(self, request_id, description, needed, unit_price, address_id):
+    def update(self, request_id, description, needed, unit_price, address, city, district, zip_code):
         cursor = self.conn.cursor()
-        query = "update Requests set description = %s, needed = %s, unit_price = %s, address_id = %s where " \
+        query = "update Requests set description = %s, needed = %s, unit_price = %s, address, city, district, zip_code = %s where " \
                 "request_id = %s;"
-        cursor.execute(query, (request_id, description, needed, unit_price, address_id))
+        cursor.execute(query, (request_id, description, needed, unit_price, address, city, district, zip_code))
         self.conn.commit()
         return request_id

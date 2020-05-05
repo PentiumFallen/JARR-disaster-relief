@@ -19,7 +19,10 @@ class SupplyHandler:
             'available': row[8],
             'sunit_price': row[9],
             'date_offered': row[10],
-            'address_id': row[11]
+            'address': row[11],
+            'city': row[12],
+            'district': row[13],
+            'zip_code': row[14]
         }
         return result
 
@@ -121,10 +124,11 @@ class SupplyHandler:
         return jsonify(Supply_Posts=result_list)
 
     def search_supplies(self, args):
-        brand = args['brand']
-        max_price = args['max_price']
-        category = args['category']
-        subcategory = args['subcategory']
+        brand = args.get('brand')
+        name = args.get('name')
+        max_price = args.get('max_price')
+        category = args.get('category')
+        subcategory = args.get('subcategory')
         dao = SupplyDAO()
 
         if len(args) == 4 and brand and max_price and category and subcategory:
@@ -141,6 +145,8 @@ class SupplyHandler:
             supply_list = dao.getSuppliesByMaxPrice(max_price)
         elif len(args) == 1 and category:
             supply_list = dao.getSuppliesByCategory(category)
+        elif len(args) == 1 and name:
+            supply_list = dao.getSuppliesByName(name)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -150,14 +156,15 @@ class SupplyHandler:
         return jsonify(Supply_Posts=result_list)
 
     def search_available_supplies(self, args):
-        brand = args['brand']
-        max_price = args['unit_price']
-        category = args['category']
-        subcategory = args['subcategory']
+        brand = args.get('brand')
+        max_price = args.get('unit_price')
+        category = args.get('category')
+        name = args.get('name')
+        subcategory = args.get('subcategory')
         dao = SupplyDAO()
 
         if len(args) == 4 and brand and max_price and category and subcategory:
-            supply_list = dao.getAvailableSuppliesByBrandAndCategoryAndSubcategoryAndMaxPrice(brand, category,subcategory, max_price)
+            supply_list = dao.getAvailableSuppliesByBrandAndCategoryAndSubcategoryAndMaxPrice(brand, category, subcategory, max_price)
         elif len(args) == 3 and brand and max_price and category:
             supply_list = dao.getAvailableSuppliesByBrandAndCategoryAndMaxPrice(brand, category, max_price)
         elif len(args) == 3 and brand and subcategory and category:
@@ -170,6 +177,8 @@ class SupplyHandler:
             supply_list = dao.getAvailableSuppliesByMaxPrice(max_price)
         elif len(args) == 1 and category:
             supply_list = dao.getAvailableSuppliesByCategory(category)
+        elif len(args) == 1 and name:
+            supply_list = dao.getAvailableSuppliesByName(name)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
