@@ -18,7 +18,10 @@ class RequestHandler:
             'needed': row[7],
             'max_unit_price': row[8],
             'date_offered': row[9],
-            'address_id': row[10]
+            'address': row[10],
+            'city': row[11],
+            'district': row[12],
+            'zip_code': row[13]
         }
         return result
 
@@ -119,8 +122,9 @@ class RequestHandler:
         return jsonify(Request_Posts=result_list)
 
     def search_requests(self, args):
-        max_price = args['max_unit_price']
-        category = args['category']
+        max_price = args.get('max_unit_price')
+        category = args.get('category')
+        name = args.get('name')
         dao = RequestDAO()
 
         if len(args) == 2 and max_price and category:
@@ -129,6 +133,8 @@ class RequestHandler:
             request_list = dao.getRequestsByMaxPrice(max_price)
         elif len(args) == 1 and category:
             request_list = dao.getRequestsByCategory(category)
+        elif len(args) == 1 and name:
+            request_list = dao.getRequestsByName(name)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
@@ -138,8 +144,9 @@ class RequestHandler:
         return jsonify(Request_Posts=result_list)
 
     def search_needed_requests(self, args):
-        max_price = args['max_unit_price']
-        category = args['category']
+        max_price = args.get('max_unit_price')
+        category = args.get('category')
+        name = args.get('name')
         dao = RequestDAO()
 
         if len(args) == 2 and max_price and category:
@@ -148,6 +155,8 @@ class RequestHandler:
             request_list = dao.getNeededRequestsByMaxPrice(max_price)
         elif len(args) == 1 and category:
             request_list = dao.getNeededRequestsByCategory(category)
+        elif len(args) == 1 and name:
+            request_list = dao.getNeededRequestsByName(name)
         else:
             return jsonify(Error="Malformed query string"), 400
         result_list = []
