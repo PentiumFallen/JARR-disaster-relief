@@ -1,7 +1,7 @@
 from flask import jsonify
-from backend.dao.authentication import AuthenticationDAO
+from backend.dao.account import AccountDAO
 
-class AuthenticationHandler:
+class AccountHandler:
     def build_account_dict(self, row):
         result = {
             'account_id': row[0],
@@ -31,23 +31,22 @@ class AuthenticationHandler:
         }
         return result
 
-    def getAccountData(self, email, password):
-        dao = AuthenticationDAO()
-        result = dao.getAccountData
-        return jsonify(Account=result)
+    def get_account_data(self, email, password):
+        dao = AccountDAO()
+        result = dao.getAccountData()
         if not result:
             return jsonify(Error='Account not found.'), 404
         else:
-            res = self.build_account_(result)
+            res = self.build_account_dict(result)
             return jsonify(Account=res), 200
 
-    def getAccountType(self, account_id):
-        dao = AuthenticationDAO()
-        result = dao.getAccountType
+    def get_account_type(self, account_id):
+        dao = AccountDAO()
+        result = dao.getAccountType()
         return jsonify(is_admin=result), 200
 
     def delete_account(self, account_id):
-        dao = AuthenticationDAO()
+        dao = AccountDAO()
         if not dao.getAllAuthenticationByEmail:
             return jsonify(Error = "Account not found."), 404
         else:
@@ -59,7 +58,7 @@ class AuthenticationHandler:
         password = form.get('password')
         
         if password and email:
-            dao = AuthenticationDAO()
+            dao = AccountDAO()
             password = self.hash_password(password)
             res = dao.accountLogin(email,password)
             if len(res)==0:
@@ -77,7 +76,7 @@ class AuthenticationHandler:
         email = form.get('email')
         password = form.get('password')        
         if password and email and (len(form)==2):
-            dao = AuthenticationDAO()
+            dao = AccountDAO()
             password = self.accountChangePassword(password)
             res = dao.accountChangePassword(email,password) 
             return jsonify(Account = res)        
@@ -98,7 +97,7 @@ class AuthenticationHandler:
             routing_number = form['routing_number']
 
             if email and password and registered_date and is_admin and person_id and balance and bank_account and routing_number:
-                dao = AuthenticationDAO()
+                dao = AccountDAO()
                 pid = dao.insertAccount(email, password, registered_date, is_admin, person_id, balance, bank_account, routing_number)
                 result = build_account_attributes(pid, email, password, registered_date, is_admin, person_id, balance, bank_account, routing_number)
                 result = 'Account created!'
@@ -117,7 +116,7 @@ class AuthenticationHandler:
         routing_number = json['routing_number']
 
         if email and password and registered_date and is_admin and person_id and balance and bank_account and routing_number:
-            dao = AuthenticationDAO()
+            dao = AccountDAO()
             pid = dao.insertAccount(email, password, registered_date, is_admin, person_id, balance, bank_account, routing_number)
             result = self.build_account_attributes(pid, email, password, registered_date, is_admin, person_id, balance, bank_account, routing_number)
             return jsonify(Account=result), 201

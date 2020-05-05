@@ -3,6 +3,7 @@ from backend.handler.supply import SupplyHandler
 from backend.handler.person import PersonHandler
 from backend.handler.request import RequestHandler
 from backend.handler.resource import ResourceHandler
+from backend.handler.account import AccountHandler
 from flask_cors import CORS
 
 # Activate
@@ -126,14 +127,30 @@ def getNeededRequestsByPersonId(person_id):
 #Resources
 @app.route('/JARR-disaster-relief/resources/<int:resource_id>')
 def getAllResources():
-    "Get the Resources in a given category subcategory"    
-    handler = ResourceHandler()
-    return handler.get_all_resources()
+    return ResourceHandler().get_all_resources()
 
 @app.route('/JARR-disaster-relief/resources/')
-def getNeededResource():
-    "Get Resource without quantity"
-    return ResourceHandler().get_all_needed_resources()
+def getAllAvailableResource():
+    return ResourceHandler().get_available_resource()
+
+
+@app.route('/JARR-disaster-relief/resource/<int:person_id>')
+def getResourceByPersonId(person_id):
+    return ResourceHandler.get_resource_by_id(person_id)
+
+@app.route('/JARR-disaster-relief/resource/count')
+def getTotalResourceCount():
+    return ResourceHandler().get_total_resource()
+
+#Account
+@app.route('/JARR-disaster-relief/account/<str:email>/<str:password>')
+def getAccountData():
+    return AccountHandler().get_account_data()
+
+@app.route('/JARR-disaster-relief/account/<int:account_id')
+def getAccountType():
+    return AccountHandler().get_account_type()
+
 
 if __name__ == '__main__':
     app.run()
