@@ -18,6 +18,15 @@ class AccountDAO:
             result.append(row)
         return result
 
+    def getAdminAccount(self):
+        cursor = self.conn.cursor()
+        query = "select * from Accounts where is_admin = TRUE;"
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
     def getAllAccountByPersonId(self):
         cursor = self.conn.cursor()
         query = "select * from Accounts where personal_id = %s;"
@@ -27,7 +36,7 @@ class AccountDAO:
             result.append(row)
         return result
 
-    def getAllAccountByEmail(self):
+    def getAccountByEmail(self):
         cursor = self.conn.cursor()
         query = "select * from Accounts where email = %s;"
         cursor.execute(query)

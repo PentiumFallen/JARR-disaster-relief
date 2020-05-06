@@ -13,7 +13,7 @@ class ResourceDAO:
     def getAllResource(self):
         cursor = self.conn.cursor()
         query = "select resource_id, person_id, name, category, subcategory, quantity, brand "\
-                "from Resources natural inner join Categories natural inner join Subcategories;"
+                "from Resources natural inner join Categories left join Subcategories;"
         cursor.execute(query)
         result = []
         for row in cursor:

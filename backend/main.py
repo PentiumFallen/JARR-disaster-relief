@@ -151,6 +151,9 @@ def getAccountData():
 def getAccountType():
     return AccountHandler().get_account_type()
 
+@app.route('/JARR-disaster-relief/account/is_admin')
+def getAdminAccount():
+    return AccountHandler().get_admin_account()
 
 if __name__ == '__main__':
     app.run()

@@ -40,6 +40,16 @@ class AccountHandler:
             res = self.build_account_dict(result)
             return jsonify(Account=res), 200
 
+    
+    def get_admin_account(self, is_admin):
+        dao = AccountDAO()
+        result = dao.getAdminAccount()
+        if not result:
+            return jsonify(Error='Admins accounts not found.'), 404
+        else:
+            res = self.build_account_dict(result)
+            return jsonify(Account=res), 200
+
     def get_account_type(self, account_id):
         dao = AccountDAO()
         result = dao.getAccountType()
