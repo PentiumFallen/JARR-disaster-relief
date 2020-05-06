@@ -12,51 +12,39 @@ class ResourceDAO:
 
     def getAllResource(self):
         cursor = self.conn.cursor()
-        query = "select resource_id, person_id, name, quantity, brand "\
-                "from Resources natural inner join " \
-                "(select category_id,category, subcategory from Categories as C left join Subcategories as S on " \
-                "C.subcategory_id = S.subcategory_id);"
+        query = "select resource_id, person_id, name, category, subcategory, quantity, brand "\
+                "from Resources natural inner join Categories left join Subcategories;"
         cursor.execute(query)
         result = []
         for row in cursor:
             result.append(row)
         return result
 
-    def getResourceById(self, resource_id):
+    def getTotalResource(self):
         cursor = self.conn.cursor()
-        query = "select resource_id, person_id, name, quantity, brand "\
-                "from Resources natural inner join " \
-                "(select category_id,category, subcategory from Categories as C left join Subcategories as S on " \
-                "C.subcategory_id = S.subcategory_id) where resource_id = %s;"
-        cursor.execute(query, (resource_id,))
-        result = cursor.fetchone()
+        query = "select count(*) from Resources;"
+        cursor.execute(query)
+        result = int(cursor.fetchone())
         return result
 
-    def getResourceByName(self, name):
+    def getTotalResourcePerCategory(self):
         cursor = self.conn.cursor()
-        query = "select resource_id, person_id, name, quantity, brand "\
-                "from Resources natural inner join " \
-                "(select category_id,category, subcategory from Categories as C left join Subcategories as S on " \
-                "C.subcategory_id = S.subcategory_id) where name = %s;"
-        cursor.execute(query, (name,))
-        result = cursor.fetchone()
+        query = "select category, subcategory, sum(quantity) as total_resources " \
+                "from Resources natural inner join Categories left join Subcategories " \
+                "group by category, subcategory " \
+                "order by category, subcategory;"
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
         return result
 
-    def getResourceByBrand(self, brand):
+    def getAllAvailableResource(self):
         cursor = self.conn.cursor()
-        query = "select resource_id, person_id, name, quantity, brand "\
-                "from Resources natural inner join " \
-                "(select category_id,category, subcategory from Categories as C left join Subcategories as S on " \
-                "C.subcategory_id = S.subcategory_id) where brand = %s;"
-        cursor.execute(query, (brand,))
-        result = cursor.fetchone()
-        return result
-
-    def getResourceByNamePerCategory(self, name):
-        cursor = self.conn.cursor()
-        query = "select category from Resources natural inner join Categories " \
-                " where name = %s group by category order by category;"
-        cursor.execute(query, (name,))
+        query = "select category, subcategory, sum(quantity) as total_resources " \
+                "from Resources natural inner join Categories left join Subcategories " \
+                "where quantity > 0;"
+        cursor.execute(query)
         result = []
         for row in cursor:
             result.append(row)
@@ -64,41 +52,9 @@ class ResourceDAO:
 
     def getResourceByPersonId(self, person_id):
         cursor = self.conn.cursor()
-        query = "select select resource_id, person_id, name, quantity, brand "\
-                "from Resources natural inner join (select category_id, " \
-                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) where person_id = %s;"
+        query = "select resource_id, person_id, category, subcategory, quantity, name, brand " \
+                "from Resources natural inner join Categories left join Subcategories " \
+                "where person_id = %s;"
         cursor.execute(query, (person_id,))
-        result = cursor.fetchall()
-        return result
-
-
-    def getResourceByCategory(self, category):
-        cursor = self.conn.cursor()
-        query = "select select resource_id, person_id, name, quantity, brand "\
-                "from Resources natural inner join (select category_id, " \
-                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) where category = %s;"
-        cursor.execute(query, (category,))
-        result = cursor.fetchall()
-        return result
-
-    def getResourceByNameAndCategory(self, name, category):
-        cursor = self.conn.cursor()
-        query = "select select resource_id, person_id, name, quantity, brand "\
-                "from Resources natural inner join (select category_id, " \
-                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) where name = %s and category = %s;"
-        cursor.execute(query, (name, category))
-        result = cursor.fetchall()
-        return result
-
-    def getAllNeededResource(self, quantity):
-        cursor = self.conn.cursor()
-        query = "select select resource_id, person_id, name, quantity, brand "\
-                "from Resources natural inner join (select category_id, " \
-                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
-                "S.subcategory_id) where quantity = 0;"
-        cursor.execute(query, (quantity,))
         result = cursor.fetchall()
         return result

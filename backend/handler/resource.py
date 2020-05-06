@@ -45,7 +45,7 @@ class ResourceHandler:
         }
         return result
 
-    def get_all_resources(self):
+    def get_all_resource(self):
         dao = ResourceDAO()
         resource_list = dao.getAllResource()
         result_list = []
@@ -54,18 +54,18 @@ class ResourceHandler:
             result_list.append(result)
         return jsonify(Resources=result_list)
 
-    def get_all_needed_resources(self):
+    def get_available_resource(self):
         dao = ResourceDAO()
-        resource_list = dao.getAllNeededResource()
+        resource_list = dao.getAllAvailableResource()
         result_list = []
         for row in resource_list:
             result = self.build_resource_dict(row)
             result_list.append(result)
         return jsonify(Needed_Resources=result_list)
 
-    def get_resource_by_name_per_category(self):
+    def get_resource_by_person_id(self):
         dao = ResourceDAO()
-        count_list = dao.getResourceByNameAndCategory()
+        count_list = dao.getResourceByPersonId()
         result_list = []
         for row in count_list:
             result = self.build_resource_count(row)
@@ -79,13 +79,18 @@ class ResourceHandler:
             return jsonify(Error="Post Not Found"), 404
         else:
             result = self.build_resource_dict(row)
-        return jsonify(Resource_Post=result)
+        return jsonify(Resources_Posts=result)
 
-    def get_resource_by_person_id(self, person_id):
+    def get_total_resource_per_category(self):
         dao = ResourceDAO()
-        resource_list = dao.getResourceByPersonId(person_id)
+        count_list = dao.getTotalResourcePerCategory()
         result_list = []
-        for row in resource_list:
-            result = self.build_resource_dict(row)
+        for row in count_list:
+            result = self.build_supply_count(row)
             result_list.append(result)
-        return jsonify(Resource_Posts=result_list)
+        return jsonify(Available_Resource_Count=result_list)
+
+    def get_total_resource(self):
+        dao = ResourceDAO()
+        amount = dao.getTotalResource()
+        return jsonify(Total_Resources=amount)
