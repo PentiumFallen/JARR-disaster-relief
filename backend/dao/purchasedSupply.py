@@ -13,7 +13,7 @@ class PurchasedSupplyDAO:
     def getAllPurchasedSupplies(self):
         cursor = self.conn.cursor()
         query = "select purchase_id, supply_id as post, person_id as buyer, category, subcategory, " \
-                    "pquantity as quantity, date_purchased "\
+                    "pquantity as quantity, punit_price, date_purchased "\
                 "from PurchasedSupplies natural inner join Supplies natural inner join Resources " \
                     "natural inner join Categories left join Subcategories " \
                 "order by date_purchased desc;"
@@ -59,7 +59,7 @@ class PurchasedSupplyDAO:
 
     def getPurchaseStatisticsPerCategory(self):
         cursor = self.conn.cursor()
-        query = "select category, count(*) as total_purchases, sum(pquantity) as total_supplies, " \
+        query = "select category, subcategory, count(*) as total_purchases, sum(pquantity) as total_supplies, " \
                     "max(punit_price) as highest_price, avg(punit_price) as average_price, " \
                     "min(punit_price) as lowest_price " \
                 "from PurchasedSupplies natural inner join Supplies natural inner join Resources " \
@@ -74,9 +74,9 @@ class PurchasedSupplyDAO:
 
     def getPurchasedSupplyById(self, purchase_id):
         cursor = self.conn.cursor()
-        query = "select purchase_id, name, category, subcategory, pquantity as purchased_amount, " \
+        query = "select purchase_id, name, category, subcategory, pquantity as purchased_amount, punit_price, " \
                     "A.first_name + ' ' + A.last_name as supplier, B.first_name + ' ' + B.last_name as buyer, " \
-                    "date_purchased, supplies.address_id " \
+                    "date_purchased " \
                 "from PurchasedSupplies natural inner join Supplies natural inner join Resources " \
                     "natural inner join Person as A natural inner join Person as B " \
                 "on A.person_id <> B.person_id " \
@@ -89,7 +89,7 @@ class PurchasedSupplyDAO:
 
     def getPurchasedSuppliesByBuyerId(self, person_id):
         cursor = self.conn.cursor()
-        query = "select purchase_id, supply_id, category, subcategory, pquantity, date_purchased " \
+        query = "select purchase_id, supply_id, category, subcategory, pquantity, punit_price, date_purchased " \
                 "from PurchasedSupplies natural inner join Supplies natural inner join Resources " \
                     "natural inner join Categories left join Subcategories " \
                 "where PurchasedSupplies.person_id = %s " \
@@ -100,7 +100,7 @@ class PurchasedSupplyDAO:
 
     def getPurchasedSuppliesBySupplierId(self, person_id):
         cursor = self.conn.cursor()
-        query = "select purchase_id, PurchasedSupplies.person_id, category, subcategory, pquantity, date_purchased " \
+        query = "select purchase_id, PurchasedSupplies.person_id, category, subcategory, pquantity, punit_price, date_purchased " \
                 "from PurchasedSupplies natural inner join Supplies natural inner join Resources " \
                     "natural inner join Categories left join Subcategories " \
                 "where Resources.person_id = %s " \
@@ -111,7 +111,7 @@ class PurchasedSupplyDAO:
 
     def getPurchasedSuppliesBySupplyId(self, supply_id):
         cursor = self.conn.cursor()
-        query = "select purchase_id, PurchasedSupplies.person_id, category, subcategory, pquantity, date_purchased " \
+        query = "select purchase_id, PurchasedSupplies.person_id, category, subcategory, pquantity, punit_price, date_purchased " \
                 "from PurchasedSupplies natural inner join Supplies natural inner join Resources " \
                     "natural inner join Categories left join Subcategories " \
                 "where supply_id = %s " \
@@ -128,10 +128,10 @@ class PurchasedSupplyDAO:
                 "returning purchase_id;"
         cursor.execute(query, (supply_id, person_id, pquantity, punit_price))
 
-        supply_id = cursor.fetchone()[0]
+        purchase_id = cursor.fetchone()[0]
 
         self.conn.commit()
-        return supply_id
+        return purchase_id
 
     def delete(self, purchase_id):
         cursor = self.conn.cursor()
@@ -141,11 +141,11 @@ class PurchasedSupplyDAO:
         self.conn.commit()
         return purchase_id
 
-    def update(self, supply_id, person_id, pquantity, punit_price):
+    def update(self, purchase_id, pquantity, punit_price):
         cursor = self.conn.cursor()
         query = "update PurchasedSupplies " \
-                "set supply_id = %s, person_id = %s, pquantity = %s, punit_price = %s " \
+                "set pquantity = %s, punit_price = %s " \
                 "where purchase_id = %s;"
-        cursor.execute(query, (supply_id, person_id, pquantity, punit_price))
+        cursor.execute(query, (pquantity, punit_price, purchase_id))
         self.conn.commit()
-        return supply_id
+        return purchase_id

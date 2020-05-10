@@ -201,6 +201,15 @@ class RequestDAO:
         cursor = self.conn.cursor()
         query = "update Requests set description = %s, needed = %s, unit_price = %s, address, city, district, zip_code = %s where " \
                 "request_id = %s;"
-        cursor.execute(query, (request_id, description, needed, unit_price, address, city, district, zip_code))
+        cursor.execute(query, (description, needed, unit_price, address, city, district, zip_code, request_id))
+        self.conn.commit()
+        return request_id
+
+    def updateStock(self, request_id, needed):
+        cursor = self.conn.cursor()
+        query = "update Requests " \
+                "set needed = %s " \
+                "where request_id = %s;"
+        cursor.execute(query, (needed, request_id))
         self.conn.commit()
         return request_id
