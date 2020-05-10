@@ -143,17 +143,21 @@ def getTotalResourceCount():
     return ResourceHandler().get_total_resource()
 
 #Account
-@app.route('/JARR-disaster-relief/account/<str:email>/<str:password>')
-def getAccountData():
-    return AccountHandler().get_account_data()
+@app.route('/JARR-disaster-relief/account')
+def getAccountData(account_id):
+    return AccountHandler().get_account_data(account_id)
 
-@app.route('/JARR-disaster-relief/account/<int:account_id')
-def getAccountType():
-    return AccountHandler().get_account_type()
+@app.route('/JARR-disaster-relief/person/<int:person_id>/resources')
+def getAccountByPersonId(person_id):
+    return AccountHandler().get_account_by_person_id(person_id)
+
+@app.route('/JARR-disaster-relief/account/<int:account_id>')
+def getAccountType(account_id):
+    return AccountHandler().get_account_type(account_id)
 
 @app.route('/JARR-disaster-relief/account/is_admin')
-def getAdminAccount():
-    return AccountHandler().get_admin_account()
+def getAdminAccount(is_admin):
+    return AccountHandler().get_admin_account(is_admin)
 
 if __name__ == '__main__':
     app.run()

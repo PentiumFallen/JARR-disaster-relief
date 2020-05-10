@@ -33,17 +33,25 @@ class AccountHandler:
 
     def get_account_data(self, email, password):
         dao = AccountDAO()
-        result = dao.getAccountData()
+        result = dao.getAccountData(email,password)
         if not result:
             return jsonify(Error='Account not found.'), 404
         else:
             res = self.build_account_dict(result)
             return jsonify(Account=res), 200
 
+    def get_account_by_person_id(self, person_id):
+        dao = AccountDAO()
+        result = dao.getAccountByPersonId(person_id)
+        if not result:
+            return jsonify(Error='Account not found.'), 404
+        else:
+            res = self.build_account_dict(result)
+            return jsonify(Account=res), 200
     
     def get_admin_account(self, is_admin):
         dao = AccountDAO()
-        result = dao.getAdminAccount()
+        result = dao.getAdminAccount(is_admin)
         if not result:
             return jsonify(Error='Admins accounts not found.'), 404
         else:
@@ -52,7 +60,7 @@ class AccountHandler:
 
     def get_account_type(self, account_id):
         dao = AccountDAO()
-        result = dao.getAccountType()
+        result = dao.getAccountType(account_id)
         return jsonify(is_admin=result), 200
 
     def delete_account(self, account_id):
