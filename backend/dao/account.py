@@ -9,7 +9,7 @@ class AccountDAO:
                                                             pg_config['passwd'])
         self.conn = psycopg2._connect(connection_url)
 
-    def getAllAccountById(self):
+    def getAllAccountById(self, account_id):
         cursor = self.conn.cursor()
         query = "select account_id, email, password, registered_date, is_admin, balance, person_id " \
                 "bank_account_number, routing_number from Accounts where account_id = %s;"
@@ -49,7 +49,7 @@ class AccountDAO:
     
     def getAccountData(self, email, password):
         cursor = self.conn.cursor()
-        query = "select email, password, registered_date, is_admin, balance " \
+        query = "select email, password, registered_date, is_admin, balance, " \
                 "bank_account_number, routing_number from Accounts where email = %s and password = %s;"
         cursor.execute(query, (email, password))
         result = cursor.fetchone()

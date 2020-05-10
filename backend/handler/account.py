@@ -38,7 +38,7 @@ class AccountHandler:
             return jsonify(Error='Account not found.'), 404
         else:
             res = self.build_account_dict(result)
-            return jsonify(Account=res), 200
+            return jsonify(Account_data=res), 200
 
     def get_account_by_person_id(self, person_id):
         dao = AccountDAO()
@@ -56,12 +56,12 @@ class AccountHandler:
             return jsonify(Error='Admins accounts not found.'), 404
         else:
             res = self.build_account_dict(result)
-            return jsonify(Account=res), 200
+            return jsonify(Admins_accounts=res), 200
 
     def get_account_type(self, account_id):
         dao = AccountDAO()
         result = dao.getAccountType(account_id)
-        return jsonify(is_admin=result), 200
+        return jsonify(Account_type=result), 200
 
     def delete_account(self, account_id):
         dao = AccountDAO()
