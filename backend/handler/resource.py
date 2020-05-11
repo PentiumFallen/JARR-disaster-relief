@@ -45,7 +45,7 @@ class ResourceHandler:
         }
         return result
 
-    def get_all_resource(self):
+    def get_all_resources(self):
         dao = ResourceDAO()
         resource_list = dao.getAllResource()
         result_list = []
