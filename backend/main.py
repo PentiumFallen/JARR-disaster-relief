@@ -1,4 +1,6 @@
 from flask import Flask, jsonify, request
+
+from backend.handler.purchasedSupply import PurchasedSupplyHandler
 from backend.handler.supply import SupplyHandler
 from backend.handler.person import PersonHandler
 from backend.handler.request import RequestHandler
@@ -86,6 +88,22 @@ def getSuppliesByPersonId(person_id):
 def getAvailableSuppliesByPersonId(person_id):
     return SupplyHandler().get_available_supplies_by_person_id(person_id)
 
+# __PurchasedSupply__
+
+@app.route('/JARR-disaster-relief/purchases', methods=['GET', 'POST'])
+def getPurchases():
+    if request.method == 'POST':
+        if request.json:
+            return PurchasedSupplyHandler.insert_purchasedSupply_json(request.json)
+        elif request.form:
+            return PurchasedSupplyHandler.insert_purchasedSupply(request.form)
+        else:
+            return jsonify(Error="Data not found"), 405
+    elif request.method == 'GET':
+        return PurchasedSupplyHandler().getAllPurchasedSupplies()
+
+@app.route('/JARR-disaster-relief/purchases')
+
 # __Request__
 
 @app.route('/JARR-disaster-relief/requests', methods=['GET', 'POST'])
@@ -136,7 +154,7 @@ def getAllAvailableResource():
 
 @app.route('/JARR-disaster-relief/resource/<int:person_id>')
 def getResourceByPersonId(person_id):
-    return ResourceHandler.get_resource_by_id(person_id)
+    return ResourceHandler.get_resource_by_person_id(person_id)
 
 @app.route('/JARR-disaster-relief/resource/count')
 def getTotalResourceCount():
