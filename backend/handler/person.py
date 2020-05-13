@@ -8,17 +8,15 @@ class PersonHandler:
             'person_id': row[0],
             'first_name': row[1],
             'last_name': row[2],
-            'phone_number': row[3],
-            'address_id': row[4],
+            'address_id': row[3],
         }
         return result
 
-    def build_person_attributes(self, person_id, first_name, last_name, phone_number, address_id):
+    def build_person_attributes(self, person_id, first_name, last_name, address_id):
         result = {
             'person_id': person_id,
             'first_name': first_name,
             'last_name': last_name,
-            'phone_number': phone_number,
             'address_id': address_id,
         }
         return result
@@ -33,7 +31,7 @@ class PersonHandler:
 
     def get_person_by_id(self, person_id):
         dao = PersonDAO()
-        row = dao.getPersonById()
+        row = dao.getPersonById(person_id)
         if not row:
             return jsonify(Error="Person Not Found"), 404
         else:
@@ -68,8 +66,8 @@ class PersonHandler:
             address_id = form['address_id']
             if first_name and last_name and address_id and phone_number:
                 dao = PersonDAO()
-                pid = dao.insertPerson(first_name, last_name, phone_number, address_id, )
-                result = self.build_person_attributes(self, first_name, last_name, phone_number, address_id)
+                pid = dao.insertPerson(first_name, last_name, address_id, )
+                result = self.build_person_attributes(self, first_name, last_name, address_id)
                 return jsonify(Person=result)
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
@@ -81,8 +79,8 @@ class PersonHandler:
         address_id = json['address_id']
         if first_name and last_name and address_id and phone_number:
             dao = PersonDAO()
-            pid = dao.insert(first_name, last_name, phone_number, address_id)
-            result = self.build_part_attributes(pid, first_name, last_name, phone_number, address_id)
+            pid = dao.insertPerson(first_name, last_name, address_id)
+            result = self.build_person_attributes(pid, first_name, last_name, address_id)
             return jsonify(Person=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -92,7 +90,7 @@ class PersonHandler:
         if not dao.getPersonById(person_id):
             return jsonify(Error="Person not found."), 404
         else:
-            dao.delete(person_id)
+            dao.deletePerson(person_id)
         return jsonify(DeleteStatus="OK"), 200
 
     def update_person(self, person_id, form):
@@ -109,7 +107,7 @@ class PersonHandler:
                 address_id = form['address_id']
                 if first_name and last_name and phone_number and person_id:
                     pid = dao.updatePerson(first_name, last_name, phone_number, person_id)
-                    result = self.build_person_attributes(pid, first_name, last_name, phone_number, address_id)
+                    result = self.build_person_attributes(pid, first_name, last_name, address_id)
                     return jsonify(Person=result)
                 else:
                     return jsonify(Error="Unexpected attributes in update request"), 400

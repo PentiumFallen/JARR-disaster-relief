@@ -18,7 +18,7 @@ class AccountDAO:
         result = cursor.fetchone()
         return result
 
-    def getAdminAccounts(self,):
+    def getAdminAccounts(self):
         cursor = self.conn.cursor()
         query = "select account_id, email, password, registered_date, is_admin, balance, person_id " \
                 "bank_account_number, routing_number from Accounts where is_admin = TRUE;"
@@ -61,11 +61,11 @@ class AccountDAO:
         result = cursor.fetchone()
         return result
 
-    def insertAccount(self, person_id, email, password, registered_date, is_admin, balance, bank_account_number, routing_number):
+    def insertAccount(self, person_id, email, password, is_admin, bank_account_number, routing_number):
         cursor = self.conn.cursor()
-        query = "insert into Accounts(person_id, email, password, is_admin, registered_date, is_admin, balance, bank_account_number, routing_number) " \
-                    "values (%s, %s, %s, %s, %s, %s, %s, %s, %s) returning account_id;"
-        cursor.execute(query, (person_id, email, password, registered_date, is_admin, balance, bank_account_number, routing_number,))
+        query = "insert into Accounts(person_id, email, password, is_admin, is_admin, balance, bank_account_number, routing_number) " \
+                    "values (%s, %s, %s, %s, %s, %s, %s, %s) returning account_id;"
+        cursor.execute(query, (person_id, email, password, is_admin, 0.0, bank_account_number, routing_number,))
         self.conn.commit()
         result = cursor.fetchone()[0]
         return result
