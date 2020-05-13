@@ -65,7 +65,7 @@ class AccountHandler:
 
     def delete_account(self, account_id):
         dao = AccountDAO()
-        if not dao.getAllAuthenticationByEmail:
+        if not dao.getAccountById(account_id):
             return jsonify(Error = "Account not found."), 404
         else:
             dao.deleteAccount(account_id)
@@ -140,3 +140,13 @@ class AccountHandler:
             return jsonify(Account=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post account"), 400
+
+    def update_balance(self, account_id, balance):
+        dao = AccountDAO()
+        if not dao.getAccountById(account_id):
+            return jsonify(Error="Post not found."), 404
+        else:
+                    dao.update(account_id, balance)
+                    row = dao.getAccountById(account_id)
+                    result = self.build_account_dict(row)
+                    return jsonify(Account_Balance_Update=result), 200

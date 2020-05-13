@@ -161,7 +161,7 @@ def getTotalResourceCount():
     return ResourceHandler().get_total_resource()
 
 #Account
-@app.route('/JARR-disaster-relief/account')
+@app.route('/JARR-disaster-relief/accounts')
 def getAccountData(account_id):
     return AccountHandler().get_account_data(account_id)
 
