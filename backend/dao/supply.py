@@ -1,4 +1,6 @@
 from backend.config.dbconfig import pg_config
+from backend.dao.Address import AddressDao
+from backend.dao.resource import ResourceDAO
 import psycopg2
 
 
@@ -259,15 +261,15 @@ class SupplyDAO:
         result = cursor.fetchall()
         return result
 
-    def insert(self, resource_id, person_id, description, available, unit_price, address, city, district, zip_code):
+    def insert(self, resource_id, person_id, brand, description, available, unit_price, address, city, zip_code):
         cursor = self.conn.cursor()
-
-        query = "insert into Supplies(resource_id, person_id, description, available, sunit_price, " \
-                "address, city, district, zip_code) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning supply_id;"
-        cursor.execute(query, (resource_id, person_id, description, available, unit_price, address, city, district, zip_code))
-
+        address_id = AddressDao().getAddressIdFromAddressAndCityAndZipCode(address, city, zip_code)
+        if not address_id:
+            address_id = AddressDao().insert(address, city, zip_code)
+        query = "insert into Supplies(resource_id, person_id, brand, description, available, sunit_price, " \
+                "address_id) values (%s, %s, %s, %s, %s, %s, %s) returning supply_id;"
+        cursor.execute(query, (resource_id, person_id, brand, description, available, unit_price, address_id))
         supply_id = cursor.fetchone()[0]
-
         self.conn.commit()
         return supply_id
 
@@ -278,19 +280,30 @@ class SupplyDAO:
         self.conn.commit()
         return supply_id
 
-    def update(self, supply_id, description, available, unit_price):
+    def update(self, supply_id, brand, description, available, unit_price, address, city, zip_code):
         cursor = self.conn.cursor()
-        query = "update Supplies set description = %s, available = %s, sunit_price = %s, address, city, district, zip_code = %s where " \
+        address_id = AddressDao().getAddressIdFromAddressAndCityAndZipCode(address, city, zip_code)
+        if not address_id:
+            address_id = AddressDao().insert(address, city, zip_code)
+        query = "update Supplies set brand = %s, description = %s, sunit_price = %s, address_id = %s where " \
                 "supply_id = %s;"
-        cursor.execute(query, (description, available, unit_price, supply_id))
+        cursor.execute(query, (brand, description, unit_price, address_id, supply_id))
         self.conn.commit()
+        self.updateStock(supply_id, available)
         return supply_id
 
     def updateStock(self, supply_id, available):
-        cursor = self.conn.cursor()
-        query = "update Supplies " \
-                "set available = %s " \
-                "where supply_id = %s;"
-        cursor.execute(query, (available, supply_id))
-        self.conn.commit()
-        return supply_id
+        supply = self.getSupplyById(supply_id)
+        curr_supply_stock = supply[8]
+        stock_difference = available - curr_supply_stock
+        if stock_difference != 0:
+            resource = ResourceDAO().getResourceIdAndQuantityBySupplyId(supply_id)
+            new_resource_quantity = resource[1] + stock_difference
+            ResourceDAO().updateResource(resource[0], new_resource_quantity)
+            cursor = self.conn.cursor()
+            query = "update Supplies " \
+                    "set available = %s " \
+                    "where supply_id = %s;"
+            cursor.execute(query, (available, supply_id))
+            self.conn.commit()
+            return supply_id

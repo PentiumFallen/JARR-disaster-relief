@@ -5,35 +5,23 @@ from backend.dao.resource import ResourceDAO
 class ResourceHandler:
 
     def build_resource_dict(self, row):
-        if not row[3]:
-            result = {
-                'resource_id': row[0],
-                'category': row[1],
-                'person_id': row[2],
-                'name': row[4],
-                'quantity': row[5],
-                'brand': row[6],
-            }
-        else:
-            result = {
-                'resource_id': row[0],
-                'category': row[1],
-                'subcategory': row[2],
-                'person_id': row[3],
-                'name': row[4],
-                'quantity': row[5],
-                'brand': row[6],
-            }
-            return result
+        result = {
+            'resource_id': row[0],
+            'category': row[1],
+            'subcategory': row[2],
+            'person_id': row[3],
+            'name': row[4],
+            'quantity': row[5]
+        }
+        return result
 
-    def build_resource_attributes(self, resource_id, category_id, person_id, name, quantity, brand):
+    def build_resource_attributes(self, resource_id, category_id, person_id, name, quantity):
         result = {
             'resource_id': resource_id,
             'category_id': category_id,
             'person_id': person_id,
             'name': name,
-            'quantity': quantity,
-            'brand': brand,
+            'quantity': quantity
         }
         return result
 
@@ -46,7 +34,7 @@ class ResourceHandler:
 
     def get_all_resources(self):
         dao = ResourceDAO()
-        resource_list = dao.getAllResource()
+        resource_list = dao.getAllResources()
         result_list = []
         for row in resource_list:
             result = self.build_resource_dict(row)
@@ -55,16 +43,16 @@ class ResourceHandler:
 
     def get_available_resource(self):
         dao = ResourceDAO()
-        resource_list = dao.getAllAvailableResource()
+        resource_list = dao.getAllAvailableResources()
         result_list = []
         for row in resource_list:
             result = self.build_resource_dict(row)
             result_list.append(result)
         return jsonify(Needed_Resources=result_list)
 
-    def get_resource_by_person_id(self, person_id):
+    def get_resources_by_person_id(self, person_id):
         dao = ResourceDAO()
-        count_list = dao.getResourceByPersonId(person_id)
+        count_list = dao.getResourcesByPersonId(person_id)
         result_list = []
         for row in count_list:
             result = self.build_resource_count(row)
@@ -82,16 +70,16 @@ class ResourceHandler:
 
     def get_total_resource_per_category(self):
         dao = ResourceDAO()
-        count_list = dao.getTotalResourcePerCategory()
+        count_list = dao.getTotalResourcesPerCategory()
         result_list = []
         for row in count_list:
-            result = self.build_supply_count(row)
+            result = self.build_resource_count(row)
             result_list.append(result)
         return jsonify(Available_Resource_Count=result_list)
 
     def get_total_resource(self):
         dao = ResourceDAO()
-        amount = dao.getTotalResource()
+        amount = dao.getTotalResources()
         return jsonify(Total_Resources=amount)
 
     def update_resource(self, resource_id, quantity):

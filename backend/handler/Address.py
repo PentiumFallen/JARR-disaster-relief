@@ -29,5 +29,5 @@ class AddressHandler:
         if not row:
             return jsonify(Error="Person Not Found"), 404
         else:
-            result = self.build_person_dict(row)
+            result = self.build_address_dict(row)
         return jsonify(Address=result)

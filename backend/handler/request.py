@@ -1,12 +1,12 @@
 from flask import jsonify
 from backend.dao.request import RequestDAO
-from backend.dao.Address import AddressDao
-#from backend.dao.resource import ResourceDAO
+from backend.utility import senate_district
+from backend.dao.resource import ResourceDAO
 
 
 class RequestHandler:
 
-    # Joined to resource
+    # Joined to resource and address
     def build_request_dict(self, row):
         result = {
             'request_id': row[0],
@@ -27,7 +27,7 @@ class RequestHandler:
         return result
 
     def build_request_attributes(self, request_id, resource_id, category_id, person_id, name, quantity, description,
-                                 needed, max_unit_price, address_id):
+                                 needed, max_unit_price, address, city, zip_code):
         result = {
             'request_id': request_id,
             'resource_id': resource_id,
@@ -38,7 +38,10 @@ class RequestHandler:
             'rdescription': description,
             'needed': needed,
             'max_unit_price': max_unit_price,
-            'address_id': address_id
+            'address': address,
+            'city': city,
+            'district': senate_district[city.lower()],
+            'zip_code': zip_code
         }
         return result
 
@@ -201,15 +204,16 @@ class RequestHandler:
         description = json['description']
         needed = quantity
         unit_price = json['max_unit_price']
-        address_id = json['address_id']
+        address = json['address']
+        city = json['city']
+        zip_code = json['zip_code']
 
         if person_id and category_id and name and needed and description and unit_price and quantity \
-                and address_id:
-            # resource_id = ResourceDAO().insert(category_id=category_id, person_id=person_id, name=name, quantity=quantity)
-            resource_id = 0
-            request_id = dao.insert(resource_id, person_id, description, needed, unit_price, address_id)
+                and address and city and zip_code:
+            resource_id = ResourceDAO().insert(category_id, person_id, name, quantity)
+            request_id = dao.insert(resource_id, person_id, description, needed, unit_price, address, city, zip_code)
             result = self.build_request_attributes(request_id, resource_id, category_id, person_id, name, quantity,
-                                                   description, needed, unit_price, address_id)
+                                                   description, needed, unit_price, address, city, zip_code)
             return jsonify(Request=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -235,15 +239,12 @@ class RequestHandler:
                 needed = form['needed']
                 address = form['address']
                 city = form['city']
-                district = form['district']
                 zip_code = form['zip_code']
-
-                address_id = AddressDao().getAddressByRequestId(request_id)[0]
 
                 if int(needed) < 0:
                     return jsonify(Error="Cannot put negative value in needed"), 400
                 if description and unit_price and needed:
-                    dao.update(request_id, description, needed, unit_price)
+                    dao.update(request_id, description, needed, unit_price, address, city, zip_code)
                     row = dao.getRequestById(request_id)
                     result = self.build_request_dict(row)
                     return jsonify(Part=result), 200
