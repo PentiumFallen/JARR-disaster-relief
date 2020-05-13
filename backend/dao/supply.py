@@ -278,11 +278,11 @@ class SupplyDAO:
         self.conn.commit()
         return supply_id
 
-    def update(self, supply_id, description, available, unit_price, address, city, district, zip_code):
+    def update(self, supply_id, description, available, unit_price):
         cursor = self.conn.cursor()
         query = "update Supplies set description = %s, available = %s, sunit_price = %s, address, city, district, zip_code = %s where " \
                 "supply_id = %s;"
-        cursor.execute(query, (description, available, unit_price, address, city, district, zip_code, supply_id))
+        cursor.execute(query, (description, available, unit_price, supply_id))
         self.conn.commit()
         return supply_id
 

@@ -1,5 +1,6 @@
 from flask import jsonify
 from backend.dao.request import RequestDAO
+from backend.dao.Address import AddressDao
 #from backend.dao.resource import ResourceDAO
 
 
@@ -232,12 +233,17 @@ class RequestHandler:
                 description = form['description']
                 unit_price = form['max_unit_price']
                 needed = form['needed']
-                address_id = form['address_id']
+                address = form['address']
+                city = form['city']
+                district = form['district']
+                zip_code = form['zip_code']
+
+                address_id = AddressDao().getAddressByRequestId(request_id)[0]
 
                 if int(needed) < 0:
                     return jsonify(Error="Cannot put negative value in needed"), 400
-                if description and unit_price and needed and address_id:
-                    dao.update(request_id, description, needed, unit_price, address_id)
+                if description and unit_price and needed:
+                    dao.update(request_id, description, needed, unit_price)
                     row = dao.getRequestById(request_id)
                     result = self.build_request_dict(row)
                     return jsonify(Part=result), 200

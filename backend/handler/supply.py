@@ -1,5 +1,6 @@
 from flask import jsonify
 from backend.dao.supply import SupplyDAO
+from backend.dao.Address import AddressDao
 #from backend.dao.resource import ResourceDAO
 
 
@@ -256,12 +257,17 @@ class SupplyHandler:
                 description = form['description']
                 unit_price = form['sunit_price']
                 available = form['available']
-                address_id = form['address_id']
+                address = form['address']
+                city = form['city']
+                district = form['district']
+                zip_code = form['zip_code']
+
+                address_id = AddressDao().getAddressByResourceId(supply_id)[0]
 
                 if int(available) < 0:
                     return jsonify(Error="Cannot put negative value in available"), 400
-                if description and unit_price and available and address_id:
-                    dao.update(supply_id, description, available, unit_price, address_id)
+                if description and unit_price and available:
+                    dao.update(supply_id, description, available, unit_price)
                     row = dao.getSupplyById(supply_id)
                     result = self.build_supply_dict(row)
                     return jsonify(Part=result), 200

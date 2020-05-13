@@ -197,11 +197,11 @@ class RequestDAO:
         self.conn.commit()
         return request_id
 
-    def update(self, request_id, description, needed, unit_price, address, city, district, zip_code):
+    def update(self, request_id, description, needed, unit_price):
         cursor = self.conn.cursor()
-        query = "update Requests set description = %s, needed = %s, unit_price = %s, address, city, district, zip_code = %s where " \
+        query = "update Requests set description = %s, needed = %s, unit_price = %s" \
                 "request_id = %s;"
-        cursor.execute(query, (description, needed, unit_price, address, city, district, zip_code, request_id))
+        cursor.execute(query, (description, needed, unit_price, request_id))
         self.conn.commit()
         return request_id
 
