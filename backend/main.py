@@ -154,7 +154,7 @@ def getAllAvailableResource():
 
 @app.route('/JARR-disaster-relief/resource/<int:person_id>')
 def getResourceByPersonId(person_id):
-    return ResourceHandler.get_resource_by_person_id(person_id)
+    return ResourceHandler.get_resources_by_person_id(person_id)
 
 @app.route('/JARR-disaster-relief/resource/count')
 def getTotalResourceCount():
