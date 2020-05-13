@@ -5,7 +5,6 @@ from backend.dao.resource import ResourceDAO
 class ResourceHandler:
 
     def build_resource_dict(self, row):
-        #ToDo: Check what Python does with null values in columns!
         if not row[3]:
             result = {
                 'resource_id': row[0],
@@ -63,9 +62,9 @@ class ResourceHandler:
             result_list.append(result)
         return jsonify(Needed_Resources=result_list)
 
-    def get_resource_by_person_id(self):
+    def get_resource_by_person_id(self, person_id):
         dao = ResourceDAO()
-        count_list = dao.getResourceByPersonId()
+        count_list = dao.getResourceByPersonId(person_id)
         result_list = []
         for row in count_list:
             result = self.build_resource_count(row)
@@ -94,3 +93,16 @@ class ResourceHandler:
         dao = ResourceDAO()
         amount = dao.getTotalResource()
         return jsonify(Total_Resources=amount)
+
+    def update_resource(self, resource_id, quantity):
+        dao = ResourceDAO()
+        if not dao.updateResource(resource_id):
+            return jsonify(Error="Post not found."), 404
+        else:
+                if int(quantity) <= 0:
+                    return jsonify(Error="Cannot put non-positive value in quantity"), 400
+                else:
+                    dao.updateResource(resource_id, quantity)
+                    row = dao.getResourceById(resource_id)
+                    result = self.build_resource_dict(row)
+                    return jsonify(Update_Resource=result), 200

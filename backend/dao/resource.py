@@ -20,6 +20,15 @@ class ResourceDAO:
             result.append(row)
         return result
 
+    def getResourceById(self, resource_id):
+        cursor = self.conn.cursor()
+        query = "select resource_id, person_id, name, category, subcategory, quantity, brand "\
+                "from Resources natural inner join Categories left join Subcategories "\
+                "where resource_id = %s;"
+        cursor.execute(query, (resource_id,))
+        result = cursor.fetchone()
+        return result
+
     def getTotalResource(self):
         cursor = self.conn.cursor()
         query = "select count(*) from Resources;"
@@ -58,3 +67,13 @@ class ResourceDAO:
         cursor.execute(query, (person_id,))
         result = cursor.fetchall()
         return result
+
+
+    def updateResource(self, resource_id, quantity):
+        cursor = self.conn.cursor()
+        query = "update Resources " \
+                "set quantity = %s " \
+                "where purchase_id = %s;"
+        cursor.execute(query, (quantity,resource_id))
+        self.conn.commit()
+        return resource_id

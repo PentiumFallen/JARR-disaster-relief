@@ -9,14 +9,12 @@ class AccountDAO:
                                                             pg_config['passwd'])
         self.conn = psycopg2._connect(connection_url)
 
-    def getAllAccountById(self, account_id):
+    def getAccountById(self, account_id):
         cursor = self.conn.cursor()
         query = "select account_id, email, password, registered_date, is_admin, balance, person_id " \
                 "bank_account_number, routing_number from Accounts where account_id = %s;"
-        cursor.execute(query)
-        result = []
-        for row in cursor:
-            result.append(row)
+        cursor.execute(query, (account_id,))
+        result = cursor.fetchone()
         return result
 
     def getAdminAccount(self, is_admin):
@@ -34,7 +32,7 @@ class AccountDAO:
         query = "select account_id, email, password, registered_date, is_admin, balance, person_id " \
                 "bank_account_number, routing_number from Accounts where person_id = %s;"
         cursor.execute(query, (person_id,))
-        result = cursor.fetchall()
+        result = cursor.fetchone()
         return result
 
     def getAccountByEmail(self, email):
@@ -68,7 +66,7 @@ class AccountDAO:
                     "values (%s, %s, %s, %s, %s, %s, %s, %s, %s) returning account_id;"
         cursor.execute(query, (person_id, email, password, registered_date, is_admin, balance, bank_account_number, routing_number,))
         self.conn.commit()
-        result = cursor.fetchone()
+        result = cursor.fetchone()[0]
         return result
     
     def deleteAccount(self, account_id):
@@ -80,7 +78,8 @@ class AccountDAO:
 
     def accountChangePassword(self, email, password):
         cursor = self.conn.cursor()
-        query = "update Accounts set password = %s  where email = %s;"
+        query = "update Accounts set password = %s "\
+                "where email = %s;"
         cursor.execute(query, (password, email))
         self.conn.commit()
         return'Password has been changed'
@@ -93,6 +92,15 @@ class AccountDAO:
         for row in cursor:
             result.append(row)
         return result
+
+    def updateBalance(self, account_id, balance):
+        cursor = self.conn.cursor()
+        query = "update Accounts " \
+                "set balance = %s " \
+                "where account_id = %s;"
+        cursor.execute(query, (balance, account_id))
+        self.conn.commit()
+        return account_id
 
 
     
