@@ -17,11 +17,11 @@ class AccountDAO:
         result = cursor.fetchone()
         return result
 
-    def getAdminAccount(self, is_admin):
+    def getAdminAccounts(self,):
         cursor = self.conn.cursor()
         query = "select account_id, email, password, registered_date, is_admin, balance, person_id " \
                 "bank_account_number, routing_number from Accounts where is_admin = TRUE;"
-        cursor.execute(query, (is_admin,))
+        cursor.execute(query)
         result = []
         for row in cursor:
             result.append(row)

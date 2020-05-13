@@ -10,10 +10,12 @@ class ResourceDAO:
                                                             pg_config['passwd'])
         self.conn = psycopg2._connect(connection_url)
 
-    def getAllResource(self):
+    def getAllResources(self):
         cursor = self.conn.cursor()
-        query = "select resource_id, person_id, name, category, subcategory, quantity, brand "\
-                "from Resources natural inner join Categories left join Subcategories;"
+        query = "select resource_id, person_id, name, category, subcategory, quantity "\
+                "from Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id);"
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -22,24 +24,28 @@ class ResourceDAO:
 
     def getResourceById(self, resource_id):
         cursor = self.conn.cursor()
-        query = "select resource_id, person_id, name, category, subcategory, quantity, brand "\
-                "from Resources natural inner join Categories left join Subcategories "\
+        query = "select resource_id, person_id, name, category, subcategory, quantity "\
+                "from Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) "\
                 "where resource_id = %s;"
         cursor.execute(query, (resource_id,))
         result = cursor.fetchone()
         return result
 
-    def getTotalResource(self):
+    def getTotalResources(self):
         cursor = self.conn.cursor()
         query = "select count(*) from Resources;"
         cursor.execute(query)
         result = int(cursor.fetchone())
         return result
 
-    def getTotalResourcePerCategory(self):
+    def getTotalResourcesPerCategory(self):
         cursor = self.conn.cursor()
         query = "select category, subcategory, sum(quantity) as total_resources " \
-                "from Resources natural inner join Categories left join Subcategories " \
+                "from Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) " \
                 "group by category, subcategory " \
                 "order by category, subcategory;"
         cursor.execute(query)
@@ -48,10 +54,12 @@ class ResourceDAO:
             result.append(row)
         return result
 
-    def getAllAvailableResource(self):
+    def getAllAvailableResources(self):
         cursor = self.conn.cursor()
         query = "select category, subcategory, sum(quantity) as total_resources " \
-                "from Resources natural inner join Categories left join Subcategories " \
+                "from Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) " \
                 "where quantity > 0;"
         cursor.execute(query)
         result = []
@@ -59,21 +67,49 @@ class ResourceDAO:
             result.append(row)
         return result
 
-    def getResourceByPersonId(self, person_id):
+    def getResourcesByPersonId(self, person_id):
         cursor = self.conn.cursor()
-        query = "select resource_id, person_id, category, subcategory, quantity, name, brand " \
-                "from Resources natural inner join Categories left join Subcategories " \
+        query = "select resource_id, person_id, category, subcategory, quantity, name " \
+                "from Resources natural inner join (select category_id, " \
+                "category, subcategory from Categories as C left join Subcategories as S on C.subcategory_id = " \
+                "S.subcategory_id) " \
                 "where person_id = %s;"
         cursor.execute(query, (person_id,))
         result = cursor.fetchall()
         return result
 
+    def getResourceIdAndQuantityBySupplyId(self, supply_id):
+        cursor = self.conn.cursor()
+        query = "select resource_id, quantity " \
+                "from Resources natural inner join Supplies" \
+                "where supply_id = %s;"
+        cursor.execute(query, (supply_id,))
+        result = cursor.fetchone()
+        return result
+
+    def getResourceIdAndQuantityByRequestId(self, request_id):
+        cursor = self.conn.cursor()
+        query = "select resource_id, quantity " \
+                "from Resources natural inner join Requests" \
+                "where supply_id = %s;"
+        cursor.execute(query, (request_id,))
+        result = cursor.fetchone()
+        return result
+
+    def insert(self, person_id, name, quantity, category_id):
+        cursor = self.conn.cursor()
+        query = "insert into Resources(person_id, name, quantity, category_id)" \
+                "values(%s, %s, %s, %s) returning resource_id"
+        cursor.execute(query, (person_id, name, quantity, category_id))
+        resource_id = cursor.fetchone()[0]
+        self.conn.commit()
+        return resource_id
 
     def updateResource(self, resource_id, quantity):
         cursor = self.conn.cursor()
         query = "update Resources " \
                 "set quantity = %s " \
-                "where purchase_id = %s;"
-        cursor.execute(query, (quantity,resource_id))
+                "where resource_id = %s;"
+        cursor.execute(query, (quantity, resource_id))
         self.conn.commit()
         return resource_id

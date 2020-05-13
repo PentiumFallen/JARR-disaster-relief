@@ -1,11 +1,12 @@
 from flask import jsonify
 from backend.dao.supply import SupplyDAO
-#from backend.dao.resource import ResourceDAO
+from backend.utility import senate_district
+from backend.dao.resource import ResourceDAO
 
 
 class SupplyHandler:
 
-    # Joined to resource
+    # Joined to resource and address
     def build_supply_dict(self, row):
         result = {
             'supply_id': row[0],
@@ -27,7 +28,7 @@ class SupplyHandler:
         return result
 
     def build_supply_attributes(self, supply_id, resource_id, category_id, person_id, name, quantity, brand,
-                                description, available, sunit_price, address_id):
+                                description, available, sunit_price, address, city, zip_code):
         result = {
             'supply_id': supply_id,
             'resource_id': resource_id,
@@ -39,7 +40,11 @@ class SupplyHandler:
             'sdescription': description,
             'available': available,
             'sunit_price': sunit_price,
-            'address_id': address_id
+            'address': address,
+            'city': city,
+            'district': senate_district[city.lower()],
+            'zip_code': zip_code
+
         }
         return result
 
@@ -188,7 +193,7 @@ class SupplyHandler:
         return jsonify(Supply_Posts=result_list)
 
     def insert_supply(self, form):
-        if len(form) != 8:
+        if len(form) != 10:
             return jsonify(Error="Malformed post request"), 400
         else:
             dao = SupplyDAO()
@@ -199,17 +204,18 @@ class SupplyHandler:
             brand = form['brand']
             description = form['description']
             unit_price = form['sunit_price']
-            address_id = form['address_id']
+            address = form['address']
+            city = form['city']
+            zip_code = form['zip_code']
 
             if person_id and category_id and name and brand and description and unit_price and quantity \
-                    and address_id:
+                    and address and city and zip_code:
                 available = quantity
-                #resource_id = ResourceDAO().insert(category_id, person_id, name, quantity, brand)
-                resource_id = 0
+                resource_id = ResourceDAO().insert(category_id, person_id, name, quantity)
                 supply_id = dao.insert(resource_id, person_id, description, available, unit_price,
-                                       address_id)
+                                       address, city, zip_code)
                 result = self.build_supply_attributes(supply_id, resource_id, category_id, person_id, name, quantity,
-                                                      brand, description, available, unit_price, address_id)
+                                                      brand, description, available, unit_price, address, city, zip_code)
                 return jsonify(Supply=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
@@ -224,15 +230,16 @@ class SupplyHandler:
         description = json['description']
         available = quantity
         unit_price = json['sunit_price']
-        address_id = json['address_id']
+        address = json['address']
+        city = json['city']
+        zip_code = json['zip_code']
 
         if person_id and category_id and name and available and brand and description and unit_price and quantity \
-                and address_id:
-            #resource_id = ResourceDAO().insert(category_id, person_id, name, quantity, brand)
-            resource_id = 0
-            supply_id = dao.insert(resource_id, person_id, description, available, unit_price, address_id)
+                and address and city and zip_code:
+            resource_id = ResourceDAO().insert(category_id, person_id, name, quantity)
+            supply_id = dao.insert(resource_id, person_id, description, available, unit_price, address, city, zip_code)
             result = self.build_supply_attributes(supply_id, resource_id, category_id, person_id, name, quantity, brand,
-                                                  description, available, unit_price, address_id)
+                                                  description, available, unit_price, address, city, zip_code)
             return jsonify(Supply=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
@@ -250,18 +257,21 @@ class SupplyHandler:
         if not dao.getSupplyById(supply_id):
             return jsonify(Error="Post not found."), 404
         else:
-            if len(form) != 4:
+            if len(form) != 7:
                 return jsonify(Error="Malformed update request"), 400
             else:
                 description = form['description']
+                brand = form['brand']
                 unit_price = form['sunit_price']
                 available = form['available']
-                address_id = form['address_id']
+                address = form['address']
+                city = form['city']
+                zip_code = form['zip_code']
 
                 if int(available) < 0:
                     return jsonify(Error="Cannot put negative value in available"), 400
-                if description and unit_price and available and address_id:
-                    dao.update(supply_id, description, available, unit_price, address_id)
+                if description and unit_price and available and brand and address and city and zip_code:
+                    dao.update(supply_id, brand, description, available, unit_price, address, city, zip_code)
                     row = dao.getSupplyById(supply_id)
                     result = self.build_supply_dict(row)
                     return jsonify(Part=result), 200

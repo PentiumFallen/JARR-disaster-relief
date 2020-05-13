@@ -1,4 +1,6 @@
 from backend.config.dbconfig import pg_config
+from backend.dao.Address import AddressDao
+from backend.dao.resource import ResourceDAO
 import psycopg2
 
 
@@ -197,19 +199,30 @@ class RequestDAO:
         self.conn.commit()
         return request_id
 
-    def update(self, request_id, description, needed, unit_price, address, city, district, zip_code):
+    def update(self, request_id, description, needed, unit_price, address, city, zip_code):
         cursor = self.conn.cursor()
-        query = "update Requests set description = %s, needed = %s, unit_price = %s, address, city, district, zip_code = %s where " \
-                "request_id = %s;"
-        cursor.execute(query, (description, needed, unit_price, address, city, district, zip_code, request_id))
+        address_id = AddressDao().getAddressIdFromAddressAndCityAndZipCode(address, city, zip_code)
+        if not address_id:
+            address_id = AddressDao().insert(address, city, zip_code)
+        query = "update Requests set description = %s, unit_price = %s, address_id = %s" \
+                "where request_id = %s;"
+        cursor.execute(query, (description, unit_price, address_id, request_id))
         self.conn.commit()
+        self.updateStock(request_id, needed)
         return request_id
 
     def updateStock(self, request_id, needed):
-        cursor = self.conn.cursor()
-        query = "update Requests " \
-                "set needed = %s " \
-                "where request_id = %s;"
-        cursor.execute(query, (needed, request_id))
-        self.conn.commit()
-        return request_id
+        request = self.getRequestById(request_id)
+        curr_request_need = request[7]
+        need_difference = needed - curr_request_need
+        if need_difference != 0:
+            resource = ResourceDAO().getResourceIdAndQuantityBySupplyId(request_id)
+            new_resource_quantity = resource[1] + need_difference
+            ResourceDAO().updateResource(resource[0], new_resource_quantity)
+            cursor = self.conn.cursor()
+            query = "update Requests " \
+                    "set needed = %s " \
+                    "where request_id = %s;"
+            cursor.execute(query, (needed, request_id))
+            self.conn.commit()
+            return request_id
