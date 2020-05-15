@@ -123,7 +123,7 @@ def getAvailableSuppliesByPersonId(person_id):
 
 # __PurchasedSupply__
 
-@app.route('/JARR-disaster-relief/purchases', methods=['GET', 'POST'])
+@app.route('/JARR-disaster-relief/purchase', methods=['GET', 'POST'])
 def getPurchases():
     if request.method == 'POST':
         if request.json:
@@ -135,8 +135,7 @@ def getPurchases():
     elif request.method == 'GET':
         return PurchasedSupplyHandler().getAllPurchasedSupplies()
 
-
-@app.route('/JARR-disaster-relief/purchases/stats/<int:stat>', methods=['GET'])
+@app.route('/JARR-disaster-relief/purchase/stats/<int:stat>', methods=['GET'])
 def getPurchaseStats(stat):
     if stat == 0:
         return PurchasedSupplyHandler().getTotalPurchases()
@@ -149,8 +148,7 @@ def getPurchaseStats(stat):
     else:
         return jsonify(Error="Incorrect statistic request"), 405
 
-
-@app.route('/JARR-disaster-relief/purchases/<int:id>', methods=['GET'])
+@app.route('/JARR-disaster-relief/purchase/<int:id>', methods=['GET'])
 def getPurchaseById(target_id):
     idType = request.args.get('id_type', type=str)
     if idType == 'purchase':
