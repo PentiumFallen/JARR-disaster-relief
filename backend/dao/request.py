@@ -1,6 +1,7 @@
 from backend.config.dbconfig import pg_config
 from backend.dao.address import AddressDao
 from backend.dao.resource import ResourceDAO
+from backend.utility import senate_district
 import psycopg2
 
 
@@ -181,12 +182,14 @@ class RequestDAO:
         result = cursor.fetchall()
         return result
 
-    def insert(self, resource_id, person_id, description, needed, unit_price, address, city, district, zip_code):
+    def insert(self, resource_id, person_id, description, needed, unit_price, address, city, zip_code):
         cursor = self.conn.cursor()
-
-        query = "insert into \"Requests\"(resource_id, person_id, description, needed, max_unit_price, " \
-                "address, city, district, zip_code) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning request_id;"
-        cursor.execute(query, (resource_id, person_id, description, needed, unit_price, address, city, district, zip_code))
+        address_id = AddressDao().getAddressIdFromAddressAndCityAndZipCode(address, city, zip_code)
+        if not address_id:
+            address_id = AddressDao().insert(address, city, zip_code)
+        query = "insert into \"Requests\"(resource_id, person_id, rdescription, needed, max_unit_price, " \
+                "address_id) values (%s, %s, %s, %s, %s, %s) returning request_id;"
+        cursor.execute(query, (resource_id, person_id, description, needed, unit_price, address_id))
 
         request_id = cursor.fetchone()[0]
 

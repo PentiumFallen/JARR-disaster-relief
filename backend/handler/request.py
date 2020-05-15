@@ -180,17 +180,18 @@ class RequestHandler:
             quantity = form['quantity']
             description = form['description']
             unit_price = form['max_unit_price']
-            address_id = form['address_id']
+            address = form['address']
+            city = form['city']
+            zip_code = form['zip_code']
 
             if person_id and category_id and name and description and unit_price and quantity \
-                    and address_id:
+                    and address and city and zip_code:
                 needed = quantity
-                #resource_id = ResourceDAO().insert(category_id, person_id, name, quantity)
-                resource_id = 0
+                resource_id = ResourceDAO().insert(category_id, person_id, name, quantity)
                 request_id = dao.insert(resource_id, person_id, description, needed, unit_price,
-                                        address_id)
+                                        address, city, zip_code)
                 result = self.build_request_attributes(request_id, resource_id, category_id, person_id, name, quantity,
-                                                       description, needed, unit_price, address_id)
+                                                       description, needed, unit_price, address, city, zip_code)
                 return jsonify(Request=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
@@ -210,7 +211,7 @@ class RequestHandler:
 
         if person_id and category_id and name and needed and description and unit_price and quantity \
                 and address and city and zip_code:
-            resource_id = ResourceDAO().insert(category_id, person_id, name, quantity)
+            resource_id = ResourceDAO().insert(person_id, name, quantity, category_id)
             request_id = dao.insert(resource_id, person_id, description, needed, unit_price, address, city, zip_code)
             result = self.build_request_attributes(request_id, resource_id, category_id, person_id, name, quantity,
                                                    description, needed, unit_price, address, city, zip_code)
