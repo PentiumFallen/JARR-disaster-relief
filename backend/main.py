@@ -94,15 +94,40 @@ def getAvailableSuppliesByPersonId(person_id):
 def getPurchases():
     if request.method == 'POST':
         if request.json:
-            return PurchasedSupplyHandler.insert_purchasedSupply_json(request.json)
+            return PurchasedSupplyHandler().insert_purchasedSupply_json(request.json)
         elif request.form:
-            return PurchasedSupplyHandler.insert_purchasedSupply(request.form)
+            return PurchasedSupplyHandler().insert_purchasedSupply(request.form)
         else:
             return jsonify(Error="Data not found"), 405
     elif request.method == 'GET':
         return PurchasedSupplyHandler().getAllPurchasedSupplies()
 
-@app.route('/JARR-disaster-relief/purchases')
+@app.route('/JARR-disaster-relief/purchases/stats/<int:stat>', methods=['GET'])
+def getPurchaseStats(stat):
+    if stat == 0:
+        return PurchasedSupplyHandler().getTotalPurchases()
+    elif stat == 1:
+        return PurchasedSupplyHandler().getTotalPurchasesPerCategory()
+    elif stat == 2:
+        return PurchasedSupplyHandler().getTotalSuppliesPurchasedPerCategory()
+    elif stat == 3:
+        return PurchasedSupplyHandler().getPurchaseStatisticsPerCategory()
+    else:
+        return jsonify(Error="Incorrect statistic request"), 405
+
+@app.route('/JARR-disaster-relief/purchases/<int:id>', methods=['GET'])
+def getPurchaseById(target_id):
+    idType = request.args.get('id_type', type=str)
+    if idType == 'purchase':
+        return PurchasedSupplyHandler().getPurchasedSupplyById(target_id)
+    elif idType == 'buyer':
+        return PurchasedSupplyHandler().getPurchasedSuppliesByBuyerId(target_id)
+    elif idType == 'supplier':
+        return PurchasedSupplyHandler().getPurchasedSuppliesBySupplierId(target_id)
+    elif idType == 'supply':
+        return PurchasedSupplyHandler().getPurchasedSuppliesBySupplyId(target_id)
+    else:
+        return jsonify(Error="Incorrect ID type"), 405
 
 # __Request__
 

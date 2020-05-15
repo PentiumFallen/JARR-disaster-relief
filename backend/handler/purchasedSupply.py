@@ -183,24 +183,22 @@ class PurchasedSupplyHandler:
 
             if person_id and supply_id and pquantity:
                 supply = SupplyDAO().getSupplyById(supply_id)
-                buyer = PersonDAO().getPersonById(person_id)
-                # TODO can't finish until account is done
-                buyerAccount = AccountDAO().getAllAccountById() #buyer[account]
-                supplierAccount = AccountDAO.getAllAccountById() #supply[3]
+                buyerAccount = AccountDAO().getAccountByPersonId(person_id)
+                supplierAccount = AccountDAO().getAccountByPersonId(supply[3])
                 if supply[8] < pquantity:
-                    return jsonify(Error="Invalid supply to purchase from"), 400
-                # elif Account[balance] < (pquantity*supply[9]):
-                #     return jsonify(Error="Insufficient funds"), 400
+                    return jsonify(Error="Insufficient stock"), 400
+                elif buyerAccount[5] < (pquantity*supply[9]):
+                    return jsonify(Error="Insufficient funds"), 400
                 else:
-                    new_available = supply[8] - pquantity
                     transactionTotal = pquantity*supply[9]
-                    # newBuyerBalance = buyerAccount[balance] - transactionTotal
-                    # newSupplierBalance = supplierAccount[balance] + transactionTotal
+                    new_available = supply[8] - pquantity
+                    newBuyerBalance = buyerAccount[5] - transactionTotal
+                    newSupplierBalance = supplierAccount[5] + transactionTotal
 
                     purchasedSupply_id = dao.insert(supply_id, person_id, pquantity, supply[9])
                     SupplyDAO().updateStock(supply[0], new_available)
-                    # AccountDAO().updateBalance(buyerAccount[0], newBuyerBalance)
-                    # AccountDAO().updateBalance(supplierAccount[0], newSupplierBalance)
+                    AccountDAO().updateBalance(buyerAccount[0], newBuyerBalance)
+                    AccountDAO().updateBalance(supplierAccount[0], newSupplierBalance)
 
                     result = self.build_purchased_supply_attributes(purchasedSupply_id, supply_id, person_id, pquantity, supply[9])
                     return jsonify(PurchasedSupply=result), 201
@@ -215,26 +213,25 @@ class PurchasedSupplyHandler:
 
         if person_id and supply_id and pquantity:
             supply = SupplyDAO().getSupplyById(supply_id)
-            buyer = PersonDAO().getPersonById(person_id)
-            # TODO can't finish until account is done
-            buyerAccount = AccountDAO().getAllAccountById()  # buyer[account]
-            supplierAccount = AccountDAO.getAllAccountById()  # supply[3]
+            buyerAccount = AccountDAO().getAccountByPersonId(person_id)
+            supplierAccount = AccountDAO().getAccountByPersonId(supply[3])
             if supply[8] < pquantity:
-                return jsonify(Error="Invalid supply to purchase from"), 400
-            # elif Account[balance] < (pquantity*supply[9]):
-            #     return jsonify(Error="Insufficient funds"), 400
+                return jsonify(Error="Insufficient stock"), 400
+            elif buyerAccount[5] < (pquantity * supply[9]):
+                return jsonify(Error="Insufficient funds"), 400
             else:
-                new_available = supply[8] - pquantity
                 transactionTotal = pquantity * supply[9]
-                # newBuyerBalance = buyerAccount[balance] - transactionTotal
-                # newSupplierBalance = supplierAccount[balance] + transactionTotal
+                new_available = supply[8] - pquantity
+                newBuyerBalance = buyerAccount[5] - transactionTotal
+                newSupplierBalance = supplierAccount[5] + transactionTotal
 
                 purchasedSupply_id = dao.insert(supply_id, person_id, pquantity, supply[9])
                 SupplyDAO().updateStock(supply[0], new_available)
-                # AccountDAO().updateBalance(buyerAccount[0], newBuyerBalance)
-                # AccountDAO().updateBalance(supplierAccount[0], newSupplierBalance)
+                AccountDAO().updateBalance(buyerAccount[0], newBuyerBalance)
+                AccountDAO().updateBalance(supplierAccount[0], newSupplierBalance)
 
-                result = self.build_purchased_supply_attributes(purchasedSupply_id, supply_id, person_id, pquantity, supply[9])
+                result = self.build_purchased_supply_attributes(purchasedSupply_id, supply_id, person_id, pquantity,
+                                                                supply[9])
                 return jsonify(PurchasedSupply=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
