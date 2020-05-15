@@ -12,7 +12,7 @@ class AccountDAO:
 
     def getAccountById(self, account_id):
         cursor = self.conn.cursor()
-        query = "select account_id, email, password, registered_date, is_admin, balance, person_id " \
+        query = "select account_id, email, password, registered_date, is_admin, balance, person_id, " \
                 "bank_account_number, routing_number from \"Accounts\" where account_id = %s;"
         cursor.execute(query, (account_id,))
         result = cursor.fetchone()
@@ -20,7 +20,7 @@ class AccountDAO:
 
     def getAdminAccounts(self):
         cursor = self.conn.cursor()
-        query = "select account_id, email, password, registered_date, is_admin, balance, person_id " \
+        query = "select account_id, email, password, registered_date, is_admin, balance, person_id, " \
                 "bank_account_number, routing_number from \"Accounts\" where is_admin = TRUE;"
         cursor.execute(query)
         result = []
@@ -30,7 +30,7 @@ class AccountDAO:
 
     def getAccountByPersonId(self, person_id):
         cursor = self.conn.cursor()
-        query = "select account_id, email, password, registered_date, is_admin, balance, person_id " \
+        query = "select account_id, email, password, registered_date, is_admin, balance, person_id, " \
                 "bank_account_number, routing_number from \"Accounts\" where person_id = %s;"
         cursor.execute(query, (person_id,))
         result = cursor.fetchone()
@@ -38,7 +38,7 @@ class AccountDAO:
 
     def getAccountByEmail(self, email):
         cursor = self.conn.cursor()
-        query = "select account_id, email, password, registered_date, is_admin, balance, person_id " \
+        query = "select account_id, email, password, registered_date, is_admin, balance, person_id, " \
                 "bank_account_number, routing_number from \"Accounts\" where email = %s;"
         cursor.execute(query, (email,))
         result = []
