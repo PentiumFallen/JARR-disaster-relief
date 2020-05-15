@@ -286,7 +286,7 @@ class SupplyDAO:
         address_id = AddressDao().getAddressIdFromAddressAndCityAndZipCode(address, city, zip_code)
         if not address_id:
             address_id = AddressDao().insert(address, city, zip_code)
-        query = "update \"Supplies\" set brand = %s, description = %s, sunit_price = %s, address_id = %s where " \
+        query = "update \"Supplies\" set brand = %s, sdescription = %s, sunit_price = %s, address_id = %s where " \
                 "supply_id = %s;"
         cursor.execute(query, (brand, description, unit_price, address_id, supply_id))
         self.conn.commit()
@@ -296,7 +296,7 @@ class SupplyDAO:
     def updateStock(self, supply_id, available):
         supply = self.getSupplyById(supply_id)
         curr_supply_stock = supply[8]
-        stock_difference = available - curr_supply_stock
+        stock_difference = int(available) - curr_supply_stock
         if stock_difference != 0:
             resource = ResourceDAO().getResourceIdAndQuantityBySupplyId(supply_id)
             new_resource_quantity = resource[1] + stock_difference

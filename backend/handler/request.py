@@ -232,7 +232,7 @@ class RequestHandler:
         if not dao.getRequestById(request_id):
             return jsonify(Error="Post not found."), 404
         else:
-            if len(form) != 4:
+            if len(form) != 6:
                 return jsonify(Error="Malformed update request"), 400
             else:
                 description = form['description']

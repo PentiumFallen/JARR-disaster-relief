@@ -208,7 +208,7 @@ class RequestDAO:
         address_id = AddressDao().getAddressIdFromAddressAndCityAndZipCode(address, city, zip_code)
         if not address_id:
             address_id = AddressDao().insert(address, city, zip_code)
-        query = "update \"Requests\" set description = %s, unit_price = %s, address_id = %s" \
+        query = "update \"Requests\" set rdescription = %s, max_unit_price = %s, address_id = %s" \
                 "where request_id = %s;"
         cursor.execute(query, (description, unit_price, address_id, request_id))
         self.conn.commit()
@@ -218,7 +218,7 @@ class RequestDAO:
     def updateStock(self, request_id, needed):
         request = self.getRequestById(request_id)
         curr_request_need = request[7]
-        need_difference = needed - curr_request_need
+        need_difference = int(needed) - curr_request_need
         if need_difference != 0:
             resource = ResourceDAO().getResourceIdAndQuantityBySupplyId(request_id)
             new_resource_quantity = resource[1] + need_difference
