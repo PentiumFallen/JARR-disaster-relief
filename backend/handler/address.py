@@ -1,6 +1,6 @@
 from flask import jsonify
 from backend.utility import senate_district
-from backend.dao.Address import AddressDao
+from backend.dao.address import AddressDao
 
 
 class AddressHandler:

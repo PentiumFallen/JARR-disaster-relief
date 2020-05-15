@@ -1,7 +1,7 @@
 from flask import jsonify
 from backend.dao.account import AccountDAO
 from backend.dao.person import PersonDAO
-from backend.dao.Address import AddressDao
+from backend.dao.address import AddressDao
 
 
 class Auth:

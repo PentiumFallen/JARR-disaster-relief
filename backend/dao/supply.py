@@ -1,5 +1,5 @@
 from backend.config.dbconfig import pg_config
-from backend.dao.Address import AddressDao
+from backend.dao.address import AddressDao
 from backend.dao.resource import ResourceDAO
 import psycopg2
 
