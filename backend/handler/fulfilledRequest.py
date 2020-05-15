@@ -1,10 +1,10 @@
 from flask import jsonify
 
 from backend.dao.account import AccountDAO
-from backend.dao.person import PersonDAO
 from backend.dao.fulfilledRequest import FulfilledRequestDAO
 from backend.dao.request import RequestDAO
-
+from backend.handler.account import AccountHandler
+from backend.handler.request import RequestHandler
 
 
 class FulfilledRequestHandler:
@@ -178,28 +178,31 @@ class FulfilledRequestHandler:
             dao = FulfilledRequestDAO()
             request_id = form['request_id']
             person_id = form['person_id']
-            fquantity = form['fquantity']
+            fquantity = int(form['fquantity'])
 
             if person_id and request_id and fquantity:
-                request = RequestDAO().getRequestById(request_id)
-                sellerAccount = AccountDAO().getAccountByPersonId(person_id)
-                buyerAccount = AccountDAO().getAccountByPersonId(request[3])
-                if request[8] < fquantity:
+                requestRow = RequestDAO().getRequestById(request_id)
+                request = RequestHandler().build_request_dict(requestRow)
+                sellerAccountRow = AccountDAO().getAccountByPersonId(person_id)
+                sellerAccount = AccountHandler().build_account_dict(sellerAccountRow)
+                buyerAccountRow = AccountDAO().getAccountByPersonId(request.get("person_id"))
+                buyerAccount = AccountHandler().build_account_dict(buyerAccountRow)
+                if request.get("needed") < fquantity:
                     return jsonify(Error="Resource overflow"), 400
-                elif buyerAccount[5] < (fquantity*request[9]):
+                elif buyerAccount.get("balance") < (fquantity*request.get("max_unit_price")):
                     return jsonify(Error="Insufficient funds"), 400
                 else:
-                    transactionTotal = fquantity*request[9]
-                    new_available = request[8] - fquantity
-                    newSellerBalance = sellerAccount[5] + transactionTotal
-                    newBuyerBalance = buyerAccount[5] - transactionTotal
+                    transactionTotal = fquantity*request.get("max_unit_price")
+                    new_needed = request.get("needed") - fquantity
+                    newSellerBalance = sellerAccount.get("balance") + transactionTotal
+                    newBuyerBalance = buyerAccount.get("balance") - transactionTotal
 
-                    fulfilledRequest_id = dao.insert(request_id, person_id, fquantity, request[9])
-                    RequestDAO().updateStock(request[0], new_available)
-                    AccountDAO().updateBalance(sellerAccount[0], newSellerBalance)
-                    AccountDAO().updateBalance(buyerAccount[0], newBuyerBalance)
+                    fulfilledRequest_id = dao.insert(request_id, person_id, fquantity, request.get("max_unit_price"))
+                    RequestDAO().updateStock(request.get("request_id"), new_needed)
+                    AccountDAO().updateBalance(sellerAccount.get("account_id"), newSellerBalance)
+                    AccountDAO().updateBalance(buyerAccount.get("account_id"), newBuyerBalance)
 
-                    result = self.build_fulfilled_request_attributes(fulfilledRequest_id, request_id, person_id, fquantity, request[9])
+                    result = self.build_fulfilled_request_attributes(fulfilledRequest_id, request_id, person_id, fquantity, request.get("max_unit_price"))
                     return jsonify(FulfilledRequest=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
@@ -208,29 +211,32 @@ class FulfilledRequestHandler:
         dao = FulfilledRequestDAO()
         request_id = json['request_id']
         person_id = json['person_id']
-        fquantity = json['fquantity']
+        fquantity = int(json['fquantity'])
 
         if person_id and request_id and fquantity:
-            request = RequestDAO().getRequestById(request_id)
-            sellerAccount = AccountDAO().getAccountByPersonId(person_id)
-            buyerAccount = AccountDAO().getAccountByPersonId(request[3])
-            if request[8] < fquantity:
+            requestRow = RequestDAO().getRequestById(request_id)
+            request = RequestHandler().build_request_dict(requestRow)
+            sellerAccountRow = AccountDAO().getAccountByPersonId(person_id)
+            sellerAccount = AccountHandler().build_account_dict(sellerAccountRow)
+            buyerAccountRow = AccountDAO().getAccountByPersonId(request.get("person_id"))
+            buyerAccount = AccountHandler().build_account_dict(buyerAccountRow)
+            if request.get("needed") < fquantity:
                 return jsonify(Error="Resource overflow"), 400
-            elif buyerAccount[5] < (fquantity * request[9]):
+            elif buyerAccount.get("balance") < (fquantity * request.get("max_unit_price")):
                 return jsonify(Error="Insufficient funds"), 400
             else:
-                transactionTotal = fquantity * request[9]
-                new_available = request[8] - fquantity
-                newSellerBalance = sellerAccount[5] + transactionTotal
-                newBuyerBalance = buyerAccount[5] - transactionTotal
+                transactionTotal = fquantity * request.get("max_unit_price")
+                new_needed = request.get("needed") - fquantity
+                newSellerBalance = sellerAccount.get("balance") + transactionTotal
+                newBuyerBalance = buyerAccount.get("balance") - transactionTotal
 
-                fulfilledRequest_id = dao.insert(request_id, person_id, fquantity, request[9])
-                RequestDAO().updateStock(request[0], new_available)
-                AccountDAO().updateBalance(sellerAccount[0], newSellerBalance)
-                AccountDAO().updateBalance(buyerAccount[0], newBuyerBalance)
+                fulfilledRequest_id = dao.insert(request_id, person_id, fquantity, request.get("max_unit_price"))
+                RequestDAO().updateStock(request.get("request_id"), new_needed)
+                AccountDAO().updateBalance(sellerAccount.get("account_id"), newSellerBalance)
+                AccountDAO().updateBalance(buyerAccount.get("account_id"), newBuyerBalance)
 
                 result = self.build_fulfilled_request_attributes(fulfilledRequest_id, request_id, person_id, fquantity,
-                                                                 request[9])
+                                                                 request.get("max_unit_price"))
                 return jsonify(FulfilledRequest=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
