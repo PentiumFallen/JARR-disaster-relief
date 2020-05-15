@@ -20,7 +20,7 @@ CORS(app)
 def greeting():
     return 'Hello, this is the JARR DB App!'
 
-@app.route('/JARR-disaster-relief/signup', methods=['PUT'])
+@app.route('/JARR-disaster-relief/signup', methods=['POST'])
 def signup():
     return Auth().signup(request.form)
 

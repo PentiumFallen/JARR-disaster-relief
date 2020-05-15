@@ -14,7 +14,7 @@ class Auth:
             #ToDo: Hash password
             password = form['password']
             is_admin = form['is_admin']
-            bank_account = form['bank_account']
+            bank_account_number = form['bank_account_number']
             routing_number = form['routing_number']
             # person
             first_name = form['first_name']
@@ -24,10 +24,10 @@ class Auth:
             city = form['city']
             zip_code = form['zip_code']
 
-            if email and password and is_admin and bank_account and routing_number and first_name and last_name and address and city and zip_code:
+            if email and password and is_admin and bank_account_number and routing_number and first_name and last_name and address and city and zip_code:
                 address_id = AddressDao().insert(address, city, zip_code)
                 person_id = PersonDAO().insertPerson(first_name, last_name, address_id)
-                AccountDAO().insertAccount(person_id, email, password, is_admin, bank_account, routing_number)
+                AccountDAO().insertAccount(person_id, email, password, is_admin, bank_account_number, routing_number)
                 return jsonify(Account="Account created!")
             else:
                 return jsonify(Error="Unexpected arguments in post request"), 400
