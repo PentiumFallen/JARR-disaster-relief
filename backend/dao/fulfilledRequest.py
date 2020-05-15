@@ -16,7 +16,8 @@ class FulfilledRequestDAO:
         query = "select fulfillment_id, request_id as post, person_id as seller, category, subcategory, " \
                     "fquantity as quantity, funit_price, date_fulfilled "\
                 "from \"FulfilledRequests\" natural inner join \"Requests\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "order by date_fulfilled desc;"
         cursor.execute(query)
         result = []
@@ -36,7 +37,8 @@ class FulfilledRequestDAO:
         cursor = self.conn.cursor()
         query = "select category, subcategory, count(*) " \
                 "from \"FulfilledRequests\" natural inner join \"Requests\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "group by category, subcategory " \
                 "order by category, subcategory;"
         cursor.execute(query)
@@ -49,7 +51,8 @@ class FulfilledRequestDAO:
         cursor = self.conn.cursor()
         query = "select category, subcategory, sum(fquantity) as total_requests " \
                 "from \"FulfilledRequests\" natural inner join \"Requests\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "group by category, subcategory " \
                 "order by category, subcategory;"
         cursor.execute(query)
@@ -64,7 +67,8 @@ class FulfilledRequestDAO:
                     "max(funit_price) as highest_price, avg(funit_price) as average_price, " \
                     "min(funit_price) as lowest_price " \
                 "from \"FulfilledRequests\" natural inner join \"Requests\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "group by category, subcategory " \
                 "order by category, subcategory;"
         cursor.execute(query)
@@ -92,7 +96,8 @@ class FulfilledRequestDAO:
         cursor = self.conn.cursor()
         query = "select fulfillment_id, request_id, category, subcategory, fquantity, funit_price, date_fulfilled " \
                 "from \"FulfilledRequests\" as FR natural inner join \"Requests\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "where FR.person_id = %s " \
                 "order by date_fulfilled desc;"
         cursor.execute(query, (person_id,))
@@ -103,7 +108,8 @@ class FulfilledRequestDAO:
         cursor = self.conn.cursor()
         query = "select fulfillment_id, FR.person_id, category, subcategory, fquantity, funit_price, date_fulfilled " \
                 "from \"FulfilledRequests\" as FR natural inner join \"Requests\" natural inner join \"Resources\" as R " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "where R.person_id = %s " \
                 "order by date_fulfilled desc;"
         cursor.execute(query, (person_id,))
@@ -114,7 +120,8 @@ class FulfilledRequestDAO:
         cursor = self.conn.cursor()
         query = "select fulfillment_id, FR.person_id, category, subcategory, fquantity, funit_price, date_fulfilled " \
                 "from \"FulfilledRequests\" as FR natural inner join \"Requests\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "where request_id = %s " \
                 "order by date_fulfilled desc;"
         cursor.execute(query, (request_id,))

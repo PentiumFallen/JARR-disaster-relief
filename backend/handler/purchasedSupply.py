@@ -9,7 +9,6 @@ from backend.dao.supply import SupplyDAO
 
 class PurchasedSupplyHandler:
 
-    # TODO purchased total calculated here
     def build_all_purchased_supply_dict(self, row):
         result = {
             'purchase_id': row[0],

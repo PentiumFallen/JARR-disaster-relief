@@ -16,7 +16,8 @@ class PurchasedSupplyDAO:
         query = "select purchase_id, supply_id as post, person_id as buyer, category, subcategory, " \
                     "pquantity as quantity, punit_price, date_purchased "\
                 "from \"PurchasedSupplies\" natural inner join \"Supplies\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "order by date_purchased desc;"
         cursor.execute(query)
         result = []
@@ -36,7 +37,8 @@ class PurchasedSupplyDAO:
         cursor = self.conn.cursor()
         query = "select category, subcategory, count(*) " \
                 "from \"PurchasedSupplies\" natural inner join \"Supplies\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "group by category, subcategory " \
                 "order by category, subcategory;"
         cursor.execute(query)
@@ -49,7 +51,8 @@ class PurchasedSupplyDAO:
         cursor = self.conn.cursor()
         query = "select category, subcategory, sum(pquantity) as total_supplies " \
                 "from \"PurchasedSupplies\" natural inner join \"Supplies\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "group by category, subcategory " \
                 "order by category, subcategory;"
         cursor.execute(query)
@@ -64,7 +67,8 @@ class PurchasedSupplyDAO:
                     "max(punit_price) as highest_price, avg(punit_price) as average_price, " \
                     "min(punit_price) as lowest_price " \
                 "from \"PurchasedSupplies\" natural inner join \"Supplies\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "group by category, subcategory " \
                 "order by category, subcategory;"
         cursor.execute(query)
@@ -92,7 +96,8 @@ class PurchasedSupplyDAO:
         cursor = self.conn.cursor()
         query = "select purchase_id, supply_id, category, subcategory, pquantity, punit_price, date_purchased " \
                 "from \"PurchasedSupplies\" as PS natural inner join \"Supplies\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "where PS.person_id = %s " \
                 "order by date_purchased desc;"
         cursor.execute(query, (person_id,))
@@ -103,7 +108,8 @@ class PurchasedSupplyDAO:
         cursor = self.conn.cursor()
         query = "select purchase_id, PS.person_id, category, subcategory, pquantity, punit_price, date_purchased " \
                 "from \"PurchasedSupplies\" as PS natural inner join \"Supplies\" natural inner join \"Resources\" as R " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "where R.person_id = %s " \
                 "order by date_purchased desc;"
         cursor.execute(query, (person_id,))
@@ -114,7 +120,8 @@ class PurchasedSupplyDAO:
         cursor = self.conn.cursor()
         query = "select purchase_id, PS.person_id, category, subcategory, pquantity, punit_price, date_purchased " \
                 "from \"PurchasedSupplies\" as PS natural inner join \"Supplies\" natural inner join \"Resources\" " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "where supply_id = %s " \
                 "order by date_purchased desc;"
         cursor.execute(query, (supply_id,))

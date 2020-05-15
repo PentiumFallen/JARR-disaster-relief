@@ -9,7 +9,6 @@ from backend.dao.request import RequestDAO
 
 class FulfilledRequestHandler:
 
-    # TODO fulfilled total calculated here
     def build_all_fulfilled_request_dict(self, row):
         result = {
             'fulfillment_id': row[0],
@@ -105,7 +104,7 @@ class FulfilledRequestHandler:
         for row in fulfilledRequest_list:
             result = self.build_all_fulfilled_request_dict(row)
             result_list.append(result)
-        return jsonify(All_Fulfullied_Requests=result_list)
+        return jsonify(All_Fulfilled_Requests=result_list)
 
     def getTotalFulfillments(self):
         dao = FulfilledRequestDAO()
