@@ -61,7 +61,13 @@ def getAllPersons():
 @app.route('/JARR-disaster-relief/supplies', methods=['GET', 'POST'])
 def getAllSupplies():
     if request.method == 'POST':
-        return SupplyHandler().insert_supply_json(request.json)
+        # Mutually exclusive
+        if request.json is not None and request.form is None:
+            return SupplyHandler().insert_supply_json(request.json)
+        elif request.form is not None and request.json is None:
+            return SupplyHandler().insert_supply(request.form)
+        else:
+            return jsonify(Error="Malformed post request.")
     elif request.method == 'GET':
         if not request.args:
             return SupplyHandler().get_all_supplies()
@@ -84,7 +90,6 @@ def getAllAvailableSupplies():
         return SupplyHandler().get_all_available_supplies()
     else:
         return SupplyHandler().search_available_supplies(request.args)
-
 
 @app.route('/JARR-disaster-relief/person/<int:person_id>/supplies')
 def getSuppliesByPersonId(person_id):
@@ -140,7 +145,12 @@ def getPurchaseById(target_id):
 @app.route('/JARR-disaster-relief/requests', methods=['GET', 'POST'])
 def getAllRequests():
     if request.method == 'POST':
-        return RequestHandler().insert_request_json(request.json)
+        if request.json is not None and request.form is None:
+            return RequestHandler().insert_request_json(request.json)
+        elif request.form is not None and request.json is None:
+            return RequestHandler().insert_request(request.form)
+        else:
+            return jsonify(Error="Malformed post request")
     elif request.method == 'GET':
         if not request.args:
             return RequestHandler().get_all_requests()
