@@ -173,24 +173,6 @@ def getRequestsByPersonId(person_id):
 def getNeededRequestsByPersonId(person_id):
     return RequestHandler().get_needed_requests_by_person_id(person_id)
 
-#Resources
-@app.route('/JARR-disaster-relief/resources/<int:resource_id>')
-def getAllResources():
-    return ResourceHandler().get_all_resources()
-
-@app.route('/JARR-disaster-relief/resources/')
-def getAllAvailableResource():
-    return ResourceHandler().get_available_resource()
-
-
-@app.route('/JARR-disaster-relief/resource/<int:person_id>')
-def getResourceByPersonId(person_id):
-    return ResourceHandler.get_resources_by_person_id(person_id)
-
-@app.route('/JARR-disaster-relief/resource/count')
-def getTotalResourceCount():
-    return ResourceHandler().get_total_resource()
-
 # __FulfilledRequest__
 
 @app.route('/JARR-disaster-relief/fulfill', methods=['GET', 'POST'])
@@ -231,6 +213,25 @@ def getFulfillById(target_id):
         return FulfilledRequestHandler().getFulfilledRequestsByRequestId(target_id)
     else:
         return jsonify(Error="Incorrect ID type"), 405
+
+#Resources
+# TODO this needs to be fixed
+@app.route('/JARR-disaster-relief/resources/<int:resource_id>')
+def getAllResources():
+    return ResourceHandler().get_all_resources()
+
+@app.route('/JARR-disaster-relief/resources/')
+def getAllAvailableResource():
+    return ResourceHandler().get_available_resource()
+
+
+@app.route('/JARR-disaster-relief/resource/<int:person_id>')
+def getResourceByPersonId(person_id):
+    return ResourceHandler().get_resources_by_person_id(person_id)
+
+@app.route('/JARR-disaster-relief/resource/count')
+def getTotalResourceCount():
+    return ResourceHandler().get_total_resource()
 
 #Account
 @app.route('/JARR-disaster-relief/accounts')
