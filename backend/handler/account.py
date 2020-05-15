@@ -10,8 +10,8 @@ class AccountHandler:
             'password': row[2],
             'registered_date': row[3],
             'is_admin': row[4],
-            'person_id': row[5],
-            'balance': row[6],
+            'balance': row[5],
+            'person_id': row[6],
             'bank_account_number': row[7],
             'routing_number': row[8],
         }
