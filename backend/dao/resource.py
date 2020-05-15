@@ -92,7 +92,7 @@ class ResourceDAO:
         cursor = self.conn.cursor()
         query = "select resource_id, quantity " \
                 "from \"Resources\" natural inner join \"Requests\" " \
-                "where supply_id = %s;"
+                "where request_id = %s;"
         cursor.execute(query, (request_id,))
         result = cursor.fetchone()
         return result

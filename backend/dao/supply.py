@@ -156,8 +156,8 @@ class SupplyDAO:
         query = "select supply_id, category, subcategory, person_id, name, quantity, brand, sdescription, available, "\
                 "sunit_price, date_offered, address, city, district, zip_code from \"Supplies\" natural inner join \"Resources\" natural inner join (select category_id, " \
                 "category, subcategory from \"Categories\" as C left join \"Subcategories\" as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat natural inner join \"Addresses\" where name = %s;"
-        cursor.execute(query, (name,))
+                "S.subcategory_id) as Cat natural inner join \"Addresses\" where name like %s or name like %s or name like %s or name like %s;"
+        cursor.execute(query, ('%'+name+'%', name, '%'+name, name+'%'))
         result = cursor.fetchall()
         return result
 

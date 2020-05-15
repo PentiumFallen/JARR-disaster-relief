@@ -137,8 +137,8 @@ class RequestDAO:
         query = "select request_id, category, subcategory, person_id, name, quantity, rdescription, needed, "\
                 "max_unit_price, date_requested, address, city, district, zip_code from \"Requests\" natural inner join \"Resources\" natural inner join (select category_id, " \
                 "category, subcategory from \"Categories\" as C left join \"Subcategories\" as S on C.subcategory_id = " \
-                "S.subcategory_id) as Cat natural inner join \"Addresses\" where name = %s;"
-        cursor.execute(query, (name,))
+                "S.subcategory_id) as Cat natural inner join \"Addresses\" where name like %s or name like %s or name like %s or name like %s;"
+        cursor.execute(query, ('%'+name+'%', name, '%'+name, name+'%'))
         result = cursor.fetchall()
         return result
 
@@ -220,7 +220,7 @@ class RequestDAO:
         curr_request_need = request[7]
         need_difference = int(needed) - curr_request_need
         if need_difference != 0:
-            resource = ResourceDAO().getResourceIdAndQuantityBySupplyId(request_id)
+            resource = ResourceDAO().getResourceIdAndQuantityByRequestId(request_id)
             new_resource_quantity = resource[1] + need_difference
             ResourceDAO().updateResource(resource[0], new_resource_quantity)
             cursor = self.conn.cursor()
