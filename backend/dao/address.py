@@ -20,12 +20,15 @@ class AddressDao:
 
     def getAddressIdFromAddressAndCityAndZipCode(self, address, city, zip_code):
         cursor = self.conn.cursor()
-        query = "select address_id from \"Addresses\" where address = %s, city = %s, zip_code = %s;"
+        query = "select address_id from \"Addresses\" where address = %s and city = %s and zip_code = %s;"
         cursor.execute(query, (address, city, zip_code))
-        result = cursor.fetchone()[0]
-        for row in cursor:
-            result.append(row)
-        return result
+        if cursor.fetchone() is None:
+            return None
+        else:
+            result = cursor.fetchone()[0]
+            for row in cursor:
+                result.append(row)
+            return result
 
     # TODO wait for ER Review
     def getAddressBySupplyId(self, supply_id):
