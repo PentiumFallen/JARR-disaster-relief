@@ -1,10 +1,10 @@
 from flask import jsonify
 
 from backend.dao.account import AccountDAO
-from backend.dao.person import PersonDAO
 from backend.dao.purchasedSupply import PurchasedSupplyDAO
 from backend.dao.supply import SupplyDAO
-
+from backend.handler.account import AccountHandler
+from backend.handler.supply import SupplyHandler
 
 
 class PurchasedSupplyHandler:
@@ -178,28 +178,31 @@ class PurchasedSupplyHandler:
             dao = PurchasedSupplyDAO()
             supply_id = form['supply_id']
             person_id = form['person_id']
-            pquantity = form['pquantity']
+            pquantity = int(form['pquantity'])
 
             if person_id and supply_id and pquantity:
                 supply = SupplyDAO().getSupplyById(supply_id)
-                buyerAccount = AccountDAO().getAccountByPersonId(person_id)
-                supplierAccount = AccountDAO().getAccountByPersonId(supply[3])
-                if supply[8] < pquantity:
+                supply = SupplyHandler().build_supply_dict(supply)
+                buyerAccountRow = AccountDAO().getAccountByPersonId(person_id)
+                buyerAccount = AccountHandler().build_account_dict(buyerAccountRow)
+                supplierAccountRow = AccountDAO().getAccountByPersonId(supply.get("person_id"))
+                supplierAccount = AccountHandler().build_account_dict(supplierAccountRow)
+                if supply.get("available") < pquantity:
                     return jsonify(Error="Insufficient stock"), 400
-                elif buyerAccount[5] < (pquantity*supply[9]):
+                elif buyerAccount.get("balance") < (pquantity*supply.get("sunit_price")):
                     return jsonify(Error="Insufficient funds"), 400
                 else:
-                    transactionTotal = pquantity*supply[9]
-                    new_available = supply[8] - pquantity
-                    newBuyerBalance = buyerAccount[5] - transactionTotal
-                    newSupplierBalance = supplierAccount[5] + transactionTotal
+                    transactionTotal = pquantity*supply.get("sunit_price")
+                    new_available = supply.get("available") - pquantity
+                    newBuyerBalance = buyerAccount.get("balance") - transactionTotal
+                    newSupplierBalance = supplierAccount.get("balance") + transactionTotal
 
-                    purchasedSupply_id = dao.insert(supply_id, person_id, pquantity, supply[9])
-                    SupplyDAO().updateStock(supply[0], new_available)
+                    purchasedSupply_id = dao.insert(supply_id, person_id, pquantity, supply.get("sunit_price"))
+                    SupplyDAO().updateStock(supply.get("supply_id"), new_available)
                     AccountDAO().updateBalance(buyerAccount[0], newBuyerBalance)
                     AccountDAO().updateBalance(supplierAccount[0], newSupplierBalance)
 
-                    result = self.build_purchased_supply_attributes(purchasedSupply_id, supply_id, person_id, pquantity, supply[9])
+                    result = self.build_purchased_supply_attributes(purchasedSupply_id, supply_id, person_id, pquantity, supply.get("sunit_price"))
                     return jsonify(PurchasedSupply=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post request"), 400
@@ -208,7 +211,7 @@ class PurchasedSupplyHandler:
         dao = PurchasedSupplyDAO()
         supply_id = json['supply_id']
         person_id = json['person_id']
-        pquantity = json['pquantity']
+        pquantity = int(json['pquantity'])
 
         if person_id and supply_id and pquantity:
             supply = SupplyDAO().getSupplyById(supply_id)
