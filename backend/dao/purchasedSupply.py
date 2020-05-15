@@ -15,14 +15,12 @@ class PurchasedSupplyDAO:
         cursor = self.conn.cursor()
         query = "select purchase_id, supply_id as post, person_id as buyer, category, subcategory, " \
                     "pquantity as quantity, punit_price, date_purchased "\
-                "from \"PurchasedSupplies\" natural inner join \"Supplies\" natural inner join \"Resources\" " \
+                "from \"PurchasedSupplies\" natural inner join \"Supplies\" natural inner join \"Resources\" as R " \
                     "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
                 "on subcat.subcategory_id = cat.subcategory_id " \
                 "order by date_purchased desc;"
         cursor.execute(query)
-        result = []
-        for row in cursor:
-            result.append(row)
+        result = cursor.fetchall()
         return result
 
     def getTotalPurchases(self):
@@ -36,7 +34,7 @@ class PurchasedSupplyDAO:
     def getTotalPurchasesPerCategory(self):
         cursor = self.conn.cursor()
         query = "select category, subcategory, count(*) " \
-                "from \"PurchasedSupplies\" natural inner join \"Supplies\" natural inner join \"Resources\" " \
+                "from \"PurchasedSupplies\" natural inner join \"Supplies\" natural inner join \"Resources\" as R " \
                     "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
                 "on subcat.subcategory_id = cat.subcategory_id " \
                 "group by category, subcategory " \
@@ -80,10 +78,11 @@ class PurchasedSupplyDAO:
     def getPurchasedSupplyById(self, purchase_id):
         cursor = self.conn.cursor()
         query = "select purchase_id, name, category, subcategory, pquantity as purchased_amount, punit_price, " \
-                    "A.first_name + ' ' + A.last_name as supplier, B.first_name + ' ' + B.last_name as buyer, " \
+                    "concat(A.first_name,' ',A.last_name) as supplier, concat(B.first_name,' ',B.last_name) as buyer, " \
                     "date_purchased " \
                 "from \"PurchasedSupplies\" as PS natural inner join \"Supplies\" natural inner join \"Resources\" as R " \
-                    "natural inner join \"Person\" as A natural inner join \"Person\" as B " \
+                    "natural inner join \"Persons\" as A natural inner join \"Persons\" as B " \
+                    "natural inner join \"Categories\" left join \"Subcategories\" " \
                 "on A.person_id <> B.person_id " \
                 "where A.person_id = R.person_id " \
                 "and B.person_id = PS.person_id " \

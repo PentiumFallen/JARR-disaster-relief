@@ -148,9 +148,9 @@ def getPurchaseStats(stat):
     else:
         return jsonify(Error="Incorrect statistic request"), 405
 
-@app.route('/JARR-disaster-relief/purchase/<int:id>', methods=['GET'])
+@app.route('/JARR-disaster-relief/purchase/<int:target_id>', methods=['GET'])
 def getPurchaseById(target_id):
-    idType = request.args.get('id_type', type=str)
+    idType = request.form['id_type']
     if idType == 'purchase':
         return PurchasedSupplyHandler().getPurchasedSupplyById(target_id)
     elif idType == 'buyer':

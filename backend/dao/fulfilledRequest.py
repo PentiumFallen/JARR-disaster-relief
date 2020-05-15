@@ -80,10 +80,11 @@ class FulfilledRequestDAO:
     def getFulfilledRequestById(self, fulfillment_id):
         cursor = self.conn.cursor()
         query = "select fulfillment_id, name, category, subcategory, fquantity as fulfilled_amount, funit_price " \
-                    "A.first_name + ' ' + A.last_name as buyer, B.first_name + ' ' + B.last_name as seller, " \
+                    "concat(A.first_name,' ',A.last_name) as buyer, concat(B.first_name,' ',B.last_name) as seller, " \
                     "date_fulfilled " \
                 "from \"FulfilledRequests\" as FR natural inner join \"Requests\" natural inner join \"Resources\" as R " \
-                    "natural inner join \"Person\" as A natural inner join \"Person\" as B " \
+                    "natural inner join \"Persons\" as A natural inner join \"Persons\" as B " \
+                    "natural inner join \"Categories\" left join \"Subcategories\" " \
                 "on A.person_id <> B.person_id " \
                 "where A.person_id = R.person_id " \
                 "and B.person_id = FR.person_id " \
