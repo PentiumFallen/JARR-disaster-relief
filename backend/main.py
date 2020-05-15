@@ -7,6 +7,8 @@ from backend.handler.person import PersonHandler
 from backend.handler.request import RequestHandler
 from backend.handler.resource import ResourceHandler
 from backend.handler.account import AccountHandler
+from backend.handler.address import AddressHandler
+from backend.handler.authentication import Auth
 from flask_cors import CORS
 
 # Activate
@@ -18,6 +20,9 @@ CORS(app)
 def greeting():
     return 'Hello, this is the JARR DB App!'
 
+@app.route('/JARR-disaster-relief/signup', methods=['PUT'])
+def signup():
+    return Auth().signup(request.form)
 
 @app.route('/JARR-disaster-relief/person/<int:person_id>', methods=['GET', 'PUT', 'DELETE'])
 def getPersonById(person_id):
@@ -37,10 +42,10 @@ def getPersonById(person_id):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/JARR-disaster-relief/person/location/<int:person_id>', methods=['POST'])
-def updatePersonLocation(person_id):
-    if request.method == 'POST':
-        return PersonHandler().update_person_location(request.json['new_location'], person_id)
+@app.route('/JARR-disaster-relief/person/location/<int:person_id>', methods=['PUT'])
+def updatePersonDefaultAddress(person_id):
+    if request.method == 'PUT':
+        return AddressHandler().update_person_default_address(person_id, request.form)
 
 
 @app.route('/JARR-disaster-relief/person', methods=['GET', 'POST'])
@@ -241,8 +246,8 @@ def getAccountType(account_id):
     return AccountHandler().get_account_type(account_id)
 
 @app.route('/JARR-disaster-relief/account/is_admin')
-def getAdminAccount(is_admin):
-    return AccountHandler().get_admin_account(is_admin)
+def getAdminAccount():
+    return AccountHandler().get_admin_accounts()
 
 if __name__ == '__main__':
     app.run()

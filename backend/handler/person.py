@@ -23,8 +23,9 @@ class PersonHandler:
 
     def get_all_persons(self):
         dao = PersonDAO()
-        result_list = dao.getAllPersons()
-        for row in result_list:
+        person_list = dao.getAllPersons()
+        result_list = []
+        for row in person_list:
             result = self.build_person_dict(row)
             result_list.append(result)
         return jsonify(Persons=result_list)
@@ -66,7 +67,7 @@ class PersonHandler:
             address_id = form['address_id']
             if first_name and last_name and address_id and phone_number:
                 dao = PersonDAO()
-                pid = dao.insertPerson(first_name, last_name, address_id, )
+                dao.insertPerson(first_name, last_name, address_id)
                 result = self.build_person_attributes(self, first_name, last_name, address_id)
                 return jsonify(Person=result)
             else:

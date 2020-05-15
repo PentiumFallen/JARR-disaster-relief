@@ -115,7 +115,7 @@ class AccountHandler:
 
             if email and password and is_admin and person_id and balance and bank_account and routing_number:
                 dao = AccountDAO()
-                pid = dao.insertAccount(email, password, is_admin, person_id, balance, bank_account, routing_number)
+                pid = dao.insertAccount(email, password, is_admin, person_id, bank_account, routing_number)
                 result = self.build_account_attributes(pid, email, password, is_admin, person_id,
                                                        balance, bank_account, routing_number)
                 return jsonify(Account=result), 201
@@ -133,8 +133,7 @@ class AccountHandler:
 
         if email and password and is_admin and person_id and balance and bank_account and routing_number:
             dao = AccountDAO()
-            pid = dao.insertAccount(email, password, is_admin, person_id, balance, bank_account,
-                                    routing_number)
+            pid = dao.insertAccount(email, password, is_admin, person_id, bank_account, routing_number)
             result = self.build_account_attributes(pid, email, password, is_admin, person_id, balance,
                                                    bank_account, routing_number)
             return jsonify(Account=result), 201
