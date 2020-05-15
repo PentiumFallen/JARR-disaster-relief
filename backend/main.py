@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 
+from backend.handler.fulfilledRequest import FulfilledRequestHandler
 from backend.handler.purchasedSupply import PurchasedSupplyHandler
 from backend.handler.supply import SupplyHandler
 from backend.handler.person import PersonHandler
@@ -184,6 +185,47 @@ def getResourceByPersonId(person_id):
 @app.route('/JARR-disaster-relief/resource/count')
 def getTotalResourceCount():
     return ResourceHandler().get_total_resource()
+
+# __FulfilledRequest__
+
+@app.route('/JARR-disaster-relief/fulfill', methods=['GET', 'POST'])
+def getFulfills():
+    if request.method == 'POST':
+        if request.json:
+            return FulfilledRequestHandler().insert_fulfilledRequest_json(request.json)
+        elif request.form:
+            return FulfilledRequestHandler().insert_fulfilledRequest(request.form)
+        else:
+            return jsonify(Error="Data not found"), 405
+    elif request.method == 'GET':
+        return FulfilledRequestHandler().getAllFulfilledRequests()
+
+@app.route('/JARR-disaster-relief/fulfill/stats/<int:stat>', methods=['GET'])
+def getFulfillStats(stat):
+    if stat == 0:
+        return FulfilledRequestHandler().getTotalFulfillments()
+    elif stat == 1:
+        return FulfilledRequestHandler().getTotalFulfillmentsPerCategory()
+    elif stat == 2:
+        return FulfilledRequestHandler().getTotalRequestsFulfulliedPerCategory()
+    elif stat == 3:
+        return FulfilledRequestHandler().getFulfillmentStatisticsPerCategory()
+    else:
+        return jsonify(Error="Incorrect statistic request"), 405
+
+@app.route('/JARR-disaster-relief/fulfill/<int:id>', methods=['GET'])
+def getFulfillById(target_id):
+    idType = request.args.get('id_type', type=str)
+    if idType == 'fulfill':
+        return FulfilledRequestHandler().getFulfilledRequestById(target_id)
+    elif idType == 'buyer':
+        return FulfilledRequestHandler().getFulfilledRequestsByBuyerId(target_id)
+    elif idType == 'supplier':
+        return FulfilledRequestHandler().getFulfilledRequestsBySellerId(target_id)
+    elif idType == 'request':
+        return FulfilledRequestHandler().getFulfilledRequestsByRequestId(target_id)
+    else:
+        return jsonify(Error="Incorrect ID type"), 405
 
 #Account
 @app.route('/JARR-disaster-relief/accounts')
