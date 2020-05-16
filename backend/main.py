@@ -269,22 +269,17 @@ def getFulfillById(target_id):
 
 # Resources
 # TODO this needs to be fixed
-@app.route('/JARR-disaster-relief/resources/<int:resource_id>')
+@app.route('/JARR-disaster-relief/resources')
 def getAllResources():
     return ResourceHandler().get_all_resources()
 
 
-@app.route('/JARR-disaster-relief/resources/')
-def getAllAvailableResource():
-    return ResourceHandler().get_available_resource()
-
-
-@app.route('/JARR-disaster-relief/resource/<int:person_id>')
+@app.route('/JARR-disaster-relief/person/<int:person_id>/resources')
 def getResourceByPersonId(person_id):
     return ResourceHandler().get_resources_by_person_id(person_id)
 
 
-@app.route('/JARR-disaster-relief/resource/count')
+@app.route('/JARR-disaster-relief/resources/count')
 def getTotalResourceCount():
     return ResourceHandler().get_total_resource()
 
