@@ -14,11 +14,18 @@ class AccountHandler:
             'person_id': row[6],
             'bank_account_number': row[7],
             'routing_number': row[8],
+            'address': row[9],
+            'city': row[10],
+            'district': row[11],
+            'zip_code': row[12],
+            'first_name': row[13],
+            'last_name': row[14],
         }
         return result
 
     def build_account_attributes(self, account_id, email, password, is_admin, person_id,
-                                 balance, bank_account_number, routing_number):
+                                 balance, bank_account_number, routing_number, address, city, district, zip_code
+                                 ):
         result = {
             'account_id': account_id,
             'email': email,
@@ -28,12 +35,16 @@ class AccountHandler:
             'balance': balance,
             'bank_account_number': bank_account_number,
             'routing_number': routing_number,
+            'address': address,
+            'city': city,
+            'district': senate_district[city.lower()],
+            'zip_code': zip_code,
         }
         return result
 
-    def get_account_data(self, email, password):
+    def get_account_data(self):
         dao = AccountDAO()
-        result = dao.getAccountData(email, password)
+        result = dao.getAccountData()
         if not result:
             return jsonify(Error='Account not found.'), 404
         else:
@@ -58,9 +69,9 @@ class AccountHandler:
             res = self.build_account_dict(result)
             return jsonify(Admins_accounts=res), 200
 
-    def get_account_type(self, account_id):
+    def get_account_type(self):
         dao = AccountDAO()
-        result = dao.getAccountType(account_id)
+        result = dao.getAccountType()
         return jsonify(Account_type=result), 200
 
     def delete_account(self, account_id):
@@ -77,14 +88,13 @@ class AccountHandler:
 
         if password and email:
             dao = AccountDAO()
-            password = self.hash_password(password)
             res = dao.accountLogin(email, password)
             if len(res) == 0:
                 return jsonify(Error="No account found with that email or Password"), 404
             else:
                 result_list = []
             for row in res:
-                result = self.build_login(row)
+                result = self.build_account_dict(row)
                 result_list.append(result)
                 return jsonify(Account=result_list)
         else:

@@ -49,16 +49,23 @@ class AccountDAO:
     def getAccountData(self, email, password):
         cursor = self.conn.cursor()
         query = "select email, password, registered_date, is_admin, balance, " \
-                "bank_account_number, routing_number from \"Accounts\" where email = %s and password = %s;"
-        cursor.execute(query, (email, password))
-        result = cursor.fetchone()
+                "bank_account_number, routing_number, first_name, last_name, " \
+                "phone_number, address, city, district, zipcode " \
+                "from \"Accounts\" natural inner join \"Persons\" " \
+                "natural inner join \"Addresses\";"
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
         return result
     
-    def getAccountType(self, account_id):
+    def getAccountType(self):
         cursor = self.conn.cursor()
-        query = "select is_admin from \"Accounts\" where account_id = %s;"
-        cursor.execute(query, (account_id,))
-        result = cursor.fetchone()
+        query = "select is_admin from \"Accounts\";"
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
         return result
 
     def insertAccount(self, person_id, email, password, is_admin, bank_account_number, routing_number):

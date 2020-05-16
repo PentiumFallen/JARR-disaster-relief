@@ -79,8 +79,13 @@ class ResourceHandler:
 
     def get_total_resource(self):
         dao = ResourceDAO()
-        amount = dao.getTotalResources()
+        amount = dao.getTotalResource()
         return jsonify(Total_Resources=amount)
+    
+    def get_total_available_resources(self):
+        dao = ResourceDAO()
+        amount = dao.getTotalAvailableResource()
+        return jsonify(Total_Needed_Requests=amount)
 
     def update_resource(self, resource_id, quantity):
         dao = ResourceDAO()

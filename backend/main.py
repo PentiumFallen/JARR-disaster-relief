@@ -16,16 +16,13 @@ app = Flask(__name__)
 # Apply CORS to this app
 CORS(app)
 
-
 @app.route('/')
 def greeting():
     return 'Hello, this is the JARR DB App!'
 
-
-@app.route('/JARR-disaster-relief/signup', methods=['POST'])
+@app.route('/JARR-disaster-relief/signup', methods=['PUT'])
 def signup():
     return Auth().signup(request.form)
-
 
 @app.route('/JARR-disaster-relief/person/<int:person_id>', methods=['GET', 'PUT', 'DELETE'])
 def getPersonById(person_id):
@@ -59,19 +56,12 @@ def getAllPersons():
         if not request.args:
             return PersonHandler().get_all_persons()
 
-
 # __Supply__
 
 @app.route('/JARR-disaster-relief/supplies', methods=['GET', 'POST'])
 def getAllSupplies():
     if request.method == 'POST':
-        # Mutually exclusive
-        if request.json is not None and request.form is None:
-            return SupplyHandler().insert_supply_json(request.json)
-        elif request.form is not None and request.json is None:
-            return SupplyHandler().insert_supply(request.form)
-        else:
-            return jsonify(Error="Malformed post request."), 400
+        return SupplyHandler().insert_supply_json(request.json)
     elif request.method == 'GET':
         if not request.args:
             return SupplyHandler().get_all_supplies()
@@ -80,28 +70,13 @@ def getAllSupplies():
     else:
         return jsonify(Error="Method not allowed."), 405
 
-
-@app.route('/JARR-disaster-relief/supplies/<int:supply_id>', methods=['GET', 'PUT', 'DELETE'])
-def getSupplyById(supply_id):
-    if request.method == 'GET':
-        return SupplyHandler().get_supply_by_id(supply_id)
-    elif request.method == 'PUT':
-        return SupplyHandler().update_supply(supply_id, request.form)
-    elif request.method == 'DELETE':
-        return SupplyHandler().delete_supply(supply_id)
-    else:
-        return jsonify(Error="Method not allowed."), 405
-
-
 @app.route('/JARR-disaster-relief/supplies/count')
 def getTotalSupplyCount():
     return SupplyHandler().get_total_supplies()
 
-
 @app.route('/JARR-disaster-relief/supplies/available/count')
 def getTotalAvailableSupplyCount():
     return SupplyHandler().get_total_available_supplies()
-
 
 @app.route('/JARR-disaster-relief/supplies/available')
 def getAllAvailableSupplies():
@@ -115,15 +90,13 @@ def getAllAvailableSupplies():
 def getSuppliesByPersonId(person_id):
     return SupplyHandler().get_supplies_by_person_id(person_id)
 
-
 @app.route('/JARR-disaster-relief/person/<int:person_id>/supplies/available')
 def getAvailableSuppliesByPersonId(person_id):
     return SupplyHandler().get_available_supplies_by_person_id(person_id)
 
-
 # __PurchasedSupply__
 
-@app.route('/JARR-disaster-relief/purchase', methods=['GET', 'POST'])
+@app.route('/JARR-disaster-relief/purchases', methods=['GET', 'POST'])
 def getPurchases():
     if request.method == 'POST':
         if request.json:
@@ -135,7 +108,7 @@ def getPurchases():
     elif request.method == 'GET':
         return PurchasedSupplyHandler().getAllPurchasedSupplies()
 
-@app.route('/JARR-disaster-relief/purchase/stats/<int:stat>', methods=['GET'])
+@app.route('/JARR-disaster-relief/purchases/stats/<int:stat>', methods=['GET'])
 def getPurchaseStats(stat):
     if stat == 0:
         return PurchasedSupplyHandler().getTotalPurchases()
@@ -148,9 +121,9 @@ def getPurchaseStats(stat):
     else:
         return jsonify(Error="Incorrect statistic request"), 405
 
-@app.route('/JARR-disaster-relief/purchase/<int:target_id>', methods=['GET'])
+@app.route('/JARR-disaster-relief/purchases/<int:id>', methods=['GET'])
 def getPurchaseById(target_id):
-    idType = request.form['id_type']
+    idType = request.args.get('id_type', type=str)
     if idType == 'purchase':
         return PurchasedSupplyHandler().getPurchasedSupplyById(target_id)
     elif idType == 'buyer':
@@ -162,18 +135,12 @@ def getPurchaseById(target_id):
     else:
         return jsonify(Error="Incorrect ID type"), 405
 
-
 # __Request__
 
 @app.route('/JARR-disaster-relief/requests', methods=['GET', 'POST'])
 def getAllRequests():
     if request.method == 'POST':
-        if request.json is not None and request.form is None:
-            return RequestHandler().insert_request_json(request.json)
-        elif request.form is not None and request.json is None:
-            return RequestHandler().insert_request(request.form)
-        else:
-            return jsonify(Error="Malformed post request")
+        return RequestHandler().insert_request_json(request.json)
     elif request.method == 'GET':
         if not request.args:
             return RequestHandler().get_all_requests()
@@ -182,28 +149,13 @@ def getAllRequests():
     else:
         return jsonify(Error="Method not allowed."), 405
 
-
-@app.route('/JARR-disaster-relief/requests/<int:request_id>', methods=['GET', 'PUT', 'DELETE'])
-def getRequestById(request_id):
-    if request.method == 'GET':
-        return RequestHandler().get_request_by_id(request_id)
-    elif request.method == 'PUT':
-        return RequestHandler().update_request(request_id, request.form)
-    elif request.method == 'DELETE':
-        return RequestHandler().delete_request(request_id)
-    else:
-        return jsonify(Error="Method not allowed."), 405
-
-
 @app.route('/JARR-disaster-relief/requests/count')
 def getTotalRequestCount():
     return RequestHandler().get_total_requests()
 
-
 @app.route('/JARR-disaster-relief/requests/needed/count')
 def getTotalNeededRequestCount():
     return RequestHandler().get_total_needed_requests()
-
 
 @app.route('/JARR-disaster-relief/requests/needed')
 def getAllNeededRequests():
@@ -217,11 +169,34 @@ def getAllNeededRequests():
 def getRequestsByPersonId(person_id):
     return RequestHandler().get_requests_by_person_id(person_id)
 
-
 @app.route('/JARR-disaster-relief/person/<int:person_id>/requests/needed')
 def getNeededRequestsByPersonId(person_id):
     return RequestHandler().get_needed_requests_by_person_id(person_id)
 
+#Resources
+@app.route('/JARR-disaster-relief/resources')
+def getAllResources():
+    return ResourceHandler().get_all_resources()
+
+@app.route('/JARR-disaster-relief/person/<int:person_id>/resources')
+def getResourceByPersonId(person_id):
+    return ResourceHandler.get_resources_by_person_id(person_id)
+
+@app.route('/JARR-disaster-relief/resource/<int:resource_id>')
+def getResourceById(resource_id):
+    return ResourceHandler.get_resource_by_id(resource_id)
+
+@app.route('/JARR-disaster-relief/resource/count')
+def getTotalResourceCount():
+    return ResourceHandler().get_total_resource()
+
+"""@app.route('/JARR-disaster-relief/resources/available')
+def getAllAvailableResource():
+    return ResourceHandler().get_available_resource()"""
+
+"""@app.route('/JARR-disaster-relief/resource/available/count')
+def getTotalAvailbleResource():
+    return ResourceHandler().get_available_resource()"""
 
 # __FulfilledRequest__
 
@@ -237,7 +212,6 @@ def getFulfills():
     elif request.method == 'GET':
         return FulfilledRequestHandler().getAllFulfilledRequests()
 
-
 @app.route('/JARR-disaster-relief/fulfill/stats/<int:stat>', methods=['GET'])
 def getFulfillStats(stat):
     if stat == 0:
@@ -250,7 +224,6 @@ def getFulfillStats(stat):
         return FulfilledRequestHandler().getFulfillmentStatisticsPerCategory()
     else:
         return jsonify(Error="Incorrect statistic request"), 405
-
 
 @app.route('/JARR-disaster-relief/fulfill/<int:id>', methods=['GET'])
 def getFulfillById(target_id):
@@ -266,49 +239,22 @@ def getFulfillById(target_id):
     else:
         return jsonify(Error="Incorrect ID type"), 405
 
-
-# Resources
-# TODO this needs to be fixed
-@app.route('/JARR-disaster-relief/resources/<int:resource_id>')
-def getAllResources():
-    return ResourceHandler().get_all_resources()
-
-
-@app.route('/JARR-disaster-relief/resources/')
-def getAllAvailableResource():
-    return ResourceHandler().get_available_resource()
-
-
-@app.route('/JARR-disaster-relief/resource/<int:person_id>')
-def getResourceByPersonId(person_id):
-    return ResourceHandler().get_resources_by_person_id(person_id)
-
-
-@app.route('/JARR-disaster-relief/resource/count')
-def getTotalResourceCount():
-    return ResourceHandler().get_total_resource()
-
-
-# Account
-@app.route('/JARR-disaster-relief/accounts')
-def getAccountData(account_id):
-    return AccountHandler().get_account_data(account_id)
-
-
+#Account
 @app.route('/JARR-disaster-relief/person/<int:person_id>/accounts')
 def getAccountByPersonId(person_id):
     return AccountHandler().get_account_by_person_id(person_id)
 
-
 @app.route('/JARR-disaster-relief/account/<int:account_id>')
-def getAccountType(account_id):
-    return AccountHandler().get_account_type(account_id)
-
+def getAccountType():
+    return AccountHandler().get_account_type()
 
 @app.route('/JARR-disaster-relief/account/is_admin')
 def getAdminAccount():
     return AccountHandler().get_admin_accounts()
 
+"""@app.route('/JARR-disaster-relief/account/data')
+def getAccountData():
+    return AccountHandler().get_account_data()"""
 
 if __name__ == '__main__':
     app.run()
