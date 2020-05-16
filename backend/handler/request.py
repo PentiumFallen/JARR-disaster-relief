@@ -188,7 +188,7 @@ class RequestHandler:
                     and address and city and zip_code:
                 needed = quantity
                 resource_id = ResourceDAO().insert(person_id, name, quantity, category_id)
-                request_id = dao.insert(resource_id, person_id, description, needed, unit_price,
+                request_id = dao.insert(resource_id, description, needed, unit_price,
                                         address, city, zip_code)
                 result = self.build_request_attributes(request_id, resource_id, category_id, person_id, name, quantity,
                                                        description, needed, unit_price, address, city, zip_code)

@@ -262,14 +262,14 @@ class SupplyDAO:
         result = cursor.fetchall()
         return result
 
-    def insert(self, resource_id, person_id, brand, description, available, unit_price, address, city, zip_code):
+    def insert(self, resource_id, brand, description, available, unit_price, address, city, zip_code):
         cursor = self.conn.cursor()
         address_id = AddressDao().getAddressIdFromAddressAndCityAndZipCode(address, city, zip_code)
         if not address_id:
             address_id = AddressDao().insert(address, city, zip_code)
-        query = "insert into \"Supplies\"(resource_id, person_id, brand, sdescription, available, sunit_price, " \
-                "address_id) values (%s, %s, %s, %s, %s, %s, %s) returning supply_id;"
-        cursor.execute(query, (resource_id, person_id, brand, description, available, unit_price, address_id))
+        query = "insert into \"Supplies\"(resource_id, brand, sdescription, available, sunit_price, " \
+                "address_id) values (%s, %s, %s, %s, %s, %s) returning supply_id;"
+        cursor.execute(query, (resource_id, brand, description, available, unit_price, address_id))
         supply_id = cursor.fetchone()[0]
         self.conn.commit()
         return supply_id
