@@ -77,13 +77,13 @@ class PurchasedSupplyDAO:
 
     def getPurchasedSupplyById(self, purchase_id):
         cursor = self.conn.cursor()
-        query = "select purchase_id, name, category, subcategory, pquantity as purchased_amount, punit_price, " \
+        query = "select purchase_id, R.name, category, subcategory, pquantity as purchased_amount, punit_price, " \
                     "concat(A.first_name,' ',A.last_name) as supplier, concat(B.first_name,' ',B.last_name) as buyer, " \
                     "date_purchased " \
                 "from \"PurchasedSupplies\" as PS natural inner join \"Supplies\" natural inner join \"Resources\" as R " \
                     "natural inner join \"Persons\" as A natural inner join \"Persons\" as B " \
-                    "natural inner join \"Categories\" left join \"Subcategories\" " \
-                "on A.person_id <> B.person_id " \
+                    "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
+                "on subcat.subcategory_id = cat.subcategory_id " \
                 "where A.person_id = R.person_id " \
                 "and B.person_id = PS.person_id " \
                 "and purchase_id = %s;"
