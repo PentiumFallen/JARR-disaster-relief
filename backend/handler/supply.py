@@ -237,7 +237,7 @@ class SupplyHandler:
         if person_id and category_id and name and available and brand and description and unit_price and quantity \
                 and address and city and zip_code:
             resource_id = ResourceDAO().insert(person_id, name, quantity, category_id)
-            supply_id = dao.insert(resource_id, person_id, brand, description, available, unit_price, address, city, zip_code)
+            supply_id = dao.insert(resource_id, brand, description, available, unit_price, address, city, zip_code)
             result = self.build_supply_attributes(supply_id, resource_id, category_id, person_id, name, quantity, brand,
                                                   description, available, unit_price, address, city, zip_code)
             return jsonify(Supply=result), 201
