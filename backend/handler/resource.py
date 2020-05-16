@@ -7,10 +7,10 @@ class ResourceHandler:
     def build_resource_dict(self, row):
         result = {
             'resource_id': row[0],
-            'category': row[1],
-            'subcategory': row[2],
-            'person_id': row[3],
-            'name': row[4],
+            'person_id': row[1],
+            'name': row[2],
+            'category': row[3],
+            'subcategory': row[4],
             'quantity': row[5]
         }
         return result
@@ -28,7 +28,8 @@ class ResourceHandler:
     def build_resource_count(self, row):
         result = {
             'category': row[0],
-            'amount': row[1]
+            'subcategory': row[1],
+            'amount': row[2]
         }
         return result
 
@@ -55,7 +56,7 @@ class ResourceHandler:
         count_list = dao.getResourcesByPersonId(person_id)
         result_list = []
         for row in count_list:
-            result = self.build_resource_count(row)
+            result = self.build_resource_dict(row)
             result_list.append(result)
         return jsonify(Resources=result_list)
 

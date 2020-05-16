@@ -16,7 +16,7 @@ class ResourceDAO:
         query = "select resource_id, person_id, name, category, subcategory, quantity "\
                 "from \"Resources\" natural inner join (select category_id, " \
                 "category, subcategory from \"Categories\" as C left join \"Subcategories\" as S on C.subcategory_id = " \
-                "S.subcategory_id);"
+                "S.subcategory_id) as cat;"
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -28,7 +28,7 @@ class ResourceDAO:
         query = "select resource_id, person_id, name, category, subcategory, quantity "\
                 "from \"Resources\" natural inner join (select category_id, " \
                 "category, subcategory from \"Categories\" as C left join \"Subcategories\" as S on C.subcategory_id = " \
-                "S.subcategory_id) "\
+                "S.subcategory_id) as cat "\
                 "where resource_id = %s;"
         cursor.execute(query, (resource_id,))
         result = cursor.fetchone()
@@ -46,7 +46,7 @@ class ResourceDAO:
         query = "select category, subcategory, sum(quantity) as total_resources " \
                 "from \"Resources\" natural inner join (select category_id, " \
                 "category, subcategory from \"Categories\" as C left join \"Subcategories\" as S on C.subcategory_id = " \
-                "S.subcategory_id) " \
+                "S.subcategory_id) as cat " \
                 "group by category, subcategory " \
                 "order by category, subcategory;"
         cursor.execute(query)
@@ -57,10 +57,10 @@ class ResourceDAO:
 
     def getAllAvailableResources(self):
         cursor = self.conn.cursor()
-        query = "select category, subcategory, sum(quantity) as total_resources " \
+        query = "select resource_id, person_id, name, category, subcategory, quantity " \
                 "from \"Resources\" natural inner join (select category_id, " \
                 "category, subcategory from \"Categories\" as C left join \"Subcategories\" as S on C.subcategory_id = " \
-                "S.subcategory_id) " \
+                "S.subcategory_id) as cat " \
                 "where quantity > 0;"
         cursor.execute(query)
         result = []
@@ -70,10 +70,10 @@ class ResourceDAO:
 
     def getResourcesByPersonId(self, person_id):
         cursor = self.conn.cursor()
-        query = "select resource_id, person_id, category, subcategory, quantity, name " \
+        query = "select resource_id, person_id, name, category, subcategory, quantity " \
                 "from \"Resources\" natural inner join (select category_id, " \
                 "category, subcategory from \"Categories\" as C left join \"Subcategories\" as S on C.subcategory_id = " \
-                "S.subcategory_id) " \
+                "S.subcategory_id) as cat " \
                 "where person_id = %s;"
         cursor.execute(query, (person_id,))
         result = cursor.fetchall()
