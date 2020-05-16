@@ -185,7 +185,7 @@ class FulfilledRequestHandler:
                 request = RequestHandler().build_request_dict(requestRow)
                 sellerAccountRow = AccountDAO().getAccountByPersonId(person_id)
                 sellerAccount = AccountHandler().build_account_dict(sellerAccountRow)
-                buyerAccountRow = AccountDAO().getAccountByPersonId(request.get("person_id"))
+                buyerAccountRow = AccountDAO().getAccountByPersonId(int(request.get("person_id")))
                 buyerAccount = AccountHandler().build_account_dict(buyerAccountRow)
                 if request.get("needed") < fquantity:
                     return jsonify(Error="Resource overflow"), 400
@@ -198,9 +198,9 @@ class FulfilledRequestHandler:
                     newBuyerBalance = buyerAccount.get("balance") - transactionTotal
 
                     fulfilledRequest_id = dao.insert(request_id, person_id, fquantity, request.get("max_unit_price"))
-                    RequestDAO().updateStock(request.get("request_id"), new_needed)
-                    AccountDAO().updateBalance(sellerAccount.get("account_id"), newSellerBalance)
-                    AccountDAO().updateBalance(buyerAccount.get("account_id"), newBuyerBalance)
+                    RequestDAO().updateStock(int(request.get("request_id")), new_needed)
+                    AccountDAO().updateBalance(int(sellerAccount.get("account_id")), newSellerBalance)
+                    AccountDAO().updateBalance(int(buyerAccount.get("account_id")), newBuyerBalance)
 
                     result = self.build_fulfilled_request_attributes(fulfilledRequest_id, request_id, person_id, fquantity, request.get("max_unit_price"))
                     return jsonify(FulfilledRequest=result), 201
@@ -218,7 +218,7 @@ class FulfilledRequestHandler:
             request = RequestHandler().build_request_dict(requestRow)
             sellerAccountRow = AccountDAO().getAccountByPersonId(person_id)
             sellerAccount = AccountHandler().build_account_dict(sellerAccountRow)
-            buyerAccountRow = AccountDAO().getAccountByPersonId(request.get("person_id"))
+            buyerAccountRow = AccountDAO().getAccountByPersonId(int(request.get("person_id")))
             buyerAccount = AccountHandler().build_account_dict(buyerAccountRow)
             if request.get("needed") < fquantity:
                 return jsonify(Error="Resource overflow"), 400
@@ -231,9 +231,9 @@ class FulfilledRequestHandler:
                 newBuyerBalance = buyerAccount.get("balance") - transactionTotal
 
                 fulfilledRequest_id = dao.insert(request_id, person_id, fquantity, request.get("max_unit_price"))
-                RequestDAO().updateStock(request.get("request_id"), new_needed)
-                AccountDAO().updateBalance(sellerAccount.get("account_id"), newSellerBalance)
-                AccountDAO().updateBalance(buyerAccount.get("account_id"), newBuyerBalance)
+                RequestDAO().updateStock(int(request.get("request_id")), new_needed)
+                AccountDAO().updateBalance(int(sellerAccount.get("account_id")), newSellerBalance)
+                AccountDAO().updateBalance(int(buyerAccount.get("account_id")), newBuyerBalance)
 
                 result = self.build_fulfilled_request_attributes(fulfilledRequest_id, request_id, person_id, fquantity,
                                                                  request.get("max_unit_price"))

@@ -89,7 +89,16 @@ class FulfilledRequestDAO:
                 "where A.person_id = R.person_id " \
                 "and B.person_id = FR.person_id " \
                 "and fulfillment_id = %s;"
-        cursor.execute(query, (fulfillment_id,))
+        query2 = "with req as (select person_id as sperson_id, first_name as sfirst_name, last_name as slast_name from \"Persons\"), " \
+                 "sell as (select person_id as bperson_id, first_name as bfirst_name, last_name as blast_name from \"Persons\") " \
+                 "select fulfillment_id, R.name, category, subcategory, fquantity as purchased_amount, funit_price, " \
+                 "concat(sfirst_name, ' ', slast_name) as requester, concat(bfirst_name, ' ', blast_name) as seller, " \
+                 "date_purchased " \
+                 "from sell inner join \"PurchasedSupplies\" as PS on sell.bperson_id = PS.person_id natural inner join \"Supplies\" " \
+                 "natural inner join \"Resources\" as R inner join req on R.person_id = req.sperson_id natural inner join " \
+                 "\"Categories\" as C left join \"Subcategories\" as S on C.subcategory_id = S.subcategory_id " \
+                 "where purchase_id = %s;"
+        cursor.execute(query2, (fulfillment_id,))
         result = cursor.fetchone()
         return result
 
