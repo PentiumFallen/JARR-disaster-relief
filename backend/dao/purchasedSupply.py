@@ -13,9 +13,10 @@ class PurchasedSupplyDAO:
 
     def getAllPurchasedSupplies(self):
         cursor = self.conn.cursor()
-        query = "select purchase_id, supply_id as post, person_id as buyer, category, subcategory, " \
+        query = "select purchase_id, supply_id as post, PS.person_id as buyer, category, subcategory, " \
                 "pquantity as quantity, punit_price, date_purchased "\
-                "from \"PurchasedSupplies\" natural inner join \"Supplies\" natural inner join \"Resources\" as R " \
+                "from \"PurchasedSupplies\" as PS natural inner join (select supply_id, resource_id from \"Supplies\") as S natural inner join " \
+                "(select resource_id, category_id from \"Resources\") as R " \
                 "natural inner join \"Categories\" as cat left join \"Subcategories\" as subcat " \
                 "on subcat.subcategory_id = cat.subcategory_id " \
                 "order by date_purchased desc;"
