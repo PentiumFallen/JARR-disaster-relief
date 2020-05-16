@@ -170,7 +170,7 @@ class RequestHandler:
         return jsonify(Request_Posts=result_list)
 
     def insert_request(self, form):
-        if len(form) != 7:
+        if len(form) != 9:
             return jsonify(Error="Malformed post request"), 400
         else:
             dao = RequestDAO()
