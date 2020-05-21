@@ -18,10 +18,25 @@ class AccountDAO:
         result = cursor.fetchone()
         return result
 
+    def getAllAccount(self):
+        cursor = self.conn.cursor()
+        query = "select account_id, email, password, registered_date, is_admin, balance, person_id, " \
+                "bank_account_number, routing_number, first_name, last_name, " \
+                "address, city, district, zip_code " \
+                "from \"Accounts\" natural inner join \"Persons\" natural inner join \"Addresses\";"
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
     def getAdminAccounts(self):
         cursor = self.conn.cursor()
         query = "select account_id, email, password, registered_date, is_admin, balance, person_id, " \
-                "bank_account_number, routing_number from \"Accounts\" where is_admin = TRUE;"
+                "bank_account_number, routing_number, first_name, last_name, " \
+                "address, city, district, zip_code " \
+                "from \"Accounts\" natural inner join \"Persons\" natural inner join \"Addresses\" " \
+                    "where is_admin = TRUE;"
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -44,14 +59,6 @@ class AccountDAO:
         result = []
         for row in cursor:
             result.append(row)
-        return result
-    
-    def getAccountData(self, email, password):
-        cursor = self.conn.cursor()
-        query = "select email, password, registered_date, is_admin, balance, " \
-                "bank_account_number, routing_number from \"Accounts\" where email = %s and password = %s;"
-        cursor.execute(query, (email, password))
-        result = cursor.fetchone()
         return result
     
     def getAccountType(self, account_id):

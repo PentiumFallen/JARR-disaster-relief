@@ -1,7 +1,10 @@
 from flask import jsonify
+
 from backend.dao.account import AccountDAO
+from backend.utility import senate_district
 
 
+# Joined to person and address
 class AccountHandler:
     def build_account_dict(self, row):
         result = {
@@ -14,11 +17,18 @@ class AccountHandler:
             'person_id': row[6],
             'bank_account_number': row[7],
             'routing_number': row[8],
+            'first_name': row[9],
+            'last_name' : row[10],
+            'address': row[11],
+            'city': row[12],
+            'district': row[13],
+            'zip_code': row[14]
         }
         return result
 
     def build_account_attributes(self, account_id, email, password, is_admin, person_id,
-                                 balance, bank_account_number, routing_number):
+                                 balance, bank_account_number, routing_number, first_name,
+                                 last_name, address, city, zip_code):
         result = {
             'account_id': account_id,
             'email': email,
@@ -28,17 +38,30 @@ class AccountHandler:
             'balance': balance,
             'bank_account_number': bank_account_number,
             'routing_number': routing_number,
+            'first_name' : first_name,
+            'last_name' : last_name,
+            'address': address,
+            'city': city,
+            'district': senate_district[city.lower()],
+            'zip_code': zip_code
         }
         return result
 
-    def get_account_data(self, email, password):
+    def build_login(self, row):
+        result = {
+            'email': row[0],
+            'password': row[1]
+        }
+        return result
+
+    def get_all_account(self):
         dao = AccountDAO()
-        result = dao.getAccountData(email, password)
-        if not result:
-            return jsonify(Error='Account not found.'), 404
-        else:
-            res = self.build_account_dict(result)
-            return jsonify(Account_data=res), 200
+        account_list = dao.getAllAccount()
+        result_list = []
+        for row in account_list:
+            result = self.build_account_dict(row)
+            result_list.append(result)
+        return jsonify(Accounts_list=result_list), 200
 
     def get_account_by_person_id(self, person_id):
         dao = AccountDAO()
@@ -51,12 +74,15 @@ class AccountHandler:
 
     def get_admin_accounts(self):
         dao = AccountDAO()
-        result = dao.getAdminAccounts()
-        if not result:
+        admin_list = dao.getAdminAccounts()
+        result_list = []
+        if not admin_list:
             return jsonify(Error='Admins accounts not found.'), 404
         else:
-            res = self.build_account_dict(result)
-            return jsonify(Admins_accounts=res), 200
+            for row in admin_list:
+                result = self.build_account_dict(row)
+                result_list.append(result)
+            return jsonify(Admins_accounts=result_list), 200
 
     def get_account_type(self, account_id):
         dao = AccountDAO()
@@ -77,7 +103,6 @@ class AccountHandler:
 
         if password and email:
             dao = AccountDAO()
-            password = self.hash_password(password)
             res = dao.accountLogin(email, password)
             if len(res) == 0:
                 return jsonify(Error="No account found with that email or Password"), 404
@@ -112,12 +137,18 @@ class AccountHandler:
             balance = form['balance']
             bank_account = form['bank_account']
             routing_number = form['routing_number']
+            first_name = form['first_name']
+            last_name = form['last_name']
+            address = form['address']
+            city = form['city']
+            zip_code = form['zip_code']
 
-            if email and password and is_admin and person_id and balance and bank_account and routing_number:
-                dao = AccountDAO()
-                pid = dao.insertAccount(email, password, is_admin, person_id, bank_account, routing_number)
-                result = self.build_account_attributes(pid, email, password, is_admin, person_id,
-                                                       balance, bank_account, routing_number)
+
+            if email and password and is_admin and person_id and balance and bank_account and routing_number \
+                and first_name and last_name and address and city and zip_code:
+                dao = AccountDAO().insertAccount(person_id, email, password, is_admin, bank_account,routing_number)
+                aid = dao.insertAccount(email, password, is_admin, person_id, bank_account, routing_number)
+                result = self.build_account_attributes(aid, first_name, last_name, address, city, zip_code)
                 return jsonify(Account=result), 201
             else:
                 return jsonify(Error="Unexpected attributes in post account"), 400
@@ -130,12 +161,18 @@ class AccountHandler:
         balance = json['balance']
         bank_account = json['bank_account']
         routing_number = json['routing_number']
+        first_name = json['first_name']
+        last_name = json['last_name']
+        address = json['address']
+        city = json['city']
+        zip_code = json['zip_code']
 
-        if email and password and is_admin and person_id and balance and bank_account and routing_number:
-            dao = AccountDAO()
-            pid = dao.insertAccount(email, password, is_admin, person_id, bank_account, routing_number)
-            result = self.build_account_attributes(pid, email, password, is_admin, person_id, balance,
-                                                   bank_account, routing_number)
+        if email and password and is_admin and person_id and balance and bank_account and routing_number \
+                and first_name and last_name and address and city and zip_code:
+            dao = AccountDAO().insertAccount(person_id, email, password, is_admin, bank_account, routing_number)
+            aid = dao.insertAccount(email, password, is_admin, person_id, bank_account, routing_number)
+    
+            result = self.build_account_attributes(aid, first_name, last_name, address, city, zip_code)
             return jsonify(Account=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post account"), 400
