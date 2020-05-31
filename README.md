@@ -85,9 +85,22 @@
     name (can match partially, but case-sensitive)
     brand
 
-### 9. (To do) Show dashboard page with Access from Postman trending statistics (8 Senate Regions in PR) on 
-  - Resources in need
-  - Resources available 
-  - Matching between need and availability
-
-
+### The resource categories handled are:
+	1. Water
+		a. Small bottles
+		b. 1 Gallon bottles
+	2. Medications
+	3. Baby Food
+	4. Canned Food
+	5. Dry Food
+	6. Ice
+	7. Fuel
+		a. Diesel
+		b. Propane
+		c. Gasoline
+	8. Medical Devices
+	9. Heavy Equipment
+	10. Tools
+	11. Clothing
+	12. Power Generators
+	13. Batteries
